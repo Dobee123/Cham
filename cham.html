@@ -30,6 +30,23 @@
     .imgbox img { display:block; width:100%; height:auto; }
     .done { min-height: 100vh; display:flex; align-items:center; justify-content:center; font-size: 18px; font-weight: 800; }
     .small { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+    .intro {
+      min-height: 60vh;
+      display:flex;
+      flex-direction: column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap: 14px;
+      padding: 10px 6px;
+    }
+    .intro-title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+      margin: 0;
+    }
     @media (max-width:520px){
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -45,17 +62,40 @@
     const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
     const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
 
+    // ✅ 모든 32-2 이미지는 이걸로 통일
+    const IMG_32_2 = "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg";
+
     const IMAGE_URLS = {
-      a: { img31_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img31_2: "https://example.com/a-31-2.jpg",
-           img32_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img32_2: "https://example.com/a-32-2.jpg" },
-      b: { img31_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img31_2: "https://example.com/b-31-2.jpg",
-           img32_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img32_2: "https://example.com/b-32-2.jpg" },
-      c: { img31_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img31_2: "https://example.com/c-31-2.jpg",
-           img32_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img32_2: "https://example.com/c-32-2.jpg" },
-      d: { img31_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img31_2: "https://example.com/d-31-2.jpg",
-           img32_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img32_2: "https://example.com/d-32-2.jpg" },
-      e: { img31_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img31_2: "https://example.com/e-31-2.jpg",
-           img32_1: "https://i.postimg.cc/7hHqNPcr/IMG-2861.jpg", img32_2: "https://example.com/e-32-2.jpg" },
+      a: {
+        img31_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img31_2: IMG_32_2,  // ✅ 줄바꿈 제거 + 정상 문자열
+        img32_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img32_2: IMG_32_2
+      },
+      b: {
+        img31_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img31_2: "https://example.com/b-31-2.jpg",
+        img32_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img32_2: IMG_32_2
+      },
+      c: {
+        img31_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img31_2: "https://example.com/c-31-2.jpg",
+        img32_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img32_2: IMG_32_2
+      },
+      d: {
+        img31_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img31_2: "https://example.com/d-31-2.jpg",
+        img32_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img32_2: IMG_32_2
+      },
+      e: {
+        img31_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img31_2: "https://example.com/e-31-2.jpg",
+        img32_1: "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+        img32_2: IMG_32_2
+      },
     };
 
     const state = {
@@ -85,6 +125,21 @@
 
     function renderShell(innerHtml){
       $app().innerHTML = `<div class="wrap"><div class="card">${innerHtml}</div></div>`;
+    }
+
+    function pageIntro(){
+      renderShell(`
+        <div class="intro">
+          <h1 class="intro-title">챔빠와 함께하는 논문여행</h1>
+          <div class="row" style="justify-content:center; width:100%; margin-top:6px;">
+            <button id="start" class="btn btn-primary" style="max-width:240px;">시작하기</button>
+          </div>
+        </div>
+      `);
+
+      document.getElementById("start").addEventListener("click", () => {
+        setHash("#/");
+      });
     }
 
     function radioQuestion({ title, qKey, nextHash }){
@@ -328,8 +383,10 @@
     }
 
     function router(){
-      const h = location.hash || "#/";
+      const h = location.hash || "#/intro";
       switch (h) {
+        case "#/intro": pageIntro(); break;
+
         case "#/": page1(); break;
         case "#/q1": pageQ1(); break;
         case "#/rand": pageRand(); break;
@@ -344,7 +401,9 @@
         case "#/q3": pageQ3(); break;
 
         case "#/done": pageDone(); break;
-        default: setHash("#/");
+
+        default:
+          setHash("#/intro");
       }
     }
 
