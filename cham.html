@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>설문조사</title>
+  <style>
+    :root { --max: 720px; --gap: 12px; --bd: #e5e7eb; --fg:#111827; --muted:#6b7280; --btn:#111827; --btnfg:#fff; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif; color:var(--fg); background:#fff; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 28px 18px 40px; }
+    .card { border:1px solid var(--bd); border-radius:16px; padding:18px; }
+    h1 { font-size: 20px; margin: 0 0 6px; }
+    p { margin: 0 0 14px; color: var(--muted); line-height:1.4; }
+    .grid { display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gap); }
+    .btn { width:100%; padding:14px 12px; border-radius:12px; border:1px solid var(--bd); background:#fff; cursor:pointer; font-weight:700; }
+    .btn:hover { border-color:#cbd5e1; }
+    .btn-primary { background: var(--btn); color: var(--btnfg); border-color: var(--btn); }
+    .btn-primary:disabled { opacity:.45; cursor:not-allowed; }
+    .row { display:flex; gap: var(--gap); align-items:center; justify-content:flex-end; margin-top: 16px; }
+    .question { font-size: 18px; font-weight: 800; margin: 0 0 12px; }
+    .options { display:grid; gap: 10px; margin-top: 8px; }
+    label.opt {
+      display:flex; align-items:center; gap:10px; padding:12px 12px;
+      border:1px solid var(--bd); border-radius:12px; cursor:pointer;
+    }
+    label.opt:hover { border-color:#cbd5e1; }
+    input[type="radio"] { transform: scale(1.15); }
+    .tag { display:inline-block; font-size:12px; padding:4px 10px; border-radius:999px; border:1px solid var(--bd); color: var(--muted); }
+    .imgbox { width:100%; border:1px solid var(--bd); border-radius:16px; overflow:hidden; background:#f9fafb; }
+    .imgbox img { display:block; width:100%; height:auto; }
+    .center { text-align:center; }
+    .done { min-height: 100vh; display:flex; align-items:center; justify-content:center; font-size: 18px; font-weight: 800; }
+    .small { font-size: 12px; color: var(--muted); margin-top: 10px; }
+    @media (max-width:520px){
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+
+  <!-- EmailJS (메일 전송용) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    /**********************************************************
+     * 0) 반드시 채워야 하는 설정값
+     **********************************************************/
+    const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
+    const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
+    const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
+    // ↑ EmailJS에서 발급/생성해서 넣어줘야 메일이 실제로 발송됨.
+
+    // a~e 선택에 따라 노출할 이미지 URL (3-1: 2장, 3-2: 2장)
+    // - 3-1 루트일 때: img31_1, img31_2 사용 (각각 10초 락)
+    // - 3-2 루트일 때: img32_1, img32_2 사용 (즉시 다음 가능)
+    const IMAGE_URLS = {
+      a: { img31_1: "https://example.com/a-31-1.jpg", img31_2: "https://example.com/a-31-2.jpg",
+           img32_1: "https://example.com/a-32-1.jpg", img32_2: "https://example.com/a-32-2.jpg" },
+      b: { img31_1: "https://example.com/b-31-1.jpg", img31_2: "https://example.com/b-31-2.jpg",
+           img32_1: "https://example.com/b-32-1.jpg", img32_2: "https://example.com/b-32-2.jpg" },
+      c: { img31_1: "https://example.com/c-31-1.jpg", img31_2: "https://example.com/c-31-2.jpg",
+           img32_1: "https://example.com/c-32-1.jpg", img32_2: "https://example.com/c-32-2.jpg" },
+      d: { img31_1: "https://example.com/d-31-1.jpg", img31_2: "https://example.com/d-31-2.jpg",
+           img32_1: "https://example.com/d-32-1.jpg", img32_2: "https://example.com/d-32-2.jpg" },
+      e: { img31_1: "https://example.com/e-31-1.jpg", img31_2: "https://example.com/e-31-2.jpg",
+           img32_1: "https://example.com/e-32-1.jpg", img32_2: "https://example.com/e-32-2.jpg" },
+    };
+
+    /**********************************************************
+     * 1) 전역 상태
+     **********************************************************/
+    const state = {
+      firstChoice: null,        // 'a'|'b'|'c'|'d'|'e'
+      route: null,              // '3-1'|'3-2'
+      answers: { q1:null, q2:null, q3:null }, // 각 질문 1~5
+    };
+
+    /**********************************************************
+     * 2) 유틸
+     **********************************************************/
+    const $app = () => document.getElementById("app");
+    const setHash = (h) => location.hash = h;
+
+    function safeInitEmailJS(){
+      try{
+        if (EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
+          emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        }
+      }catch(e){
+        console.warn("EmailJS init failed:", e);
+      }
+    }
+    safeInitEmailJS();
+
+    function getVariantTitle(choice){
+      const map = { a:"A", b:"B", c:"C", d:"D", e:"E" };
+      return map[choice] ? `${map[choice]} 타입 설문` : "설문";
+    }
+
+    function renderShell(innerHtml){
+      $app().innerHTML = `<div class="wrap"><div class="card">${innerHtml}</div></div>`;
+    }
+
+    function radioQuestion({ title, qKey, nextHash }){
+      const current = state.answers[qKey];
+      renderShell(`
+        <div>
+          <div class="tag">${getVariantTitle(state.firstChoice)}</div>
+          <h1 style="margin-top:10px;">${title}</h1>
+          <p>항목 5개 중 하나만 선택 가능합니다.</p>
+
+          <div class="question">잘하고 있습니까?</div>
+          <div class="options" role="radiogroup" aria-label="score">
+            ${[1,2,3,4,5].map(v => `
+              <label class="opt">
+                <input type="radio" name="${qKey}" value="${v}" ${String(current)===String(v) ? "checked":""}/>
+                <span>${v}점</span>
+              </label>
+            `).join("")}
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled>다음</button>
+          </div>
+        </div>
+      `);
+
+      const radios = [...document.querySelectorAll(`input[name="${qKey}"]`)];
+      const nextBtn = document.getElementById("next");
+
+      function sync(){
+        const picked = radios.find(r => r.checked)?.value ?? null;
+        state.answers[qKey] = picked ? Number(picked) : null;
+        nextBtn.disabled = !state.answers[qKey];
+      }
+      radios.forEach(r => r.addEventListener("change", sync));
+      sync();
+
+      nextBtn.addEventListener("click", () => {
+        if (!state.answers[qKey]) return;
+        setHash(nextHash);
+      });
+    }
+
+    function imagePage({ title, imgUrl, nextHash, lockSeconds }){
+      const lockMs = (lockSeconds ?? 0) * 1000;
+
+      renderShell(`
+        <div>
+          <div class="tag">${getVariantTitle(state.firstChoice)}</div>
+          <h1 style="margin-top:10px;">${title}</h1>
+          <p>${lockSeconds ? `페이지 접속 후 ${lockSeconds}초 뒤 ‘다음’ 버튼이 활성화됩니다.` : "‘다음’ 버튼을 눌러 진행하세요."}</p>
+
+          <div class="imgbox">
+            <img src="${imgUrl}" alt="설문 이미지" />
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" ${lockSeconds ? "disabled":""}>다음</button>
+          </div>
+          ${lockSeconds ? `<div class="small" id="countdown"></div>` : ""}
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+      if (!lockSeconds) {
+        nextBtn.addEventListener("click", ()=> setHash(nextHash));
+        return;
+      }
+
+      const cd = document.getElementById("countdown");
+      let remain = lockSeconds;
+      cd.textContent = `활성화까지 ${remain}초`;
+      const timer = setInterval(() => {
+        remain -= 1;
+        if (remain <= 0){
+          clearInterval(timer);
+          cd.textContent = "버튼이 활성화되었습니다.";
+          nextBtn.disabled = false;
+          return;
+        }
+        cd.textContent = `활성화까지 ${remain}초`;
+      }, 1000);
+
+      nextBtn.addEventListener("click", () => {
+        if (nextBtn.disabled) return;
+        setHash(nextHash);
+      });
+    }
+
+    function page1(){
+      renderShell(`
+        <div>
+          <h1>설문 시작</h1>
+          <p>아래 버튼 중 하나를 선택하세요. (선택에 따라 이후 페이지가 달라집니다)</p>
+
+          <div class="grid">
+            ${["a","b","c","d","e"].map(ch => `
+              <button class="btn" data-choice="${ch}">${ch}</button>
+            `).join("")}
+          </div>
+        </div>
+      `);
+
+      document.querySelectorAll("button[data-choice]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const choice = btn.getAttribute("data-choice");
+          state.firstChoice = choice;
+          state.route = null;
+          state.answers = { q1:null, q2:null, q3:null };
+          setHash("#/q1");
+        });
+      });
+    }
+
+    function pageQ1(){
+      if (!state.firstChoice) return setHash("#/");
+      radioQuestion({ title: "두번째 페이지", qKey: "q1", nextHash: "#/rand" });
+    }
+
+    function pageRand(){
+      if (!state.firstChoice || !state.answers.q1) return setHash("#/");
+      // 50% 확률로 3-1 또는 3-2
+      state.route = (Math.random() < 0.5) ? "3-1" : "3-2";
+      setHash(state.route === "3-1" ? "#/3-1/1" : "#/3-2/1");
+    }
+
+    function page31_1(){
+      if (!state.firstChoice || !state.answers.q1) return setHash("#/");
+      const imgUrl = IMAGE_URLS?.[state.firstChoice]?.img31_1;
+      imagePage({ title:"3-1 페이지 (1/2)", imgUrl, nextHash:"#/3-1/2", lockSeconds:10 });
+    }
+
+    function page31_2(){
+      if (!state.firstChoice || !state.answers.q1) return setHash("#/");
+      const imgUrl = IMAGE_URLS?.[state.firstChoice]?.img31_2;
+      imagePage({ title:"3-1 페이지 (2/2)", imgUrl, nextHash:"#/q2", lockSeconds:10 });
+    }
+
+    function page32_1(){
+      if (!state.firstChoice || !state.answers.q1) return setHash("#/");
+      const imgUrl = IMAGE_URLS?.[state.firstChoice]?.img32_1;
+      imagePage({ title:"3-2 페이지 (1/2)", imgUrl, nextHash:"#/3-2/2", lockSeconds:0 });
+    }
+
+    function page32_2(){
+      if (!state.firstChoice || !state.answers.q1) return setHash("#/");
+      const imgUrl = IMAGE_URLS?.[state.firstChoice]?.img32_2;
+      imagePage({ title:"3-2 페이지 (2/2)", imgUrl, nextHash:"#/q2", lockSeconds:0 });
+    }
+
+    function pageQ2(){
+      if (!state.firstChoice || !state.answers.q1) return setHash("#/");
+      radioQuestion({ title: "3번째(공통) 질문 페이지", qKey: "q2", nextHash: "#/q3" });
+    }
+
+    function pageQ3(){
+      if (!state.firstChoice || !state.answers.q1 || !state.answers.q2) return setHash("#/");
+      // 마지막 질문 + 전송하기 버튼
+      const current = state.answers.q3;
+
+      renderShell(`
+        <div>
+          <div class="tag">${getVariantTitle(state.firstChoice)}</div>
+          <h1 style="margin-top:10px;">네번째(마지막) 페이지</h1>
+          <p>항목 5개 중 하나만 선택 가능합니다. ‘전송하기’를 누르면 결과가 메일로 전송됩니다.</p>
+
+          <div class="question">잘하고 있습니까?</div>
+          <div class="options" role="radiogroup" aria-label="score">
+            ${[1,2,3,4,5].map(v => `
+              <label class="opt">
+                <input type="radio" name="q3" value="${v}" ${String(current)===String(v) ? "checked":""}/>
+                <span>${v}점</span>
+              </label>
+            `).join("")}
+          </div>
+
+          <div class="row">
+            <button id="send" class="btn btn-primary" disabled>전송하기</button>
+          </div>
+
+          <div class="small" id="status"></div>
+        </div>
+      `);
+
+      const radios = [...document.querySelectorAll(`input[name="q3"]`)];
+      const sendBtn = document.getElementById("send");
+      const status = document.getElementById("status");
+
+      function sync(){
+        const picked = radios.find(r => r.checked)?.value ?? null;
+        state.answers.q3 = picked ? Number(picked) : null;
+        sendBtn.disabled = !state.answers.q3;
+      }
+      radios.forEach(r => r.addEventListener("change", sync));
+      sync();
+
+      sendBtn.addEventListener("click", async () => {
+        if (!state.answers.q3) return;
+
+        // 전송 페이로드 (메일에 들어갈 내용)
+        const payload = {
+          firstChoice: state.firstChoice,
+          route: state.route, // 3-1 or 3-2
+          q1: state.answers.q1,
+          q2: state.answers.q2,
+          q3: state.answers.q3,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+        };
+
+        // EmailJS 설정이 안된 경우: 화면에만 완료 처리 (개발용)
+        const emailConfigured =
+          EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID &&
+          EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY" &&
+          EMAILJS_SERVICE_ID !== "YOUR_EMAILJS_SERVICE_ID" &&
+          EMAILJS_TEMPLATE_ID !== "YOUR_EMAILJS_TEMPLATE_ID";
+
+        sendBtn.disabled = true;
+        status.textContent = "전송 중...";
+
+        try {
+          if (emailConfigured) {
+            // 템플릿 변수는 EmailJS 템플릿에서 아래 키와 맞춰줘야 함
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+              subject: `[설문 결과] choice=${payload.firstChoice} route=${payload.route}`,
+              message: JSON.stringify(payload, null, 2),
+              firstChoice: payload.firstChoice,
+              route: payload.route,
+              q1: payload.q1,
+              q2: payload.q2,
+              q3: payload.q3,
+              timestamp: payload.timestamp,
+            });
+          } else {
+            console.warn("EmailJS not configured. Payload:", payload);
+          }
+
+          setHash("#/done");
+        } catch (e) {
+          console.error(e);
+          status.textContent = "전송 실패: EmailJS 설정/네트워크를 확인하세요.";
+          sendBtn.disabled = false;
+        }
+      });
+    }
+
+    function pageDone(){
+      // 빈 페이지 느낌 + 완료 문구만
+      document.body.innerHTML = `<div class="done">전송이 완료되었습니다</div>`;
+    }
+
+    /**********************************************************
+     * 3) 라우터
+     **********************************************************/
+    function router(){
+      const h = location.hash || "#/";
+      switch (h) {
+        case "#/":
+          page1(); break;
+        case "#/q1":
+          pageQ1(); break;
+        case "#/rand":
+          pageRand(); break;
+
+        case "#/3-1/1":
+          state.route = "3-1";
+          page31_1(); break;
+        case "#/3-1/2":
+          state.route = "3-1";
+          page31_2(); break;
+
+        case "#/3-2/1":
+          state.route = "3-2";
+          page32_1(); break;
+        case "#/3-2/2":
+          state.route = "3-2";
+          page32_2(); break;
+
+        case "#/q2":
+          pageQ2(); break;
+        case "#/q3":
+          pageQ3(); break;
+
+        case "#/done":
+          pageDone(); break;
+
+        default:
+          setHash("#/");
+      }
+    }
+
+    window.addEventListener("hashchange", router);
+    router();
+  </script>
+</body>
+</html>
