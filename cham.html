@@ -172,46 +172,49 @@
     /***********************
      * ✅ 관리자 목록(JSONP로 조회) - "페이지 죽음" 방지 버전
      ***********************/
-    function fetchAdminList({ limit = 200, timeoutMs = 8000 } = {}){
-      return new Promise((resolve, reject) => {
-        const cbName = "jsonp_cb_" + Math.random().toString(16).slice(2);
-        const script = document.createElement("script");
+function fetchAdminList({ limit = 200 } = {}){
+  return new Promise((resolve, reject) => {
+    const cbName = "jsonp_cb_" + Math.random().toString(16).slice(2);
+    const script = document.createElement("script");
 
-        const url =
-          `${GS_WEBAPP_URL}?action=list` +
-          `&limit=${encodeURIComponent(limit)}` +
-          `&callback=${encodeURIComponent(cbName)}` +
-          `&_=${Date.now()}`; // ✅ 캐시 방지
+    const url = `${GS_WEBAPP_URL}?action=list&limit=${encodeURIComponent(limit)}&callback=${encodeURIComponent(cbName)}&_=${Date.now()}`;
 
-        let done = false;
-        const cleanup = () => {
-          if (done) return;
-          done = true;
-          try { delete window[cbName]; } catch(e){}
-          try { script.remove(); } catch(e){}
-          try { clearTimeout(tid); } catch(e){}
-        };
+    let finished = false;
+    const cleanup = () => {
+      if (finished) return;
+      finished = true;
+      try { delete window[cbName]; } catch(e){}
+      try { script.remove(); } catch(e){}
+      try { clearTimeout(tid); } catch(e){}
+    };
 
-        window[cbName] = (data) => {
-          cleanup();
-          resolve(data);
-        };
+    window[cbName] = (data) => {
+      cleanup();
+      resolve(data);
+    };
 
-        script.onerror = () => {
-          cleanup();
-          reject(new Error("Admin list JSONP load error (script.onerror)"));
-        };
+    script.onload = () => {
+      // onload 됐는데 callback이 안 불리면, 응답이 JS가 아니라 HTML/리다이렉트/빈 응답일 수 있음
+      console.log("[JSONP] script loaded:", url);
+      // callback이 정상 호출되면 위에서 cleanup되므로 여기서 뭘 하진 않음
+    };
 
-        const tid = setTimeout(() => {
-          cleanup();
-          reject(new Error("Admin list JSONP timeout (callback not called)"));
-        }, timeoutMs);
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Admin list JSONP load error (script.onerror)"));
+    };
 
-        script.async = true;
-        script.src = url;
-        document.head.appendChild(script);
-      });
-    }
+    const tid = setTimeout(() => {
+      console.warn("[JSONP] timeout:", url);
+      cleanup();
+      reject(new Error("Admin list JSONP timeout (callback not called)"));
+    }, 8000);
+
+    script.async = true;
+    script.src = url;
+    document.head.appendChild(script);
+  });
+}
 
     /***********************
      * Pages
