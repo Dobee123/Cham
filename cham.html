@@ -6,7 +6,7 @@
   <title>설문조사</title>
   <style>
     :root {
-      --max: 900px;
+      --max: 980px;
       --gap: 12px;
       --bd: #e5e7eb;
       --fg: #111827;
@@ -340,7 +340,7 @@
     .fact-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 700px;
+      min-width: 760px;
       background: #fff;
     }
 
@@ -473,6 +473,15 @@
       ]
     };
 
+    const ALGO_QUESTIONS = [
+      "Q7. 나는 온라인사이트에서 알고리즘이 콘텐츠를 추천해주는 원리를 대략적으로 알고 있다.",
+      "Q8. 나는 알고리즘이 사용되는 사이트와 그렇지 않은 사이트를 구별할 수 있다.",
+      "Q9. 나는 온라인사이트에서 알고리즘을 통해 콘텐츠가 추천되었을때 이것을 인지할 수 있다.",
+      "Q10. 나는 온라인사이트의 알고리즘이 내가 원하는 콘텐츠를 추천해줄 수 있도록 하는 방법들을 알고 있다.",
+      "Q11. 나는 온라인사이트에서 사용되는 알고리즘이 왜 필요한지에 대해 잘 알고 있다.",
+      "Q12. 나는 알고리즘이 이용자에게 미칠 수 있는 영향력에 대해 잘 알고 있다."
+    ];
+
     const ADMIN_PASSWORD = "1234";
     const STORAGE_KEY_ADMIN = "survey_admin_authed_v1";
 
@@ -495,6 +504,7 @@
         "4": [null, null, null, null, null],
         "5": [null, null, null, null, null]
       },
+      algoAnswers: [null, null, null, null, null, null],
       routeChoice: null,
       route: null,
       answers: { q2: null, q3: null },
@@ -678,7 +688,7 @@
           <div class="sq-block">
             <div class="sq-q">SQ4. 귀하께서는 포탈이나 SNS 등을 통해 뉴스를 접하고 계십니까?</div>
             <div class="sq-note">* 본 설문에서 말하는 「포탈이나 SNS」란 사람들의 의견, 생각, 경험, 관점, 정보 등을 서로 공유하고 확인하기 위해 사용하는 서비스나 플랫폼을 의미합니다.
-포탈에는 네이버, 다음, 구글 등이 있으며, SNS에는 페이스북, 인스타그램, X(구 트위터) 등이 있습니다.</br>이들 서비스나 플랫폼 중 어느 하나라도 이용하고 있으면 ‘① 이용하고 있다’에 응답하시면 됩니다.</div>
+포탈에는 네이버, 다음, 구글 등이 있으며, SNS에는 페이스북, 인스타그램, X(구 트위터) 등이 있습니다. 이들 서비스나 플랫폼 중 어느 하나라도 이용하고 있으면 ‘① 이용하고 있다’에 응답하시면 됩니다.</div>
             <div class="sq-inline">
               <label class="sq-opt">
                 <input type="radio" name="sq_portalNews" value="1" ${state.sq.portalNews === "1" ? "checked" : ""}>
@@ -693,7 +703,7 @@
 
           <div class="sq-block">
             <div class="sq-q">SQ5. 귀하께서는 휴대전화를 사용하고 계십니까?</div>
-            <div class="sq-note">* 본 설문에서 말하는 「휴대전화」란 사용자가 지정된 전화 서비스 지역 내에서 이동하면서 전화를 걸고 받을 수 있는 휴대용 전화를 말합니다. </br>특히 디지털 사진, 비디오 녹화, 게임과 같은 다양한 멀티미디어 기능뿐만 아니라 ‘모바일 브라우저’나 ‘앱’을 통해 포탈이나 SNS를 이용할 수 있는 기능이 탑재된 전화를 뜻합니다. 대표적으로 삼성의 갤럭시, 애플의 아이폰이 있습니다. 모바일 브라우저나 앱을 통해 포탈이나 SNS를 이용할 수 있는 휴대전화를 가지고 있다면 ‘① 가지고 있다’에 응답하시면 됩니다.</div>
+            <div class="sq-note">* 본 설문에서 말하는 「휴대전화」란 사용자가 지정된 전화 서비스 지역 내에서 이동하면서 전화를 걸고 받을 수 있는 휴대용 전화를 말합니다. 특히 디지털 사진, 비디오 녹화, 게임과 같은 다양한 멀티미디어 기능뿐만 아니라 ‘모바일 브라우저’나 ‘앱’을 통해 포탈이나 SNS를 이용할 수 있는 기능이 탑재된 전화를 뜻합니다. 대표적으로 삼성의 갤럭시, 애플의 아이폰이 있습니다. 모바일 브라우저나 앱을 통해 포탈이나 SNS를 이용할 수 있는 휴대전화를 가지고 있다면 ‘① 가지고 있다’에 응답하시면 됩니다.</div>
             <div class="sq-inline">
               <label class="sq-opt">
                 <input type="radio" name="sq_mobilePhone" value="1" ${state.sq.mobilePhone === "1" ? "checked" : ""}>
@@ -774,10 +784,7 @@
 
       document.getElementById("sqNext").addEventListener("click", async () => {
         if (state.sq.portalNews === "2" || state.sq.mobilePhone === "2") {
-          const screenoutReason =
-            state.sq.portalNews === "2"
-              ? "SQ4_2"
-              : "SQ5_2";
+          const screenoutReason = state.sq.portalNews === "2" ? "SQ4_2" : "SQ5_2";
 
           const payload = {
             id: (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2)),
@@ -799,6 +806,12 @@
             fact3: "",
             fact4: "",
             fact5: "",
+            algoQ7: "",
+            algoQ8: "",
+            algoQ9: "",
+            algoQ10: "",
+            algoQ11: "",
+            algoQ12: "",
             q2: "",
             q3: "",
             timestamp: new Date().toISOString(),
@@ -907,15 +920,9 @@
                   <tr>
                     <td class="fact-no">${idx + 1}</td>
                     <td class="fact-text">${q}</td>
-                    <td>
-                      <input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="1" ${current[idx] === "1" ? "checked" : ""}>
-                    </td>
-                    <td>
-                      <input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="2" ${current[idx] === "2" ? "checked" : ""}>
-                    </td>
-                    <td>
-                      <input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="3" ${current[idx] === "3" ? "checked" : ""}>
-                    </td>
+                    <td><input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="1" ${current[idx] === "1" ? "checked" : ""}></td>
+                    <td><input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="2" ${current[idx] === "2" ? "checked" : ""}></td>
+                    <td><input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="3" ${current[idx] === "3" ? "checked" : ""}></td>
                   </tr>
                 `).join("")}
               </tbody>
@@ -940,6 +947,73 @@
 
       for (let i = 0; i < 5; i++) {
         document.querySelectorAll(`input[name="fact_${topicNo}_${i}"]`).forEach(el => {
+          el.addEventListener("change", sync);
+        });
+      }
+
+      sync();
+
+      nextBtn.addEventListener("click", () => {
+        setHash("#/page5");
+      });
+    }
+
+    function page5() {
+      renderShell(`
+        <div>
+          <div class="sq-title-box">5페이지</div>
+          <p style="white-space: pre-line; line-height:1.7;">
+※ 알고리즘이란 포털, SNS, 유튜브 등에서 사용자의 이용 패턴을 바탕으로 뉴스나 콘텐츠를 추천하는 시스템입니다. 포털, SNS, 유튜브에서 방금 읽었던 기사나 영상과 유사한 내용이 자동으로 노출되는 형태가 대표적인 예입니다. 다음 질문은 알고리즘에 대한 평소 생각을 묻는 내용입니다. 귀하의 평소 생각을 답해주십시오.
+          </p>
+
+          <div class="fact-table-wrap">
+            <table class="fact-table" style="min-width: 1100px;">
+              <thead>
+                <tr>
+                  <th>문항 내용</th>
+                  <th class="fact-col">전혀 동의하지 않는다</th>
+                  <th class="fact-col">동의하지 않는다</th>
+                  <th class="fact-col">보통이다</th>
+                  <th class="fact-col">동의한다</th>
+                  <th class="fact-col">전적으로 동의한다</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${ALGO_QUESTIONS.map((q, idx) => `
+                  <tr>
+                    <td class="fact-text">${q}</td>
+                    ${[1,2,3,4,5].map(v => `
+                      <td>
+                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                          <input class="fact-radio" type="radio" name="algo_${idx}" value="${v}" ${String(state.algoAnswers[idx]) === String(v) ? "checked" : ""}>
+                          <span>${["①","②","③","④","⑤"][v-1]}</span>
+                        </label>
+                      </td>
+                    `).join("")}
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled>다음</button>
+          </div>
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        for (let i = 0; i < 6; i++) {
+          const picked = document.querySelector(`input[name="algo_${i}"]:checked`);
+          state.algoAnswers[i] = picked ? Number(picked.value) : null;
+        }
+        nextBtn.disabled = state.algoAnswers.some(v => !v);
+      }
+
+      for (let i = 0; i < 6; i++) {
+        document.querySelectorAll(`input[name="algo_${i}"]`).forEach(el => {
           el.addEventListener("change", sync);
         });
       }
@@ -1151,6 +1225,12 @@
           fact3: facts[2] || "",
           fact4: facts[3] || "",
           fact5: facts[4] || "",
+          algoQ7: state.algoAnswers[0] || "",
+          algoQ8: state.algoAnswers[1] || "",
+          algoQ9: state.algoAnswers[2] || "",
+          algoQ10: state.algoAnswers[3] || "",
+          algoQ11: state.algoAnswers[4] || "",
+          algoQ12: state.algoAnswers[5] || "",
           q2: state.answers.q2,
           q3: state.answers.q3,
           timestamp: new Date().toISOString(),
@@ -1315,6 +1395,8 @@
         case "#/4-3": page43(); break;
         case "#/4-4": page44(); break;
         case "#/4-5": page45(); break;
+
+        case "#/page5": page5(); break;
 
         case "#/rand": pageRand(); break;
 
