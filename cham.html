@@ -1,156 +1,1598 @@
-const SHEET_NAME = "Results_v7";
-
-function doPost(e) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-
-    if (sh.getLastRow() === 0) {
-      sh.appendRow([
-        "id",
-        "timestamp",
-        "firstChoice",
-        "topicChoice",
-        "route",
-        "screenout",
-        "screenoutReason",
-        "sqGender",
-        "sqBranch",
-        "sqRank",
-        "sqPortalNews",
-        "sqMobilePhone",
-        "sqInternetTime",
-        "sqPolitical",
-        "sqDevice",
-        "fact1",
-        "fact2",
-        "fact3",
-        "fact4",
-        "fact5",
-        "algoQ7",
-        "algoQ8",
-        "algoQ9",
-        "algoQ10",
-        "algoQ11",
-        "algoQ12",
-        "selectedNews",
-        "selectedNewsTitle",
-        "selectedNewsPage",
-        "q2",
-        "q3",
-        "userAgent"
-      ]);
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>설문조사</title>
+  <style>
+    :root {
+      --max: 980px;
+      --gap: 12px;
+      --bd: #e5e7eb;
+      --fg: #111827;
+      --muted: #6b7280;
+      --btn: #111827;
+      --btnfg: #fff;
+      --thead: #e5e7eb;
     }
 
-    const body =
-      (e && e.postData && typeof e.postData.contents === "string")
-        ? e.postData.contents
-        : "{}";
+    * { box-sizing: border-box; }
 
-    let data = {};
-    try {
-      data = JSON.parse(body || "{}");
-    } catch (err) {
-      data = {};
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+      color: var(--fg);
+      background: #fff;
     }
 
-    const id = data.id || Utilities.getUuid();
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
 
-    const row = [
-      id,
-      data.timestamp || new Date().toISOString(),
-      data.firstChoice || "",
-      data.topicChoice || "",
-      data.route || "",
-      data.screenout || "N",
-      data.screenoutReason || "",
-      data.sqGender || "",
-      data.sqBranch || "",
-      data.sqRank || "",
-      data.sqPortalNews || "",
-      data.sqMobilePhone || "",
-      data.sqInternetTime || "",
-      data.sqPolitical || "",
-      data.sqDevice || "",
-      data.fact1 || "",
-      data.fact2 || "",
-      data.fact3 || "",
-      data.fact4 || "",
-      data.fact5 || "",
-      data.algoQ7 || "",
-      data.algoQ8 || "",
-      data.algoQ9 || "",
-      data.algoQ10 || "",
-      data.algoQ11 || "",
-      data.algoQ12 || "",
-      data.selectedNews || "",
-      data.selectedNewsTitle || "",
-      data.selectedNewsPage || "",
-      data.q2 || "",
-      data.q3 || "",
-      data.userAgent || ""
+    .card {
+      border: 1px solid var(--bd);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 6px;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--bd);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn:hover { border-color: #cbd5e1; }
+
+    .btn-primary {
+      background: var(--btn);
+      color: var(--btnfg);
+      border-color: var(--btn);
+    }
+
+    .btn-primary:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .row {
+      display: flex;
+      gap: var(--gap);
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .question {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    label.opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 12px;
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    label.opt:hover { border-color: #cbd5e1; }
+
+    input[type="radio"] { transform: scale(1.1); }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--bd);
+      color: var(--muted);
+    }
+
+    .imgbox {
+      width: 100%;
+      border: 1px solid var(--bd);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f9fafb;
+      margin-top: 12px;
+    }
+
+    .imgbox img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .done {
+      min-height: 60vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      font-weight:800;
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .intro {
+      min-height: 60vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:14px;
+      padding:10px 6px;
+      position: relative;
+    }
+
+    .intro-title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+      margin: 0;
+    }
+
+    .admin-btn {
+      position:absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--bd);
+      background:#fff;
+      cursor:pointer;
+      font-weight:800;
+      width:auto;
+    }
+
+    .admin-btn:hover { border-color:#cbd5e1; }
+
+    .loginBox {
+      max-width: 340px;
+      margin: 0 auto;
+      width:100%;
+    }
+
+    .input {
+      width: 100%;
+      max-width: 340px;
+      padding: 10px 12px;
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .input:focus { border-color:#cbd5e1; }
+
+    .list {
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .item {
+      border:1px solid var(--bd);
+      border-radius:12px;
+      padding:12px;
+      cursor:pointer;
+    }
+
+    .item:hover { border-color:#cbd5e1; }
+
+    .item-top {
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background:#f9fafb;
+      border:1px solid var(--bd);
+      border-radius:12px;
+      padding:12px;
+      margin-top: 12px;
+    }
+
+    .sq-page {
+      display:grid;
+      gap:18px;
+    }
+
+    .sq-title-box {
+      display:inline-block;
+      margin:0 auto 6px;
+      padding:12px 22px;
+      background:#111;
+      color:#fff;
+      border-radius:10px;
+      font-size:22px;
+      font-weight:800;
+      text-align:center;
+    }
+
+    .sq-block {
+      border:1px solid var(--bd);
+      border-radius:14px;
+      padding:16px;
+      background:#fff;
+    }
+
+    .sq-q {
+      font-size:17px;
+      font-weight:800;
+      margin:0 0 12px;
+      line-height:1.55;
+    }
+
+    .sq-note {
+      font-size:14px;
+      color: var(--muted);
+      line-height:1.7;
+      margin:10px 0 14px;
+      white-space: pre-line;
+    }
+
+    .sq-options {
+      display:grid;
+      gap:10px;
+    }
+
+    .sq-inline {
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:10px;
+    }
+
+    .sq-inline-3 {
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:10px;
+    }
+
+    .sq-inline-4 {
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap:10px;
+    }
+
+    .sq-inline-5 {
+      display:grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap:10px;
+    }
+
+    .sq-opt {
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:12px;
+      border:1px solid var(--bd);
+      border-radius:12px;
+      cursor:pointer;
+      line-height:1.45;
+      background:#fff;
+    }
+
+    .sq-opt:hover { border-color:#cbd5e1; }
+
+    .sq-opt input[type="radio"] {
+      margin-top:2px;
+      transform: scale(1.1);
+      flex:0 0 auto;
+    }
+
+    .sq-opt span { word-break: keep-all; }
+
+    .fact-table-wrap {
+      overflow-x:auto;
+      border:1px solid var(--bd);
+      border-radius:14px;
+      margin-top:14px;
+    }
+
+    .fact-table {
+      width:100%;
+      border-collapse:collapse;
+      min-width:760px;
+      background:#fff;
+    }
+
+    .fact-table th,
+    .fact-table td {
+      border:1px solid var(--bd);
+      padding:12px 10px;
+      vertical-align:middle;
+      text-align:center;
+    }
+
+    .fact-table thead th {
+      background: var(--thead);
+      font-weight:800;
+    }
+
+    .fact-table .fact-text {
+      text-align:left;
+      line-height:1.6;
+      word-break: keep-all;
+    }
+
+    .fact-table .fact-no {
+      width:56px;
+      font-weight:700;
+    }
+
+    .fact-table .fact-col {
+      width:90px;
+    }
+
+    .fact-radio {
+      transform: scale(1.15);
+    }
+
+    .news-title {
+      font-weight:800;
+      margin:18px 0 10px;
+      font-size:16px;
+    }
+
+    .news-links {
+      display:grid;
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .news-link {
+      display:block;
+      padding:14px 16px;
+      border:1px solid var(--bd);
+      border-radius:12px;
+      background:#fff;
+      color: var(--fg);
+      text-decoration:none;
+      line-height:1.5;
+      cursor:pointer;
+      font-weight:700;
+      text-align:left;
+    }
+
+    .news-link:hover {
+      border-color:#cbd5e1;
+      background:#f9fafb;
+    }
+
+    .news-link.disabled {
+      pointer-events:none;
+      color:#9ca3af;
+      text-decoration:none;
+      background:#f3f4f6;
+      cursor:not-allowed;
+    }
+
+    .news-link:active {
+      transform: translateY(1px);
+    }
+
+    @media (max-width:640px) {
+      .sq-inline,
+      .sq-inline-3,
+      .sq-inline-4,
+      .sq-inline-5 {
+        grid-template-columns:1fr;
+      }
+
+      .sq-title-box { width:100%; }
+    }
+
+    @media (max-width:520px) {
+      .loginBox { max-width:100%; }
+      .input { max-width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const GS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzzDv9AJbOzFDKOhmYCu6hqTSzMRzTZMqxalFU2uG1kno-ITzVK02BU70hZSwTbeL1faA/exec";
+
+    /***********************
+     * 페이지별 이미지 URL
+     * 여기만 바꾸면 각 페이지 이미지 교체 가능
+     ***********************/
+    const PAGE_IMAGES = {
+      "6-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "6-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "6-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "6-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "6-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+
+      "6-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "6-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "6-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "6-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "6-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+
+      "62-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "62-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "62-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "62-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "62-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+
+      "62-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "62-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "62-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "62-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "62-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+
+      "63-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "63-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "63-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "63-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "63-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+
+      "63-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "63-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "63-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "63-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "63-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+
+      "64-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "64-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "64-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "64-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "64-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+
+      "64-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "64-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "64-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "64-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "64-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+
+      "65-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "65-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "65-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "65-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+      "65-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
+
+      "65-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "65-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "65-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "65-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
+      "65-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg"
+    };
+
+    const ARTICLE_TITLES = {
+      main: "한국형 3축 체계 대폭 강화…北 핵·미사일 위협 대응",
+      a1: "“북핵, 압도적 힘으로 막는다”…3축체계에 ‘돈줄’ 푼 정부",
+      a2: "KF-21 날고 정조대왕함 뜬다, 3축체계 고도화 9조 투입",
+      a3: "北 핵·미사일 대응 최우선 과제, 국방부 “어떤 상황서도 평화”",
+      a4: "전년비 21% 증액 8조 8337억…북핵 대응에 ‘올인’"
+    };
+
+    const TOPIC_ROUTE_MAP = {
+      "1": { locked: "6-1",  free: "6-2"  },
+      "2": { locked: "62-1", free: "62-2" },
+      "3": { locked: "63-1", free: "63-2" },
+      "4": { locked: "64-1", free: "64-2" },
+      "5": { locked: "65-1", free: "65-2" }
+    };
+
+    function buildArticleMap(prefix) {
+      const root = `#/${prefix}`;
+      const p1 = `#/${prefix}-1`;
+      const p2 = `#/${prefix}-2`;
+      const p3 = `#/${prefix}-3`;
+      const p4 = `#/${prefix}-4`;
+
+      return {
+        [root]: {
+          title: ARTICLE_TITLES.main,
+          selectedNews: 0,
+          links: [
+            { text: ARTICLE_TITLES.a1, target: p1, code: 1 },
+            { text: ARTICLE_TITLES.a2, target: p2, code: 2 },
+            { text: ARTICLE_TITLES.a3, target: p3, code: 3 },
+            { text: ARTICLE_TITLES.a4, target: p4, code: 4 }
+          ]
+        },
+        [p1]: {
+          title: ARTICLE_TITLES.a1,
+          selectedNews: 1,
+          links: [
+            { text: ARTICLE_TITLES.a2, target: p2, code: 2 },
+            { text: ARTICLE_TITLES.a3, target: p3, code: 3 },
+            { text: ARTICLE_TITLES.a4, target: p4, code: 4 },
+            { text: ARTICLE_TITLES.main, target: root, code: 0 }
+          ]
+        },
+        [p2]: {
+          title: ARTICLE_TITLES.a2,
+          selectedNews: 2,
+          links: [
+            { text: ARTICLE_TITLES.a3, target: p3, code: 3 },
+            { text: ARTICLE_TITLES.a4, target: p4, code: 4 },
+            { text: ARTICLE_TITLES.main, target: root, code: 0 },
+            { text: ARTICLE_TITLES.a1, target: p1, code: 1 }
+          ]
+        },
+        [p3]: {
+          title: ARTICLE_TITLES.a3,
+          selectedNews: 3,
+          links: [
+            { text: ARTICLE_TITLES.a4, target: p4, code: 4 },
+            { text: ARTICLE_TITLES.main, target: root, code: 0 },
+            { text: ARTICLE_TITLES.a1, target: p1, code: 1 },
+            { text: ARTICLE_TITLES.a2, target: p2, code: 2 }
+          ]
+        },
+        [p4]: {
+          title: ARTICLE_TITLES.a4,
+          selectedNews: 4,
+          links: [
+            { text: ARTICLE_TITLES.main, target: root, code: 0 },
+            { text: ARTICLE_TITLES.a1, target: p1, code: 1 },
+            { text: ARTICLE_TITLES.a2, target: p2, code: 2 },
+            { text: ARTICLE_TITLES.a3, target: p3, code: 3 }
+          ]
+        }
+      };
+    }
+
+    const ARTICLE_LINK_MAP = {
+      ...buildArticleMap("6-1"),
+      ...buildArticleMap("6-2"),
+      ...buildArticleMap("62-1"),
+      ...buildArticleMap("62-2"),
+      ...buildArticleMap("63-1"),
+      ...buildArticleMap("63-2"),
+      ...buildArticleMap("64-1"),
+      ...buildArticleMap("64-2"),
+      ...buildArticleMap("65-1"),
+      ...buildArticleMap("65-2")
+    };
+
+    const TOPIC_QUESTIONS = {
+      "1": [
+        "북한은 핵무기 개발과 이를 운반할 수 있는 탄도미사일 능력을 동시 보유하고 있다.",
+        "한국형 3축 체계(Kill Chain, KAMD, KMPR)는 북한의 미사일 위협에 대한 억제·대응 전략 중 하나다.",
+        "우리 군은 북한의 미사일 발사 징후를 조기 탐지하기 위한 감시·정찰체계를 운용하고 있다.",
+        "북한의 탄도미사일 발사 행위는 국제법상 제한을 받지 않는다.",
+        "한국과 미국은 북한의 미사일 발사에 관한 실시간 경보·데이터 공유 체계를 운영하고 있다."
+      ],
+      "2": [
+        "장병 자기계발 활동은 부대 여건과 작전, 훈련 일정과는 무관하게 보장된다.",
+        "현역 장병이 복무 중 원격강좌를 통해 대학 학점을 취득하기 위해서는 부대의 승인이 필요하다.",
+        "나라사랑포털 등에서 병사들을 위해 군 e-러닝 콘텐츠를 제공하고 있다.",
+        "장병자기계발 지원 사업으로 병사 개인별 연간 12만 원 씩 지원되던 금액이 2026년부터 15만 원으로 늘어났다.",
+        "국방부는 MZ장병들의 취향에 맞춰 20206년부터 e-Book 지원사업을 시작하였다."
+      ],
+      "3": [
+        "국방부는 복무 환경 개선을 위해 민간 위탁 급식을 확대 추진하고 있다.",
+        "병사 사기 진작을 위해 병영 내 카페형 휴게공간인 북카페가 대대급 단위로 설치되고 있다.",
+        "2026년부터 간부 당직근무비가 평일 3만 원 주말 10만 원으로 상향되었다.",
+        "병사들의 휴대전화 사용은 평일 일과 후부터 취침 전까지, 휴일은 아침점호부터 저녁 취침 전까지 허용되고 있다.",
+        "2026년 장병 급식 단가는 1일 1만 5000원으로 인상되었다."
+      ],
+      "4": [
+        "2026년 기준 병장 순수 봉급은 205만 원이다.",
+        "2025년부터 장병내일준비적금의 개인별 월 최대 납입한도는 55만원이다.",
+        "장기간부도약적금은 장기복무 간부에게 4년간 월 최대 30만 원을 납입하면 국가에서 같은 액수만큼 지원해주는 사업이다.",
+        "장병내일준비적금, 장기간부도약적금의 정부 매칭지원금은 비과세 혜택이 적용되어 만기 해지 시 이자 소득세가 부과되지 않는다.",
+        "단기복무장려금 지급대상은 2026년부터 △대학교 졸업 후 선발되는 사관후보생, 민간모집 부사관, 학군부사관(RNTC)까지로 확대하였다."
+      ],
+      "5": [
+        "이동이 잦은 간부들을 위해 국방부는 전세자금 대부 제도를 운영하고 있다.",
+        "자녀가 2명 이상인 장기복무 간부는 군인특별공급 아파트 분양에 신청할 수 있다.",
+        "국방부는 2027년까지 초급간부 1인 2실을 확보해 주거지원을 획대한다.",
+        "국방부는 2024년부터 3년 미만 초급간부에게 주택수당을 지급하고 있다.",
+        "군 관사 배정은 계급·가족 여부·근무지 여건 등 기준에 따라 우선순위가 정해진다."
+      ]
+    };
+
+    const ALGO_QUESTIONS = [
+      "Q7. 나는 온라인사이트에서 알고리즘이 콘텐츠를 추천해주는 원리를 대략적으로 알고 있다.",
+      "Q8. 나는 알고리즘이 사용되는 사이트와 그렇지 않은 사이트를 구별할 수 있다.",
+      "Q9. 나는 온라인사이트에서 알고리즘을 통해 콘텐츠가 추천되었을때 이것을 인지할 수 있다.",
+      "Q10. 나는 온라인사이트의 알고리즘이 내가 원하는 콘텐츠를 추천해줄 수 있도록 하는 방법들을 알고 있다.",
+      "Q11. 나는 온라인사이트에서 사용되는 알고리즘이 왜 필요한지에 대해 잘 알고 있다.",
+      "Q12. 나는 알고리즘이 이용자에게 미칠 수 있는 영향력에 대해 잘 알고 있다."
     ];
 
-    sh.appendRow(row);
+    const ADMIN_PASSWORD = "1234";
+    const STORAGE_KEY_ADMIN = "survey_admin_authed_v1";
 
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: true, id: id }))
-      .setMimeType(ContentService.MimeType.JSON);
+    const state = {
+      sq: {
+        gender: null,
+        branch: null,
+        rank: null,
+        portalNews: null,
+        mobilePhone: null,
+        internetTime: null,
+        political: null,
+        device: null
+      },
+      topicChoice: null,
+      topicFacts: {
+        "1": [null, null, null, null, null],
+        "2": [null, null, null, null, null],
+        "3": [null, null, null, null, null],
+        "4": [null, null, null, null, null],
+        "5": [null, null, null, null, null]
+      },
+      algoAnswers: [null, null, null, null, null, null],
+      selectedNews: null,
+      selectedNewsTitle: null,
+      selectedNewsPage: null,
+      routeChoice: null,
+      route: null,
+      answers: { q2: null, q3: null },
+      adminRows: []
+    };
 
-  } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+    const $app = () => document.getElementById("app");
 
-function doGet(e) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sh = ss.getSheetByName(SHEET_NAME);
+    const setHash = (h) => {
+      if (location.hash === h) {
+        router();
+      } else {
+        location.hash = h;
+      }
+    };
 
-    const action = ((e && e.parameter && e.parameter.action) || "").toLowerCase();
-    const limit = Math.min(parseInt((e && e.parameter && e.parameter.limit) || "200", 10) || 200, 2000);
+    function isAdminAuthed() {
+      return localStorage.getItem(STORAGE_KEY_ADMIN) === "1";
+    }
 
-    let payload = { ok: true, rows: [] };
+    function setAdminAuthed(v) {
+      localStorage.setItem(STORAGE_KEY_ADMIN, v ? "1" : "0");
+    }
 
-    if (action === "list" && sh && sh.getLastRow() >= 2) {
-      const values = sh.getDataRange().getValues();
-      const header = values[0];
-      const dataRows = values.slice(1).reverse().slice(0, limit);
+    function getVariantTitle(choice) {
+      return choice || "설문";
+    }
 
-      payload.rows = dataRows.map(r => {
-        const obj = {};
-        header.forEach((k, i) => obj[k] = r[i]);
-        return obj;
+    function renderShell(innerHtml) {
+      const el = $app();
+      if (!el) return;
+      el.innerHTML = `<div class="wrap"><div class="card">${innerHtml}</div></div>`;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function saveToGoogleSheets(payload) {
+      await fetch(GS_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      return true;
+    }
+
+    function fetchAdminList({ limit = 200 } = {}) {
+      return new Promise((resolve, reject) => {
+        const cbName = "jsonp_cb_" + Math.random().toString(16).slice(2);
+        const script = document.createElement("script");
+        const url = `${GS_WEBAPP_URL}?action=list&limit=${encodeURIComponent(limit)}&callback=${encodeURIComponent(cbName)}&_=${Date.now()}`;
+
+        let done = false;
+
+        function cleanup() {
+          if (done) return;
+          done = true;
+          try { delete window[cbName]; } catch (e) {}
+          try { script.remove(); } catch (e) {}
+          try { clearTimeout(timer); } catch (e) {}
+        }
+
+        window[cbName] = (data) => {
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("관리 목록 조회 실패(script load error)"));
+        };
+
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error("관리 목록 조회 실패(timeout)"));
+        }, 8000);
+
+        script.src = url;
+        script.async = true;
+        document.head.appendChild(script);
       });
     }
 
-    const cb = e && e.parameter ? e.parameter.callback : "";
-    if (cb) {
-      const js = `${cb}(${JSON.stringify(payload)})`;
-      return ContentService
-        .createTextOutput(js)
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    function pageIntro() {
+      renderShell(`
+        <div class="intro">
+          <button class="admin-btn" id="adminGo">관리자</button>
+          <h1 class="intro-title" style="font-weight: normal; font-size: 1rem; line-height: 1.6;">안녕하십니까? <br><br>
+본 실험 연구는 ‘장병들의 뉴스 소비’에 대한 인식 조사입니다.<br><br>
+설문 사항에는 정답이 없습니다.<br><br>
+조사와 관련한 귀하의 모든 답변은 통계법 제33조(비밀의 보호) 및 제34조(통계 조사자 등의 의무)에 의거하여 <strong>익명</strong>으로 처리되며, 수집된 정보는 학문적 연구에만 활용합니다.<br><br>
+
+이번 연구에서는 한 가지 이슈를 다양한 기사로 접하는 포털 뉴스 이용 상황을 재현하고 있습니다. <br>
+유사한 주제나 내용의 기사를 몇 차례로 제시되며, 제시된 기사를 읽고 나서의 생각을 설문 문항으로 묻습니다. <br><br>
+
+바쁘시더라도 잠시만 시간을 내어 설문에 성실히 응해주시면 감사하겠습니다. <br><br>
+</h1>
+          <div class="row" style="justify-content:center; width:100%; margin-top:6px;">
+            <button id="start" class="btn btn-primary" style="max-width:240px;">시작하기</button>
+          </div>
+        </div>
+      `);
+
+      document.getElementById("start").addEventListener("click", () => setHash("#/"));
+      document.getElementById("adminGo").addEventListener("click", () => setHash("#/admin-login"));
     }
 
-    return ContentService
-      .createTextOutput(JSON.stringify(payload))
-      .setMimeType(ContentService.MimeType.JSON);
+    function pageSQ() {
+      renderShell(`
+        <div class="sq-page">
+          <div class="sq-title-box">SQ. 인적사항</div>
 
-  } catch (err) {
-    const payload = { ok: false, error: String(err), rows: [] };
-    const cb = e && e.parameter ? e.parameter.callback : "";
+          <div class="sq-block">
+            <div class="sq-q">SQ1. 귀하의 성별은 어떻게 되십니까?</div>
+            <div class="sq-inline">
+              <label class="sq-opt"><input type="radio" name="sq_gender" value="1" ${state.sq.gender === "1" ? "checked" : ""}><span>① 남성</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_gender" value="2" ${state.sq.gender === "2" ? "checked" : ""}><span>② 여성</span></label>
+            </div>
+          </div>
 
-    if (cb) {
-      const js = `${cb}(${JSON.stringify(payload)})`;
-      return ContentService
-        .createTextOutput(js)
-        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+          <div class="sq-block">
+            <div class="sq-q">SQ2. 귀하는 어떤 군에서 복무하고 있습니까?</div>
+            <div class="sq-inline-3">
+              <label class="sq-opt"><input type="radio" name="sq_branch" value="1" ${state.sq.branch === "1" ? "checked" : ""}><span>① 육군</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_branch" value="2" ${state.sq.branch === "2" ? "checked" : ""}><span>② 해군 / 해병대</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_branch" value="3" ${state.sq.branch === "3" ? "checked" : ""}><span>③ 공군</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">SQ3. 귀하의 계급은 무엇입니까?</div>
+            <div class="sq-options">
+              <div class="sq-inline-4">
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="1" ${state.sq.rank === "1" ? "checked" : ""}><span>① 이병</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="2" ${state.sq.rank === "2" ? "checked" : ""}><span>② 일병</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="3" ${state.sq.rank === "3" ? "checked" : ""}><span>③ 상병</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="4" ${state.sq.rank === "4" ? "checked" : ""}><span>④ 병장</span></label>
+              </div>
+              <div class="sq-inline-4">
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="5" ${state.sq.rank === "5" ? "checked" : ""}><span>⑤ 하사</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="6" ${state.sq.rank === "6" ? "checked" : ""}><span>⑥ 중사</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="7" ${state.sq.rank === "7" ? "checked" : ""}><span>⑦ 상사</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="8" ${state.sq.rank === "8" ? "checked" : ""}><span>⑧ 원사</span></label>
+              </div>
+              <div class="sq-inline-4">
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="9" ${state.sq.rank === "9" ? "checked" : ""}><span>⑨ 소위</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="10" ${state.sq.rank === "10" ? "checked" : ""}><span>⑩ 중위</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="11" ${state.sq.rank === "11" ? "checked" : ""}><span>⑪ 대위</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="12" ${state.sq.rank === "12" ? "checked" : ""}><span>⑫ 소령</span></label>
+              </div>
+              <div class="sq-inline">
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="13" ${state.sq.rank === "13" ? "checked" : ""}><span>⑬ 중령</span></label>
+                <label class="sq-opt"><input type="radio" name="sq_rank" value="14" ${state.sq.rank === "14" ? "checked" : ""}><span>⑭ 대령</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">SQ4. 귀하께서는 포탈이나 SNS 등을 통해 뉴스를 접하고 계십니까?</div>
+            <div class="sq-note">* 본 설문에서 말하는 「포탈이나 SNS」란 사람들의 의견, 생각, 경험, 관점, 정보 등을 서로 공유하고 확인하기 위해 사용하는 서비스나 플랫폼을 의미합니다.
+포탈에는 네이버, 다음, 구글 등이 있으며, SNS에는 페이스북, 인스타그램, X(구 트위터) 등이 있습니다. 이들 서비스나 플랫폼 중 어느 하나라도 이용하고 있으면 ‘① 이용하고 있다’에 응답하시면 됩니다.</div>
+            <div class="sq-inline">
+              <label class="sq-opt"><input type="radio" name="sq_portalNews" value="1" ${state.sq.portalNews === "1" ? "checked" : ""}><span>① 이용하고 있다</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_portalNews" value="2" ${state.sq.portalNews === "2" ? "checked" : ""}><span>② 이용하고 있지 않다</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">SQ5. 귀하께서는 휴대전화를 사용하고 계십니까?</div>
+            <div class="sq-note">* 본 설문에서 말하는 「휴대전화」란 사용자가 지정된 전화 서비스 지역 내에서 이동하면서 전화를 걸고 받을 수 있는 휴대용 전화를 말합니다. 특히 디지털 사진, 비디오 녹화, 게임과 같은 다양한 멀티미디어 기능뿐만 아니라 ‘모바일 브라우저’나 ‘앱’을 통해 포탈이나 SNS를 이용할 수 있는 기능이 탑재된 전화를 뜻합니다. 대표적으로 삼성의 갤럭시, 애플의 아이폰이 있습니다. 모바일 브라우저나 앱을 통해 포탈이나 SNS를 이용할 수 있는 휴대전화를 가지고 있다면 ‘① 가지고 있다’에 응답하시면 됩니다.</div>
+            <div class="sq-inline">
+              <label class="sq-opt"><input type="radio" name="sq_mobilePhone" value="1" ${state.sq.mobilePhone === "1" ? "checked" : ""}><span>① 가지고 있다</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_mobilePhone" value="2" ${state.sq.mobilePhone === "2" ? "checked" : ""}><span>② 가지고 있지 않다</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">SQ6. 평소 하루에 휴대전화를 이용해 인터넷을 얼마나 사용하고 있는지 선택해 주십시오.</div>
+            <div class="sq-inline-5">
+              <label class="sq-opt"><input type="radio" name="sq_internetTime" value="1" ${state.sq.internetTime === "1" ? "checked" : ""}><span>① 30분</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_internetTime" value="2" ${state.sq.internetTime === "2" ? "checked" : ""}><span>② 1시간</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_internetTime" value="3" ${state.sq.internetTime === "3" ? "checked" : ""}><span>③ 1시간 30분</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_internetTime" value="4" ${state.sq.internetTime === "4" ? "checked" : ""}><span>④ 2시간</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_internetTime" value="5" ${state.sq.internetTime === "5" ? "checked" : ""}><span>⑤ 3시간</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">SQ7. 귀하께서 생각하시는 정치적 성향은 어디에 가장 가깝습니까?</div>
+            <div class="sq-inline-5">
+              <label class="sq-opt"><input type="radio" name="sq_political" value="1" ${state.sq.political === "1" ? "checked" : ""}><span>① 매우 진보</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_political" value="2" ${state.sq.political === "2" ? "checked" : ""}><span>② 진보</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_political" value="3" ${state.sq.political === "3" ? "checked" : ""}><span>③ 중도</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_political" value="4" ${state.sq.political === "4" ? "checked" : ""}><span>④ 보수</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_political" value="5" ${state.sq.political === "5" ? "checked" : ""}><span>⑤ 매우 보수</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">SQ8. 귀하께서 현재 설문에 응하고 있는 접속 환경은 무엇입니까?</div>
+            <div class="sq-inline-3">
+              <label class="sq-opt"><input type="radio" name="sq_device" value="1" ${state.sq.device === "1" ? "checked" : ""}><span>① PC</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_device" value="2" ${state.sq.device === "2" ? "checked" : ""}><span>② 태블릿</span></label>
+              <label class="sq-opt"><input type="radio" name="sq_device" value="3" ${state.sq.device === "3" ? "checked" : ""}><span>③ 휴대전화</span></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="sqNext" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
+          </div>
+        </div>
+      `);
+
+      const mappings = [
+        ["sq_gender", "gender"],
+        ["sq_branch", "branch"],
+        ["sq_rank", "rank"],
+        ["sq_portalNews", "portalNews"],
+        ["sq_mobilePhone", "mobilePhone"],
+        ["sq_internetTime", "internetTime"],
+        ["sq_political", "political"],
+        ["sq_device", "device"]
+      ];
+
+      function sync() {
+        mappings.forEach(([name, key]) => {
+          const picked = document.querySelector(`input[name="${name}"]:checked`);
+          state.sq[key] = picked ? picked.value : null;
+        });
+        document.getElementById("sqNext").disabled = !mappings.every(([, key]) => !!state.sq[key]);
+      }
+
+      mappings.forEach(([name]) => {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+          el.addEventListener("change", sync);
+        });
+      });
+
+      sync();
+
+      document.getElementById("sqNext").addEventListener("click", async () => {
+        if (state.sq.portalNews === "2" || state.sq.mobilePhone === "2") {
+          const screenoutReason = state.sq.portalNews === "2" ? "SQ4_2" : "SQ5_2";
+
+          const payload = {
+            id: (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2)),
+            firstChoice: "",
+            topicChoice: "",
+            route: "screenout",
+            screenout: "Y",
+            screenoutReason,
+            sqGender: state.sq.gender,
+            sqBranch: state.sq.branch,
+            sqRank: state.sq.rank,
+            sqPortalNews: state.sq.portalNews,
+            sqMobilePhone: state.sq.mobilePhone,
+            sqInternetTime: state.sq.internetTime,
+            sqPolitical: state.sq.political,
+            sqDevice: state.sq.device,
+            fact1: "",
+            fact2: "",
+            fact3: "",
+            fact4: "",
+            fact5: "",
+            algoQ7: "",
+            algoQ8: "",
+            algoQ9: "",
+            algoQ10: "",
+            algoQ11: "",
+            algoQ12: "",
+            selectedNews: "",
+            selectedNewsTitle: "",
+            selectedNewsPage: "",
+            q2: "",
+            q3: "",
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent
+          };
+
+          try {
+            await saveToGoogleSheets(payload);
+          } catch (e) {
+            console.error(e);
+          }
+
+          setHash("#/screenout");
+          return;
+        }
+
+        state.topicChoice = null;
+        state.routeChoice = null;
+        state.route = null;
+        state.selectedNews = null;
+        state.selectedNewsTitle = null;
+        state.selectedNewsPage = null;
+        state.answers = { q2: null, q3: null };
+        setHash("#/q1");
+      });
     }
 
-    return ContentService
-      .createTextOutput(JSON.stringify(payload))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+    function pageTopicChoice() {
+      renderShell(`
+        <div class="sq-page">
+          <div class="sq-title-box">A. 관심 분야 주제 선택</div>
+
+          <div class="sq-block">
+            <div class="sq-q">Q1. 평소 업무 등에 필요하다고 생각하거나 관심있는 국방 주제를 선택해 주십시오.</div>
+
+            <div class="sq-options">
+              <label class="sq-opt"><input type="radio" name="topic_q1" value="1" ${state.topicChoice === "1" ? "checked" : ""}><span>① 북한 핵·미사일 위협 대응</span></label>
+              <label class="sq-opt"><input type="radio" name="topic_q1" value="2" ${state.topicChoice === "2" ? "checked" : ""}><span>② 장병 자기계발 여건 개선</span></label>
+              <label class="sq-opt"><input type="radio" name="topic_q1" value="3" ${state.topicChoice === "3" ? "checked" : ""}><span>③ 복무환경 개선</span></label>
+              <label class="sq-opt"><input type="radio" name="topic_q1" value="4" ${state.topicChoice === "4" ? "checked" : ""}><span>④ 장병 급여 인상</span></label>
+              <label class="sq-opt"><input type="radio" name="topic_q1" value="5" ${state.topicChoice === "5" ? "checked" : ""}><span>⑤ 주거 지원 정책</span></label>
+            </div>
+
+            <div class="row">
+              <button id="next" class="btn btn-primary" disabled>다음</button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      const radios = [...document.querySelectorAll('input[name="topic_q1"]')];
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        const picked = radios.find(r => r.checked)?.value ?? null;
+        state.topicChoice = picked;
+        nextBtn.disabled = !state.topicChoice;
+      }
+
+      radios.forEach(r => r.addEventListener("change", sync));
+      sync();
+
+      nextBtn.addEventListener("click", () => {
+        if (!state.topicChoice) return;
+        setHash(`#/4-${state.topicChoice}`);
+      });
+    }
+
+    function topicFactPage(topicNo) {
+      const questions = TOPIC_QUESTIONS[topicNo];
+      const current = state.topicFacts[topicNo];
+
+      renderShell(`
+        <div>
+          <div class="sq-title-box">4-${topicNo}</div>
+          <p style="white-space: pre-line; line-height:1.7;">
+※ 다음은 귀하께서 선택하신 국방 주제에 대해 평소 어떤 생각을 가지고 있는지를 묻는 문항입니다.
+문항의 내용이 옳다고 생각하시면 ‘맞음 ①’, 틀리다고 생각하시면 ‘틀림 ②’, 잘 모를 경우에는 ‘모름 ③’에 답해주시기 바랍니다.
+          </p>
+
+          <div class="fact-table-wrap">
+            <table class="fact-table">
+              <thead>
+                <tr>
+                  <th style="width:56px;">번호</th>
+                  <th>문항</th>
+                  <th class="fact-col">맞음</th>
+                  <th class="fact-col">틀림</th>
+                  <th class="fact-col">모름</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${questions.map((q, idx) => `
+                  <tr>
+                    <td class="fact-no">${idx + 1}</td>
+                    <td class="fact-text">${q}</td>
+                    <td><input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="1" ${current[idx] === "1" ? "checked" : ""}></td>
+                    <td><input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="2" ${current[idx] === "2" ? "checked" : ""}></td>
+                    <td><input class="fact-radio" type="radio" name="fact_${topicNo}_${idx}" value="3" ${current[idx] === "3" ? "checked" : ""}></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled>다음</button>
+          </div>
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        for (let i = 0; i < 5; i++) {
+          const picked = document.querySelector(`input[name="fact_${topicNo}_${i}"]:checked`);
+          state.topicFacts[topicNo][i] = picked ? picked.value : null;
+        }
+        nextBtn.disabled = state.topicFacts[topicNo].some(v => !v);
+      }
+
+      for (let i = 0; i < 5; i++) {
+        document.querySelectorAll(`input[name="fact_${topicNo}_${i}"]`).forEach(el => {
+          el.addEventListener("change", sync);
+        });
+      }
+
+      sync();
+
+      nextBtn.addEventListener("click", () => setHash("#/page5"));
+    }
+
+    function page41() { if (!state.topicChoice) return setHash("#/intro"); topicFactPage("1"); }
+    function page42() { if (!state.topicChoice) return setHash("#/intro"); topicFactPage("2"); }
+    function page43() { if (!state.topicChoice) return setHash("#/intro"); topicFactPage("3"); }
+    function page44() { if (!state.topicChoice) return setHash("#/intro"); topicFactPage("4"); }
+    function page45() { if (!state.topicChoice) return setHash("#/intro"); topicFactPage("5"); }
+
+    function page5() {
+      renderShell(`
+        <div>
+          <div class="sq-title-box">5페이지</div>
+          <p style="white-space: pre-line; line-height:1.7;">
+※ 알고리즘이란 포털, SNS, 유튜브 등에서 사용자의 이용 패턴을 바탕으로 뉴스나 콘텐츠를 추천하는 시스템입니다. 포털, SNS, 유튜브에서 방금 읽었던 기사나 영상과 유사한 내용이 자동으로 노출되는 형태가 대표적인 예입니다. 다음 질문은 알고리즘에 대한 평소 생각을 묻는 내용입니다. 귀하의 평소 생각을 답해주십시오.
+          </p>
+
+          <div class="fact-table-wrap">
+            <table class="fact-table" style="min-width: 1100px;">
+              <thead>
+                <tr>
+                  <th>문항 내용</th>
+                  <th class="fact-col">전혀 동의하지 않는다</th>
+                  <th class="fact-col">동의하지 않는다</th>
+                  <th class="fact-col">보통이다</th>
+                  <th class="fact-col">동의한다</th>
+                  <th class="fact-col">전적으로 동의한다</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${ALGO_QUESTIONS.map((q, idx) => `
+                  <tr>
+                    <td class="fact-text">${q}</td>
+                    ${[1,2,3,4,5].map(v => `
+                      <td>
+                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                          <input class="fact-radio" type="radio" name="algo_${idx}" value="${v}" ${String(state.algoAnswers[idx]) === String(v) ? "checked" : ""}>
+                          <span>${["①","②","③","④","⑤"][v-1]}</span>
+                        </label>
+                      </td>
+                    `).join("")}
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled>다음</button>
+          </div>
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        for (let i = 0; i < 6; i++) {
+          const picked = document.querySelector(`input[name="algo_${i}"]:checked`);
+          state.algoAnswers[i] = picked ? Number(picked.value) : null;
+        }
+        nextBtn.disabled = state.algoAnswers.some(v => !v);
+      }
+
+      for (let i = 0; i < 6; i++) {
+        document.querySelectorAll(`input[name="algo_${i}"]`).forEach(el => {
+          el.addEventListener("change", sync);
+        });
+      }
+
+      sync();
+
+      nextBtn.addEventListener("click", () => {
+        state.selectedNews = null;
+        state.selectedNewsTitle = null;
+        state.selectedNewsPage = null;
+        state.routeChoice = null;
+        state.route = null;
+        state.answers = { q2: null, q3: null };
+        setHash("#/rand");
+      });
+    }
+
+    function radioQuestion({ title, qKey, nextHash }) {
+      const current = state.answers[qKey];
+
+      renderShell(`
+        <div>
+          <div class="tag">${getVariantTitle(state.routeChoice)}</div>
+          <h1 style="margin-top:10px;">${title}</h1>
+          <p>항목 5개 중 하나만 선택 가능합니다.</p>
+
+          <div class="question">잘하고 있습니까?</div>
+          <div class="options" role="radiogroup" aria-label="score">
+            ${[1, 2, 3, 4, 5].map(v => `
+              <label class="opt">
+                <input type="radio" name="${qKey}" value="${v}" ${String(current) === String(v) ? "checked" : ""}/>
+                <span>${v}점</span>
+              </label>
+            `).join("")}
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled>다음</button>
+          </div>
+        </div>
+      `);
+
+      const radios = [...document.querySelectorAll(`input[name="${qKey}"]`)];
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        const picked = radios.find(r => r.checked)?.value ?? null;
+        state.answers[qKey] = picked ? Number(picked) : null;
+        nextBtn.disabled = !state.answers[qKey];
+      }
+
+      radios.forEach(r => r.addEventListener("change", sync));
+      sync();
+
+      nextBtn.addEventListener("click", () => {
+        if (!state.answers[qKey]) return;
+        setHash(nextHash);
+      });
+    }
+
+    function pageRand() {
+      if (!state.topicChoice || !state.sq.rank) return setHash("#/intro");
+
+      const rankNum = Number(state.sq.rank);
+      const group = TOPIC_ROUTE_MAP[state.topicChoice];
+      if (!group) return setHash("#/intro");
+
+      if (rankNum >= 1 && rankNum <= 4) {
+        state.route = Math.random() < 0.5 ? group.locked : group.free;
+      } else if (rankNum >= 5 && rankNum <= 14) {
+        state.route = Math.random() < 0.5 ? group.locked : group.free;
+      } else {
+        state.route = Math.random() < 0.5 ? group.locked : group.free;
+      }
+
+      state.routeChoice = state.route;
+      setHash(`#/${state.route}`);
+    }
+
+    function renderArticleButtonsPage({ pageKey, cfg, locked }) {
+      const imgUrl = PAGE_IMAGES[pageKey] || "";
+
+      renderShell(`
+        <div>
+          <div class="tag">${getVariantTitle(state.routeChoice)}</div>
+          <h1 style="margin-top:10px;">${cfg.title}</h1>
+          <p>${locked ? "페이지 접속 후 10초 뒤 버튼이 활성화됩니다." : "원하는 기사를 선택해 주세요."}</p>
+
+          <div class="imgbox">
+            <img src="${imgUrl}" alt="기사 이미지" />
+          </div>
+
+          <div class="news-title"><strong>함께 볼만한 뉴스</strong></div>
+          <div class="news-links">
+            ${cfg.links.map(item => `
+              <button
+                type="button"
+                class="news-link ${locked ? "disabled" : ""}"
+                data-news-btn="1"
+                data-target="${item.target}"
+                data-code="${item.code}"
+                data-title="${escapeHtml(item.text)}"
+              >
+                ${item.text}
+              </button>
+            `).join("")}
+          </div>
+
+          ${cfg.selectedNews !== 0 ? `
+            <div class="row">
+              <button id="next" class="btn btn-primary" ${locked ? "disabled" : ""}>다음</button>
+            </div>
+          ` : ""}
+
+          ${locked ? `<div class="small" id="countdown"></div>` : ""}
+        </div>
+      `);
+
+      state.selectedNews = cfg.selectedNews;
+      state.selectedNewsTitle = cfg.title;
+      state.selectedNewsPage = pageKey;
+
+      const buttons = [...document.querySelectorAll('[data-news-btn="1"]')];
+      const nextBtn = document.getElementById("next");
+
+      function bindButtons() {
+        buttons.forEach(btn => {
+          btn.addEventListener("click", () => {
+            if (btn.classList.contains("disabled")) return;
+            state.selectedNews = Number(btn.dataset.code);
+            state.selectedNewsTitle = btn.dataset.title;
+            state.selectedNewsPage = btn.dataset.target.replace(/^#\//, "");
+            setHash(btn.dataset.target);
+          });
+        });
+      }
+
+      bindButtons();
+
+      if (locked) {
+        const cd = document.getElementById("countdown");
+        let remain = 10;
+        cd.textContent = `활성화까지 ${remain}초`;
+
+        const timer = setInterval(() => {
+          remain -= 1;
+          if (remain <= 0) {
+            clearInterval(timer);
+            cd.textContent = "버튼이 활성화되었습니다.";
+            buttons.forEach(btn => btn.classList.remove("disabled"));
+            if (nextBtn) nextBtn.disabled = false;
+            return;
+          }
+          cd.textContent = `활성화까지 ${remain}초`;
+        }, 1000);
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          if (nextBtn.disabled) return;
+          setHash("#/q2");
+        });
+      }
+    }
+
+    function articlePage(routeKey) {
+      const cfg = ARTICLE_LINK_MAP[`#/${routeKey}`];
+      if (!cfg) return setHash("#/intro");
+      const locked = routeKey.endsWith("-1") || routeKey.includes("-1-");
+      renderArticleButtonsPage({
+        pageKey: routeKey,
+        cfg,
+        locked
+      });
+    }
+
+    function pageQ2() {
+      if (!state.route) return setHash("#/intro");
+      radioQuestion({ title: "공통 질문 페이지", qKey: "q2", nextHash: "#/q3" });
+    }
+
+    function pageQ3() {
+      if (!state.route || !state.answers.q2) return setHash("#/intro");
+      const current = state.answers.q3;
+
+      renderShell(`
+        <div>
+          <div class="tag">${getVariantTitle(state.routeChoice)}</div>
+          <h1 style="margin-top:10px;">마지막 페이지</h1>
+          <p>항목 5개 중 하나만 선택 가능합니다. ‘전송하기’를 누르면 결과가 Google Sheets로 저장됩니다.</p>
+
+          <div class="question">잘하고 있습니까?</div>
+          <div class="options" role="radiogroup" aria-label="score">
+            ${[1, 2, 3, 4, 5].map(v => `
+              <label class="opt">
+                <input type="radio" name="q3" value="${v}" ${String(current) === String(v) ? "checked" : ""}/>
+                <span>${v}점</span>
+              </label>
+            `).join("")}
+          </div>
+
+          <div class="row">
+            <button id="send" class="btn btn-primary" disabled>전송하기</button>
+          </div>
+          <div class="small" id="status"></div>
+        </div>
+      `);
+
+      const radios = [...document.querySelectorAll(`input[name="q3"]`)];
+      const sendBtn = document.getElementById("send");
+      const status = document.getElementById("status");
+
+      function sync() {
+        const picked = radios.find(r => r.checked)?.value ?? null;
+        state.answers.q3 = picked ? Number(picked) : null;
+        sendBtn.disabled = !state.answers.q3;
+      }
+
+      radios.forEach(r => r.addEventListener("change", sync));
+      sync();
+
+      sendBtn.addEventListener("click", async () => {
+        if (!state.answers.q3) return;
+
+        const facts = state.topicChoice ? state.topicFacts[state.topicChoice] : [null, null, null, null, null];
+
+        const payload = {
+          id: (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2)),
+          firstChoice: state.routeChoice,
+          topicChoice: state.topicChoice || "",
+          route: state.route,
+          screenout: "N",
+          screenoutReason: "",
+          sqGender: state.sq.gender,
+          sqBranch: state.sq.branch,
+          sqRank: state.sq.rank,
+          sqPortalNews: state.sq.portalNews,
+          sqMobilePhone: state.sq.mobilePhone,
+          sqInternetTime: state.sq.internetTime,
+          sqPolitical: state.sq.political,
+          sqDevice: state.sq.device,
+          fact1: facts[0] || "",
+          fact2: facts[1] || "",
+          fact3: facts[2] || "",
+          fact4: facts[3] || "",
+          fact5: facts[4] || "",
+          algoQ7: state.algoAnswers[0] || "",
+          algoQ8: state.algoAnswers[1] || "",
+          algoQ9: state.algoAnswers[2] || "",
+          algoQ10: state.algoAnswers[3] || "",
+          algoQ11: state.algoAnswers[4] || "",
+          algoQ12: state.algoAnswers[5] || "",
+          selectedNews: state.selectedNews ?? "",
+          selectedNewsTitle: state.selectedNewsTitle || "",
+          selectedNewsPage: state.selectedNewsPage || "",
+          q2: state.answers.q2,
+          q3: state.answers.q3,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent
+        };
+
+        sendBtn.disabled = true;
+        status.textContent = "저장 중...";
+
+        try {
+          await saveToGoogleSheets(payload);
+          setHash("#/done");
+        } catch (e) {
+          console.error(e);
+          status.textContent = "저장 실패: Apps Script 배포/권한/URL 확인";
+          sendBtn.disabled = false;
+        }
+      });
+    }
+
+    function pageScreenout() {
+      renderShell(`<div class="done">설문이 종료되었습니다</div>`);
+    }
+
+    function pageDone() {
+      renderShell(`<div class="done">전송이 완료되었습니다</div>`);
+    }
+
+    function pageAdminLogin() {
+      renderShell(`
+        <div class="loginBox">
+          <h1>비밀번호</h1>
+          <p>관리자용 페이지입니다.</p>
+          <div style="display:grid; gap:10px; margin-top:10px;">
+            <input id="pw" class="input" type="password" placeholder="비밀번호를 입력하세요" />
+            <div class="row" style="justify-content:flex-start;">
+              <button id="ok" class="btn btn-primary" style="max-width:160px;">확인</button>
+              <button id="back" class="btn" style="max-width:160px;">뒤로</button>
+            </div>
+            <div class="small" id="err"></div>
+          </div>
+        </div>
+      `);
+
+      const pw = document.getElementById("pw");
+      const err = document.getElementById("err");
+
+      function submit() {
+        if (pw.value === ADMIN_PASSWORD) {
+          setAdminAuthed(true);
+          setHash("#/admin");
+        } else {
+          err.textContent = "비밀번호가 올바르지 않습니다.";
+        }
+      }
+
+      document.getElementById("ok").addEventListener("click", submit);
+      document.getElementById("back").addEventListener("click", () => setHash("#/intro"));
+      pw.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") submit();
+      });
+      pw.focus();
+    }
+
+    async function pageAdmin() {
+      if (!isAdminAuthed()) return setHash("#/admin-login");
+
+      renderShell(`
+        <div>
+          <div class="row" style="justify-content:space-between; margin-top:0;">
+            <div>
+              <h1 style="margin:0;">관리페이지</h1>
+              <div class="small" id="cnt">불러오는 중...</div>
+            </div>
+            <div class="row" style="margin-top:0;">
+              <button id="refresh" class="btn">새로고침</button>
+              <button id="logout" class="btn">로그아웃</button>
+            </div>
+          </div>
+
+          <div class="small" id="err" style="margin-top:10px;"></div>
+          <div class="list" id="list"></div>
+          <div id="detail"></div>
+        </div>
+      `);
+
+      const cnt = document.getElementById("cnt");
+      const err = document.getElementById("err");
+      const listEl = document.getElementById("list");
+      const detailEl = document.getElementById("detail");
+
+      async function load() {
+        err.textContent = "";
+        cnt.textContent = "불러오는 중...";
+        listEl.innerHTML = "";
+        detailEl.innerHTML = "";
+
+        try {
+          const res = await fetchAdminList({ limit: 200 });
+          const rows = Array.isArray(res?.rows) ? res.rows : [];
+
+          state.adminRows = rows;
+          cnt.textContent = `총 ${rows.length}건`;
+
+          if (rows.length === 0) {
+            listEl.innerHTML = `<div class="small">아직 저장된 결과가 없습니다.</div>`;
+            return;
+          }
+
+          listEl.innerHTML = rows.map(r => `
+            <div class="item" data-id="${escapeHtml(r.id)}">
+              <div class="item-top">
+                <div><b>choice=${escapeHtml(r.firstChoice)}</b> · topic=${escapeHtml(r.topicChoice)} · route=${escapeHtml(r.route)} · news=${escapeHtml(r.selectedNews)} · page=${escapeHtml(r.selectedNewsPage)} · q2=${escapeHtml(r.q2)}, q3=${escapeHtml(r.q3)}</div>
+                <div class="mono">${escapeHtml(r.timestamp)}</div>
+              </div>
+              <div class="mono">id=${escapeHtml(r.id)}</div>
+            </div>
+          `).join("");
+
+          document.querySelectorAll(".item[data-id]").forEach(el => {
+            el.addEventListener("click", () => {
+              const id = el.getAttribute("data-id");
+              const selected = state.adminRows.find(x => String(x.id) === String(id));
+              if (!selected) return;
+
+              detailEl.innerHTML = `
+                <h1 style="margin-top:18px;">상세</h1>
+                <pre>${escapeHtml(JSON.stringify(selected, null, 2))}</pre>
+              `;
+            });
+          });
+
+        } catch (e) {
+          console.error(e);
+          err.textContent = String(e?.message || e || "관리 목록 조회 실패");
+          cnt.textContent = "0건";
+        }
+      }
+
+      document.getElementById("refresh").addEventListener("click", load);
+      document.getElementById("logout").addEventListener("click", () => {
+        setAdminAuthed(false);
+        setHash("#/intro");
+      });
+
+      load();
+    }
+
+    function router() {
+      const h = location.hash || "#/intro";
+
+      if (h === "#/intro") return pageIntro();
+      if (h === "#/admin-login") return pageAdminLogin();
+      if (h === "#/admin") return pageAdmin();
+
+      if (h === "#/") return pageSQ();
+      if (h === "#/q1") return pageTopicChoice();
+
+      if (h === "#/4-1") return page41();
+      if (h === "#/4-2") return page42();
+      if (h === "#/4-3") return page43();
+      if (h === "#/4-4") return page44();
+      if (h === "#/4-5") return page45();
+
+      if (h === "#/page5") return page5();
+      if (h === "#/rand") return pageRand();
+
+      const articleMatch = h.match(/^#\/(6-1|6-2|62-1|62-2|63-1|63-2|64-1|64-2|65-1|65-2)(?:-([1-4]))?$/);
+      if (articleMatch) {
+        const routeKey = articleMatch[2] ? `${articleMatch[1]}-${articleMatch[2]}` : articleMatch[1];
+        return articlePage(routeKey);
+      }
+
+      if (h === "#/q2") return pageQ2();
+      if (h === "#/q3") return pageQ3();
+      if (h === "#/screenout") return pageScreenout();
+      if (h === "#/done") return pageDone();
+
+      return setHash("#/intro");
+    }
+
+    (function forceIntroOnFirstLoad() {
+      const BOOT_KEY = "survey_boot_v1";
+      const h = location.hash || "";
+      const firstLoad = !sessionStorage.getItem(BOOT_KEY);
+
+      if (firstLoad) {
+        sessionStorage.setItem(BOOT_KEY, "1");
+        if (h === "" || h === "#" || h === "#/") {
+          location.hash = "#/intro";
+        }
+      }
+    })();
+
+    window.addEventListener("hashchange", router);
+    router();
+  </script>
+</body>
+</html>
