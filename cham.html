@@ -376,6 +376,50 @@
       transform: scale(1.15);
     }
 
+    .news-title {
+      font-weight: 800;
+      margin: 18px 0 10px;
+      font-size: 16px;
+    }
+
+    .news-links {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .news-link {
+      display: block;
+      padding: 12px 14px;
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      background: #fff;
+      color: #2563eb;
+      text-decoration: underline;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .news-link:hover {
+      border-color: #cbd5e1;
+    }
+
+    .news-link.disabled {
+      pointer-events: none;
+      color: #9ca3af;
+      text-decoration: none;
+      background: #f9fafb;
+      cursor: not-allowed;
+    }
+
+    .news-link.selected {
+      border-color: #111827;
+      font-weight: 800;
+      color: #111827;
+      background: #f3f4f6;
+      text-decoration: none;
+    }
+
     @media (max-width: 640px) {
       .sq-inline,
       .sq-inline-3,
@@ -434,6 +478,13 @@
         img62_2: IMG_62_2
       }
     };
+
+    const NEWS_LINKS = [
+      "“북핵, 압도적 힘으로 막는다”…3축체계에 ‘돈줄’ 푼 정부",
+      "KF-21 날고 정조대왕함 뜬다, 3축체계 고도화 9조 투입",
+      "北 핵·미사일 대응 최우선 과제, 국방부 “어떤 상황서도 평화”",
+      "전년비 21% 증액 8조 8337억…북핵 대응에 ‘올인’"
+    ];
 
     const TOPIC_QUESTIONS = {
       "1": [
@@ -505,6 +556,7 @@
         "5": [null, null, null, null, null]
       },
       algoAnswers: [null, null, null, null, null, null],
+      selectedNews: null,
       routeChoice: null,
       route: null,
       answers: { q2: null, q3: null },
@@ -688,7 +740,7 @@
           <div class="sq-block">
             <div class="sq-q">SQ4. 귀하께서는 포탈이나 SNS 등을 통해 뉴스를 접하고 계십니까?</div>
             <div class="sq-note">* 본 설문에서 말하는 「포탈이나 SNS」란 사람들의 의견, 생각, 경험, 관점, 정보 등을 서로 공유하고 확인하기 위해 사용하는 서비스나 플랫폼을 의미합니다.
-포탈에는 네이버, 다음, 구글 등이 있으며, SNS에는 페이스북, 인스타그램, X(구 트위터) 등이 있습니다. 이들 서비스나 플랫폼 중 어느 하나라도 이용하고 있으면 ‘① 이용하고 있다’에 응답하시면 됩니다.</div>
+포탈에는 네이버, 다음, 구글 등이 있으며, SNS에는 페이스북, 인스타그램, X(구 트위터) 등이 있습니다. </br>이들 서비스나 플랫폼 중 어느 하나라도 이용하고 있으면 ‘① 이용하고 있다’에 응답하시면 됩니다.</div>
             <div class="sq-inline">
               <label class="sq-opt">
                 <input type="radio" name="sq_portalNews" value="1" ${state.sq.portalNews === "1" ? "checked" : ""}>
@@ -703,7 +755,7 @@
 
           <div class="sq-block">
             <div class="sq-q">SQ5. 귀하께서는 휴대전화를 사용하고 계십니까?</div>
-            <div class="sq-note">* 본 설문에서 말하는 「휴대전화」란 사용자가 지정된 전화 서비스 지역 내에서 이동하면서 전화를 걸고 받을 수 있는 휴대용 전화를 말합니다. 특히 디지털 사진, 비디오 녹화, 게임과 같은 다양한 멀티미디어 기능뿐만 아니라 ‘모바일 브라우저’나 ‘앱’을 통해 포탈이나 SNS를 이용할 수 있는 기능이 탑재된 전화를 뜻합니다. 대표적으로 삼성의 갤럭시, 애플의 아이폰이 있습니다. 모바일 브라우저나 앱을 통해 포탈이나 SNS를 이용할 수 있는 휴대전화를 가지고 있다면 ‘① 가지고 있다’에 응답하시면 됩니다.</div>
+            <div class="sq-note">* 본 설문에서 말하는 「휴대전화」란 사용자가 지정된 전화 서비스 지역 내에서 이동하면서 전화를 걸고 받을 수 있는 휴대용 전화를 말합니다.</br> 특히 디지털 사진, 비디오 녹화, 게임과 같은 다양한 멀티미디어 기능뿐만 아니라 ‘모바일 브라우저’나 ‘앱’을 통해 포탈이나 SNS를 이용할 수 있는 기능이 탑재된 전화를 뜻합니다. 대표적으로 삼성의 갤럭시, 애플의 아이폰이 있습니다. 모바일 브라우저나 앱을 통해 포탈이나 SNS를 이용할 수 있는 휴대전화를 가지고 있다면 ‘① 가지고 있다’에 응답하시면 됩니다.</div>
             <div class="sq-inline">
               <label class="sq-opt">
                 <input type="radio" name="sq_mobilePhone" value="1" ${state.sq.mobilePhone === "1" ? "checked" : ""}>
@@ -812,6 +864,7 @@
             algoQ10: "",
             algoQ11: "",
             algoQ12: "",
+            selectedNews: "",
             q2: "",
             q3: "",
             timestamp: new Date().toISOString(),
@@ -831,6 +884,7 @@
         state.topicChoice = null;
         state.routeChoice = null;
         state.route = null;
+        state.selectedNews = null;
         state.answers = { q2: null, q3: null };
         setHash("#/q1");
       });
@@ -1021,8 +1075,8 @@
       sync();
 
       nextBtn.addEventListener("click", () => {
-        const choices = ["a", "b", "c", "d", "e"];
-        state.routeChoice = choices[Math.floor(Math.random() * choices.length)];
+        state.selectedNews = null;
+        state.routeChoice = null;
         state.route = null;
         state.answers = { q2: null, q3: null };
         setHash("#/rand");
@@ -1079,8 +1133,18 @@
     }
 
     function pageRand() {
-      if (!state.routeChoice) return setHash("#/intro");
-      state.route = (Math.random() < 0.5) ? "6-1" : "6-2";
+      if (!state.sq.rank) return setHash("#/intro");
+
+      const rankNum = Number(state.sq.rank);
+
+      if (rankNum >= 1 && rankNum <= 4) {
+        state.route = Math.random() < 0.5 ? "6-1" : "6-2";
+      } else if (rankNum >= 5 && rankNum <= 14) {
+        state.route = Math.random() < 0.5 ? "6-1" : "6-2";
+      } else {
+        state.route = Math.random() < 0.5 ? "6-1" : "6-2";
+      }
+
       setHash(state.route === "6-1" ? "#/6-1/1" : "#/6-2/1");
     }
 
@@ -1131,26 +1195,138 @@
       });
     }
 
-    function page61_1() {
-      if (!state.routeChoice) return setHash("#/intro");
-      const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img61_1;
-      imagePage({ title: "6-1 페이지 (1/2)", imgUrl, nextHash: "#/6-1/2", lockSeconds: 10 });
+    function renderTimedNewsLinks({ title, imgUrl, targets, selectedIndex = null, nextHash = null }) {
+      renderShell(`
+        <div>
+          <div class="tag">${getVariantTitle(state.routeChoice)}</div>
+          <h1 style="margin-top:10px;">${title}</h1>
+          <p>페이지 접속 후 10초 뒤 링크가 활성화됩니다.</p>
+
+          <div class="imgbox">
+            <img src="${imgUrl}" alt="설문 이미지" />
+          </div>
+
+          <div class="news-title"><strong>함께 볼만한 뉴스</strong></div>
+          <div class="news-links">
+            ${NEWS_LINKS.map((text, idx) => `
+              <a
+                href="${targets[idx] || '#'}"
+                class="news-link disabled ${selectedIndex === idx ? 'selected' : ''}"
+                data-news-link="1"
+                data-idx="${idx}"
+              >
+                ${text}
+              </a>
+            `).join("")}
+          </div>
+
+          ${nextHash ? `
+            <div class="row">
+              <button id="next" class="btn btn-primary" disabled>다음</button>
+            </div>
+          ` : ""}
+
+          <div class="small" id="countdown"></div>
+        </div>
+      `);
+
+      const cd = document.getElementById("countdown");
+      const links = [...document.querySelectorAll('[data-news-link="1"]')];
+      const nextBtn = document.getElementById("next");
+
+      let remain = 10;
+      cd.textContent = `활성화까지 ${remain}초`;
+
+      const timer = setInterval(() => {
+        remain -= 1;
+        if (remain <= 0) {
+          clearInterval(timer);
+          cd.textContent = "링크가 활성화되었습니다.";
+          links.forEach(link => link.classList.remove("disabled"));
+          if (nextBtn) nextBtn.disabled = false;
+          return;
+        }
+        cd.textContent = `활성화까지 ${remain}초`;
+      }, 1000);
+
+      links.forEach(link => {
+        link.addEventListener("click", (e) => {
+          if (link.classList.contains("disabled")) {
+            e.preventDefault();
+            return;
+          }
+          const idx = Number(link.dataset.idx);
+          state.selectedNews = idx + 1;
+        });
+      });
+
+      if (nextBtn && nextHash) {
+        nextBtn.addEventListener("click", () => {
+          if (nextBtn.disabled) return;
+          setHash(nextHash);
+        });
+      }
     }
 
-    function page61_2() {
-      if (!state.routeChoice) return setHash("#/intro");
-      const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img61_2;
-      imagePage({ title: "6-1 페이지 (2/2)", imgUrl, nextHash: "#/q2", lockSeconds: 10 });
+    function page61_1() {
+      const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img61_1;
+      renderTimedNewsLinks({
+        title: "6-1 페이지 (1/2)",
+        imgUrl,
+        targets: ["#/6-1-1", "#/6-1-2", "#/6-1-3", "#/6-1-4"]
+      });
+    }
+
+    function page611() {
+      const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img61_1;
+      renderTimedNewsLinks({
+        title: "6-1-1 페이지",
+        imgUrl,
+        targets: ["#/6-1-1", "#/6-1-2", "#/6-1-3", "#/6-1-4"],
+        selectedIndex: 0,
+        nextHash: "#/q2"
+      });
+    }
+
+    function page612() {
+      const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img61_1;
+      renderTimedNewsLinks({
+        title: "6-1-2 페이지",
+        imgUrl,
+        targets: ["#/6-1-1", "#/6-1-2", "#/6-1-3", "#/6-1-4"],
+        selectedIndex: 1,
+        nextHash: "#/q2"
+      });
+    }
+
+    function page613() {
+      const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img61_1;
+      renderTimedNewsLinks({
+        title: "6-1-3 페이지",
+        imgUrl,
+        targets: ["#/6-1-1", "#/6-1-2", "#/6-1-3", "#/6-1-4"],
+        selectedIndex: 2,
+        nextHash: "#/q2"
+      });
+    }
+
+    function page614() {
+      const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img61_1;
+      renderTimedNewsLinks({
+        title: "6-1-4 페이지",
+        imgUrl,
+        targets: ["#/6-1-1", "#/6-1-2", "#/6-1-3", "#/6-1-4"],
+        selectedIndex: 3,
+        nextHash: "#/q2"
+      });
     }
 
     function page62_1() {
-      if (!state.routeChoice) return setHash("#/intro");
       const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img62_1;
       imagePage({ title: "6-2 페이지 (1/2)", imgUrl, nextHash: "#/6-2/2", lockSeconds: 0 });
     }
 
     function page62_2() {
-      if (!state.routeChoice) return setHash("#/intro");
       const imgUrl = IMAGE_URLS?.[state.routeChoice]?.img62_2;
       imagePage({ title: "6-2 페이지 (2/2)", imgUrl, nextHash: "#/q2", lockSeconds: 0 });
     }
@@ -1231,6 +1407,7 @@
           algoQ10: state.algoAnswers[3] || "",
           algoQ11: state.algoAnswers[4] || "",
           algoQ12: state.algoAnswers[5] || "",
+          selectedNews: state.selectedNews || "",
           q2: state.answers.q2,
           q3: state.answers.q3,
           timestamp: new Date().toISOString(),
@@ -1343,7 +1520,7 @@
           listEl.innerHTML = rows.map(r => `
             <div class="item" data-id="${escapeHtml(r.id)}">
               <div class="item-top">
-                <div><b>choice=${escapeHtml(r.firstChoice)}</b> · topic=${escapeHtml(r.topicChoice)} · route=${escapeHtml(r.route)} · q2=${escapeHtml(r.q2)}, q3=${escapeHtml(r.q3)}</div>
+                <div><b>choice=${escapeHtml(r.firstChoice)}</b> · topic=${escapeHtml(r.topicChoice)} · route=${escapeHtml(r.route)} · news=${escapeHtml(r.selectedNews)} · q2=${escapeHtml(r.q2)}, q3=${escapeHtml(r.q3)}</div>
                 <div class="mono">${escapeHtml(r.timestamp)}</div>
               </div>
               <div class="mono">id=${escapeHtml(r.id)}</div>
@@ -1401,7 +1578,11 @@
         case "#/rand": pageRand(); break;
 
         case "#/6-1/1": page61_1(); break;
-        case "#/6-1/2": page61_2(); break;
+        case "#/6-1-1": page611(); break;
+        case "#/6-1-2": page612(); break;
+        case "#/6-1-3": page613(); break;
+        case "#/6-1-4": page614(); break;
+
         case "#/6-2/1": page62_1(); break;
         case "#/6-2/2": page62_2(); break;
 
