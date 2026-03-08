@@ -1240,11 +1240,10 @@
           <div class="sq-block">
             <div class="sq-q">D. 자극물 안내문 및 제시</div>
             <div class="sq-note" style="white-space: pre-line; color:#111827;">
-(자유탐색 집단에 제시되는 안내문)
-
-이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다.
+(자유탐색 집단에 제시되는 안내문) 
+이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다. 
 기사 하단에는 연관 기사 목록이 제시되며, 5분 동안 현재의 기사와 연관 기사를 자유롭게 선택해 읽으시면 됩니다.
-5분이 지나면 다음 단계로 넘어갑니다.
+5분이 지나면 다음 단계로 넘어갈 수 있는 버튼이 활성화됩니다. 버튼을 눌러 다음 설문에 응답해주십시오.
             </div>
 
             <div class="row">
@@ -1478,7 +1477,7 @@
             </div>
           </div>
 
-          <div class="sq-block" id="add2Wrap" style="margin-top:18px; ${state.page7Answers.add1 === "1" ? "" : "display:none;"}">
+          <div class="sq-block" id="add2Wrap" style="margin-top:18px;">
             <div class="sq-q">ADD2. 추가적인 정보를 탐색하기 위해 다음 중 어느 매체를 선택하시겠습니까?</div>
             <div class="sq-options">
               <label class="sq-opt"><input type="radio" name="add2" value="1" ${state.page7Answers.add2 === "1" ? "checked" : ""}><span>① 국방일보</span></label>
@@ -1496,8 +1495,6 @@
       `);
 
       const nextBtn = document.getElementById("next");
-      const add2Wrap = document.getElementById("add2Wrap");
-
       function sync() {
         for (let i = 0; i < 15; i++) {
           const picked = document.querySelector(`input[name="iup_${i}"]:checked`);
@@ -1510,20 +1507,10 @@
         const add2Picked = document.querySelector('input[name="add2"]:checked');
         state.page7Answers.add2 = add2Picked ? add2Picked.value : null;
 
-        if (state.page7Answers.add1 === "1") {
-          add2Wrap.style.display = "";
-        } else {
-          add2Wrap.style.display = "none";
-          state.page7Answers.add2 = null;
-          document.querySelectorAll('input[name="add2"]').forEach(el => {
-            el.checked = false;
-          });
-        }
-
         const iupDone = state.page7Answers.iup.every(v => !!v);
         const add1Done = !!state.page7Answers.add1;
-        const add2Done = state.page7Answers.add1 === "1" ? !!state.page7Answers.add2 : true;
-
+        const add2Done = !!state.page7Answers.add2;
+        
         nextBtn.disabled = !(iupDone && add1Done && add2Done);
       }
 
