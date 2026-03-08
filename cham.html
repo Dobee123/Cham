@@ -164,28 +164,6 @@
       margin: 0;
     }
 
-    .admin-btn {
-      position:absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 12px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border:1px solid var(--bd);
-      background:#fff;
-      cursor:pointer;
-      font-weight:800;
-      width:auto;
-    }
-
-    .admin-btn:hover { border-color:#cbd5e1; }
-
-    .loginBox {
-      max-width: 340px;
-      margin: 0 auto;
-      width:100%;
-    }
-
     .input {
       width: 100%;
       max-width: 340px;
@@ -198,60 +176,13 @@
 
     .input:focus { border-color:#cbd5e1; }
 
-    .list {
-      display:grid;
-      gap:10px;
-      margin-top:12px;
-    }
-
-    .item {
-      border:1px solid var(--bd);
-      border-radius:12px;
-      padding:12px;
-      cursor:pointer;
-    }
-
-    .item:hover { border-color:#cbd5e1; }
-
-    .item-top {
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:12px;
-      color: var(--muted);
-    }
-
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      background:#f9fafb;
-      border:1px solid var(--bd);
-      border-radius:12px;
-      padding:12px;
-      margin-top: 12px;
-    }
-
     .sq-page {
       display:grid;
       gap:18px;
     }
 
     .sq-title-box {
-      display:inline-block;
-      margin:0 auto 6px;
-      padding:12px 22px;
-      background:#111;
-      color:#fff;
-      border-radius:10px;
-      font-size:22px;
-      font-weight:800;
-      text-align:center;
+      display: none;
     }
 
     .sq-block {
@@ -425,11 +356,6 @@
       }
 
       .sq-title-box { width:100%; }
-    }
-
-    @media (max-width:520px) {
-      .loginBox { max-width:100%; }
-      .input { max-width:100%; }
     }
   </style>
 </head>
@@ -663,9 +589,6 @@
       "Q12. 나는 알고리즘이 이용자에게 미칠 수 있는 영향력에 대해 잘 알고 있다."
     ];
 
-    const ADMIN_PASSWORD = "1234";
-    const STORAGE_KEY_ADMIN = "survey_admin_authed_v1";
-
     const state = {
       sq: {
         gender: null,
@@ -718,8 +641,7 @@
       isFinalSaved: false,
       articleVisited: {},
       lockedVisitCount: 0,
-      freeRouteStartedAt: null,
-      adminRows: []
+      freeRouteStartedAt: null
     };
 
     const $app = () => document.getElementById("app");
@@ -731,14 +653,6 @@
         location.hash = h;
       }
     };
-
-    function isAdminAuthed() {
-      return localStorage.getItem(STORAGE_KEY_ADMIN) === "1";
-    }
-
-    function setAdminAuthed(v) {
-      localStorage.setItem(STORAGE_KEY_ADMIN, v ? "1" : "0");
-    }
 
     function getVariantTitle(choice) {
       return choice || "설문";
@@ -769,47 +683,9 @@
       return true;
     }
 
-    function fetchAdminList({ limit = 200 } = {}) {
-      return new Promise((resolve, reject) => {
-        const cbName = "jsonp_cb_" + Math.random().toString(16).slice(2);
-        const script = document.createElement("script");
-        const url = `${GS_WEBAPP_URL}?action=list&limit=${encodeURIComponent(limit)}&callback=${encodeURIComponent(cbName)}&_=${Date.now()}`;
-
-        let done = false;
-
-        function cleanup() {
-          if (done) return;
-          done = true;
-          try { delete window[cbName]; } catch (e) {}
-          try { script.remove(); } catch (e) {}
-          try { clearTimeout(timer); } catch (e) {}
-        }
-
-        window[cbName] = (data) => {
-          cleanup();
-          resolve(data);
-        };
-
-        script.onerror = () => {
-          cleanup();
-          reject(new Error("관리 목록 조회 실패(script load error)"));
-        };
-
-        const timer = setTimeout(() => {
-          cleanup();
-          reject(new Error("관리 목록 조회 실패(timeout)"));
-        }, 8000);
-
-        script.src = url;
-        script.async = true;
-        document.head.appendChild(script);
-      });
-    }
-
     function pageIntro() {
       renderShell(`
         <div class="intro">
-          <button class="admin-btn" id="adminGo">관리자</button>
           <h1 class="intro-title" style="font-weight: normal; font-size: 1rem; line-height: 1.6;">안녕하십니까? <br><br>
 본 실험 연구는 ‘장병들의 뉴스 소비’에 대한 인식 조사입니다.<br><br>
 설문 사항에는 정답이 없습니다.<br><br>
@@ -827,7 +703,6 @@
       `);
 
       document.getElementById("start").addEventListener("click", () => setHash("#/"));
-      document.getElementById("adminGo").addEventListener("click", () => setHash("#/admin-login"));
     }
 
     function pageSQ() {
@@ -1044,7 +919,7 @@
             console.error(e);
           }
 
-          setHash("#/screenout");
+          setHash("#/12");
           return;
         }
 
@@ -1300,6 +1175,14 @@
     function pageRand() {
       if (!state.topicChoice || !state.sq.rank) return setHash("#/intro");
 
+      if (state.route) {
+        if (state.route.endsWith("-1")) {
+          return setHash("#/stimulus-intro-locked");
+        } else {
+          return setHash("#/stimulus-intro-free");
+        }
+      }
+
       const rankNum = Number(state.sq.rank);
       const group = TOPIC_ROUTE_MAP[state.topicChoice];
       if (!group) return setHash("#/intro");
@@ -1313,7 +1196,67 @@
       }
 
       state.routeChoice = state.route;
-      setHash(`#/${state.route}`);
+
+      if (state.route.endsWith("-1")) {
+        setHash("#/stimulus-intro-locked");
+      } else {
+        setHash("#/stimulus-intro-free");
+      }
+    }
+
+    function pageStimulusIntroLocked() {
+      if (!state.route || !state.route.endsWith("-1")) return setHash("#/intro");
+
+      renderShell(`
+        <div class="sq-page">
+          <div class="sq-block">
+            <div class="sq-q">D. 자극물 안내문 및 제시</div>
+            <div class="sq-note" style="white-space: pre-line; color:#111827;">
+(반복노출 집단에 제시되는 안내문)
+
+이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다.
+1분 동안 읽을 시간이 주어지며, 1분이 지나면 추천 기사 목록이 활성화됩니다.
+목록 중 하나의 기사를 선택하시면 또다시 1분 동안 기사를 읽으실 수 있습니다.
+총 5개의 기사를 모두 읽으시면 다음 단계로 넘어갑니다.
+            </div>
+
+            <div class="row">
+              <button id="nextLockedIntro" class="btn btn-primary" style="max-width:200px;">다음</button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      document.getElementById("nextLockedIntro").addEventListener("click", () => {
+        setHash(`#/${state.route}`);
+      });
+    }
+
+    function pageStimulusIntroFree() {
+      if (!state.route || !state.route.endsWith("-2")) return setHash("#/intro");
+
+      renderShell(`
+        <div class="sq-page">
+          <div class="sq-block">
+            <div class="sq-q">D. 자극물 안내문 및 제시</div>
+            <div class="sq-note" style="white-space: pre-line; color:#111827;">
+(자유탐색 집단에 제시되는 안내문)
+
+이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다.
+기사 하단에는 연관 기사 목록이 제시되며, 5분 동안 현재의 기사와 연관 기사를 자유롭게 선택해 읽으시면 됩니다.
+5분이 지나면 다음 단계로 넘어갑니다.
+            </div>
+
+            <div class="row">
+              <button id="nextFreeIntro" class="btn btn-primary" style="max-width:200px;">다음</button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      document.getElementById("nextFreeIntro").addEventListener("click", () => {
+        setHash(`#/${state.route}`);
+      });
     }
 
     function renderArticleButtonsPage({ pageKey, cfg, locked }) {
@@ -1340,7 +1283,7 @@
         <div>
           <div class="tag">${getVariantTitle(state.routeChoice)}</div>
           <h1 style="margin-top:10px;">${cfg.title}</h1>
-          <p>${locked ? "페이지 접속 후 10초 뒤 메뉴 버튼이 활성화됩니다." : "원하는 기사를 선택해 주세요."}</p>
+          ${locked ? "" : `<p>원하는 기사를 선택해 주세요.</p>`}
 
           <div class="imgbox">
             ${imgUrl ? `<img src="${imgUrl}" alt="기사 이미지" />` : `<div style="padding:60px 20px; text-align:center; color:#9ca3af;">이미지 영역</div>`}
@@ -2073,136 +2016,10 @@
       }
     }
 
-    function pageScreenout() {
-      renderShell(`<div class="done">설문이 종료되었습니다</div>`);
-    }
-
-    function pageAdminLogin() {
-      renderShell(`
-        <div class="loginBox">
-          <h1>비밀번호</h1>
-          <p>관리자용 페이지입니다.</p>
-          <div style="display:grid; gap:10px; margin-top:10px;">
-            <input id="pw" class="input" type="password" placeholder="비밀번호를 입력하세요" />
-            <div class="row" style="justify-content:flex-start;">
-              <button id="ok" class="btn btn-primary" style="max-width:160px;">확인</button>
-              <button id="back" class="btn" style="max-width:160px;">뒤로</button>
-            </div>
-            <div class="small" id="err"></div>
-          </div>
-        </div>
-      `);
-
-      const pw = document.getElementById("pw");
-      const err = document.getElementById("err");
-
-      function submit() {
-        if (pw.value === ADMIN_PASSWORD) {
-          setAdminAuthed(true);
-          setHash("#/admin");
-        } else {
-          err.textContent = "비밀번호가 올바르지 않습니다.";
-        }
-      }
-
-      document.getElementById("ok").addEventListener("click", submit);
-      document.getElementById("back").addEventListener("click", () => setHash("#/intro"));
-      pw.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") submit();
-      });
-      pw.focus();
-    }
-
-    async function pageAdmin() {
-      if (!isAdminAuthed()) return setHash("#/admin-login");
-
-      renderShell(`
-        <div>
-          <div class="row" style="justify-content:space-between; margin-top:0;">
-            <div>
-              <h1 style="margin:0;">관리페이지</h1>
-              <div class="small" id="cnt">불러오는 중...</div>
-            </div>
-            <div class="row" style="margin-top:0;">
-              <button id="refresh" class="btn">새로고침</button>
-              <button id="logout" class="btn">로그아웃</button>
-            </div>
-          </div>
-
-          <div class="small" id="err" style="margin-top:10px;"></div>
-          <div class="list" id="list"></div>
-          <div id="detail"></div>
-        </div>
-      `);
-
-      const cnt = document.getElementById("cnt");
-      const err = document.getElementById("err");
-      const listEl = document.getElementById("list");
-      const detailEl = document.getElementById("detail");
-
-      async function load() {
-        err.textContent = "";
-        cnt.textContent = "불러오는 중...";
-        listEl.innerHTML = "";
-        detailEl.innerHTML = "";
-
-        try {
-          const res = await fetchAdminList({ limit: 200 });
-          const rows = Array.isArray(res?.rows) ? res.rows : [];
-
-          state.adminRows = rows;
-          cnt.textContent = `총 ${rows.length}건`;
-
-          if (rows.length === 0) {
-            listEl.innerHTML = `<div class="small">아직 저장된 결과가 없습니다.</div>`;
-            return;
-          }
-
-          listEl.innerHTML = rows.map(r => `
-            <div class="item" data-id="${escapeHtml(r.id)}">
-              <div class="item-top">
-                <div><b>choice=${escapeHtml(r.firstChoice)}</b> · topic=${escapeHtml(r.topicChoice)} · route=${escapeHtml(r.route)} · news=${escapeHtml(r.selectedNews)} · page=${escapeHtml(r.selectedNewsPage)}</div>
-                <div class="mono">${escapeHtml(r.timestamp)}</div>
-              </div>
-              <div class="mono">id=${escapeHtml(r.id)}</div>
-            </div>
-          `).join("");
-
-          document.querySelectorAll(".item[data-id]").forEach(el => {
-            el.addEventListener("click", () => {
-              const id = el.getAttribute("data-id");
-              const selected = state.adminRows.find(x => String(x.id) === String(id));
-              if (!selected) return;
-
-              detailEl.innerHTML = `
-                <h1 style="margin-top:18px;">상세</h1>
-                <pre>${escapeHtml(JSON.stringify(selected, null, 2))}</pre>
-              `;
-            });
-          });
-
-        } catch (e) {
-          console.error(e);
-          err.textContent = String(e?.message || e || "관리 목록 조회 실패");
-          cnt.textContent = "0건";
-        }
-      }
-
-      document.getElementById("refresh").addEventListener("click", load);
-      document.getElementById("logout").addEventListener("click", () => {
-        setAdminAuthed(false);
-        setHash("#/intro");
-      });
-
-      load();
-    }
-
     function router() {
       const h = location.hash || "#/intro";
 
       if (h === "#/intro") return pageIntro();
-      if (h === "#/admin-login") return pageAdminLogin();
-      if (h === "#/admin") return pageAdmin();
 
       if (h === "#/") return pageSQ();
       if (h === "#/q1") return pageTopicChoice();
@@ -2215,6 +2032,8 @@
 
       if (h === "#/page5") return page5();
       if (h === "#/rand") return pageRand();
+      if (h === "#/stimulus-intro-locked") return pageStimulusIntroLocked();
+      if (h === "#/stimulus-intro-free") return pageStimulusIntroFree();
 
       const articleMatch = h.match(/^#\/(6-1|6-2|62-1|62-2|63-1|63-2|64-1|64-2|65-1|65-2)(?:-([1-4]))?$/);
       if (articleMatch) {
@@ -2228,8 +2047,6 @@
       if (h === "#/10") return page10();
       if (h === "#/11") return page11();
       if (h === "#/12") return page12();
-
-      if (h === "#/screenout") return pageScreenout();
 
       return setHash("#/intro");
     }
