@@ -391,23 +391,23 @@
   <script>
     const GS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzzDv9AJbOzFDKOhmYCu6hqTSzMRzTZMqxalFU2uG1kno-ITzVK02BU70hZSwTbeL1faA/exec";
 
-function getArticleImage(pageKey) {
-  const parts = pageKey.split("-");
-  const topic = parts[0];
-  const type = parts[1];
+    function getArticleImage(pageKey) {
+      const parts = pageKey.split("-");
+      const topic = parts[0];
+      const type = parts[1];
 
-  let folder = "";
+      let folder = "";
 
-  if (topic === "6") folder = "1";
-  else if (topic === "62") folder = "2";
-  else if (topic === "63") folder = "3";
-  else if (topic === "64") folder = "4";
-  else if (topic === "65") folder = "5";
+      if (topic === "6") folder = "1";
+      else if (topic === "62") folder = "2";
+      else if (topic === "63") folder = "3";
+      else if (topic === "64") folder = "4";
+      else if (topic === "65") folder = "5";
 
-  const group = type === "1" ? "1_timelimit" : "2_fulltime";
+      const group = type === "1" ? "1_timelimit" : "2_fulltime";
 
-  return `${group}/${folder}/${pageKey}.png`;
-}
+      return `${group}/${folder}/${pageKey}.png`;
+    }
 
     const ARTICLE_TITLE_SETS = {
       "6-1": {
@@ -498,6 +498,17 @@ function getArticleImage(pageKey) {
       "4": { locked: "64-1", free: "64-2" },
       "5": { locked: "65-1", free: "65-2" }
     };
+
+    function getRandomStartRoute(baseRoute) {
+      const candidates = [
+        baseRoute,
+        `${baseRoute}-1`,
+        `${baseRoute}-2`,
+        `${baseRoute}-3`,
+        `${baseRoute}-4`
+      ];
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
 
     function buildArticleMap(prefix, titles) {
       const root = `#/${prefix}`;
@@ -663,18 +674,20 @@ function getArticleImage(pageKey) {
         lsq1: null,
         lsq2: null
       },
-selectedNews: null,
-selectedNewsTitle: null,
-selectedNewsPage: null,
-selectedNewsHistory: [],
-selectedNewsTitleHistory: [],
-selectedNewsPageHistory: [],
+      selectedNews: null,
+      selectedNewsTitle: null,
+      selectedNewsPage: null,
+      selectedNewsHistory: [],
+      selectedNewsTitleHistory: [],
+      selectedNewsPageHistory: [],
       routeChoice: null,
       route: null,
+      initialArticleRoute: null,
       answers: { q2: null, q3: null },
       isFinalSaved: false,
       articleVisited: {},
       lockedVisitCount: 0,
+      lockedNextEligibleAt: null,
       freeRouteStartedAt: null
     };
 
@@ -696,6 +709,7 @@ selectedNewsPageHistory: [],
       const el = $app();
       if (!el) return;
       el.innerHTML = `<div class="wrap"><div class="card">${innerHtml}</div></div>`;
+      window.scrollTo(0, 0);
     }
 
     function escapeHtml(str) {
@@ -938,14 +952,14 @@ selectedNewsPageHistory: [],
             dq5: "",
             lsq1: "",
             lsq2: "",
-selectedNews: "",
-selectedNewsTitle: "",
-selectedNewsPage: "",
-selectedNewsHistory: "",
-selectedNewsTitleHistory: "",
-selectedNewsPageHistory: "",
-q2: "",
-q3: "",
+            selectedNews: "",
+            selectedNewsTitle: "",
+            selectedNewsPage: "",
+            selectedNewsHistory: "",
+            selectedNewsTitleHistory: "",
+            selectedNewsPageHistory: "",
+            q2: "",
+            q3: "",
             timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent
           };
@@ -963,12 +977,13 @@ q3: "",
         state.topicChoice = null;
         state.routeChoice = null;
         state.route = null;
-state.selectedNews = null;
-state.selectedNewsTitle = null;
-state.selectedNewsPage = null;
-state.selectedNewsHistory = [];
-state.selectedNewsTitleHistory = [];
-state.selectedNewsPageHistory = [];
+        state.initialArticleRoute = null;
+        state.selectedNews = null;
+        state.selectedNewsTitle = null;
+        state.selectedNewsPage = null;
+        state.selectedNewsHistory = [];
+        state.selectedNewsTitleHistory = [];
+        state.selectedNewsPageHistory = [];
         state.answers = { q2: null, q3: null };
         state.page7Answers = {
           iup: Array(15).fill(null),
@@ -996,6 +1011,7 @@ state.selectedNewsPageHistory = [];
         state.isFinalSaved = false;
         state.articleVisited = {};
         state.lockedVisitCount = 0;
+        state.lockedNextEligibleAt = null;
         state.freeRouteStartedAt = null;
         setHash("#/q1");
       });
@@ -1178,8 +1194,12 @@ state.selectedNewsPageHistory = [];
         state.selectedNews = null;
         state.selectedNewsTitle = null;
         state.selectedNewsPage = null;
+        state.selectedNewsHistory = [];
+        state.selectedNewsTitleHistory = [];
+        state.selectedNewsPageHistory = [];
         state.routeChoice = null;
         state.route = null;
+        state.initialArticleRoute = null;
         state.answers = { q2: null, q3: null };
         state.page7Answers = {
           iup: Array(15).fill(null),
@@ -1207,6 +1227,7 @@ state.selectedNewsPageHistory = [];
         state.isFinalSaved = false;
         state.articleVisited = {};
         state.lockedVisitCount = 0;
+        state.lockedNextEligibleAt = null;
         state.freeRouteStartedAt = null;
         setHash("#/rand");
       });
@@ -1216,6 +1237,9 @@ state.selectedNewsPageHistory = [];
       if (!state.topicChoice || !state.sq.rank) return setHash("#/intro");
 
       if (state.route) {
+        if (!state.initialArticleRoute) {
+          state.initialArticleRoute = getRandomStartRoute(state.route);
+        }
         if (state.route.endsWith("-1")) {
           return setHash("#/stimulus-intro-locked");
         } else {
@@ -1236,6 +1260,7 @@ state.selectedNewsPageHistory = [];
       }
 
       state.routeChoice = state.route;
+      state.initialArticleRoute = getRandomStartRoute(state.route);
 
       if (state.route.endsWith("-1")) {
         setHash("#/stimulus-intro-locked");
@@ -1267,7 +1292,7 @@ state.selectedNewsPageHistory = [];
       `);
 
       document.getElementById("nextLockedIntro").addEventListener("click", () => {
-        setHash(`#/${state.route}`);
+        setHash(`#/${state.initialArticleRoute || state.route}`);
       });
     }
 
@@ -1293,7 +1318,7 @@ state.selectedNewsPageHistory = [];
       `);
 
       document.getElementById("nextFreeIntro").addEventListener("click", () => {
-        setHash(`#/${state.route}`);
+        setHash(`#/${state.initialArticleRoute || state.route}`);
       });
     }
 
@@ -1304,13 +1329,20 @@ state.selectedNewsPageHistory = [];
 
       if (locked) {
         state.lockedVisitCount += 1;
+
+        if (state.lockedVisitCount === 5 && !state.lockedNextEligibleAt) {
+          state.lockedNextEligibleAt = Date.now() + 10000;
+        }
       }
 
       if (!locked && !state.freeRouteStartedAt) {
         state.freeRouteStartedAt = Date.now();
       }
 
-      const lockedEnoughVisited = state.lockedVisitCount >= 5;
+      const lockedNextVisible =
+        locked &&
+        state.lockedNextEligibleAt &&
+        Date.now() >= state.lockedNextEligibleAt;
 
       let freeNextVisible = false;
       if (!locked && state.freeRouteStartedAt) {
@@ -1344,7 +1376,7 @@ state.selectedNewsPageHistory = [];
 
           <div class="row" id="nextWrap" style="justify-content:center;">
             ${
-              locked && lockedEnoughVisited
+              locked && lockedNextVisible
                 ? `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`
                 : (!locked && freeNextVisible
                     ? `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`
@@ -1357,15 +1389,16 @@ state.selectedNewsPageHistory = [];
       `);
 
       state.selectedNews = cfg.selectedNews;
-      const currentPageAlreadyLogged =
-  state.selectedNewsPageHistory[state.selectedNewsPageHistory.length - 1] === pageKey;
 
-if (!currentPageAlreadyLogged) {
-  state.selectedNewsHistory.push(String(cfg.selectedNews));
-  state.selectedNewsTitleHistory.push(cfg.title);
-  state.selectedNewsPageHistory.push(pageKey);
-}
-      
+      const currentPageAlreadyLogged =
+        state.selectedNewsPageHistory[state.selectedNewsPageHistory.length - 1] === pageKey;
+
+      if (!currentPageAlreadyLogged) {
+        state.selectedNewsHistory.push(String(cfg.selectedNews));
+        state.selectedNewsTitleHistory.push(cfg.title);
+        state.selectedNewsPageHistory.push(pageKey);
+      }
+
       state.selectedNewsTitle = cfg.title;
       state.selectedNewsPage = pageKey;
 
@@ -1374,25 +1407,25 @@ if (!currentPageAlreadyLogged) {
       const nextStageBtn = document.getElementById("nextStage");
       const nextWrap = document.getElementById("nextWrap");
 
-buttons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    if (btn.classList.contains("disabled")) return;
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (btn.classList.contains("disabled")) return;
 
-    const clickedCode = String(btn.dataset.code);
-    const clickedTitle = btn.dataset.title;
-    const clickedPage = btn.dataset.target.replace(/^#\//, "");
+          const clickedCode = String(btn.dataset.code);
+          const clickedTitle = btn.dataset.title;
+          const clickedPage = btn.dataset.target.replace(/^#\//, "");
 
-    state.selectedNews = Number(clickedCode);
-    state.selectedNewsTitle = clickedTitle;
-    state.selectedNewsPage = clickedPage;
+          state.selectedNews = Number(clickedCode);
+          state.selectedNewsTitle = clickedTitle;
+          state.selectedNewsPage = clickedPage;
 
-    state.selectedNewsHistory.push(clickedCode);
-    state.selectedNewsTitleHistory.push(clickedTitle);
-    state.selectedNewsPageHistory.push(clickedPage);
+          state.selectedNewsHistory.push(clickedCode);
+          state.selectedNewsTitleHistory.push(clickedTitle);
+          state.selectedNewsPageHistory.push(clickedPage);
 
-    setHash(btn.dataset.target);
-  });
-});
+          setHash(btn.dataset.target);
+        });
+      });
 
       if (nextStageBtn) {
         nextStageBtn.addEventListener("click", () => {
@@ -1406,19 +1439,47 @@ buttons.forEach(btn => {
 
         const timer = setInterval(() => {
           remain -= 1;
+
           if (remain <= 0) {
             clearInterval(timer);
-            cd.textContent = "메뉴가 활성화되었습니다.";
             buttons.forEach(btn => btn.classList.remove("disabled"));
 
-            if (state.lockedVisitCount >= 5) {
-              nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-              document.getElementById("nextStage").addEventListener("click", () => {
-                setHash("#/7");
-              });
+            if (state.lockedNextEligibleAt) {
+              const nextRemainMs = state.lockedNextEligibleAt - Date.now();
+              let nextRemain = Math.max(0, Math.ceil(nextRemainMs / 1000));
+
+              if (nextRemain > 0) {
+                cd.textContent = `다음 단계 버튼 노출까지 ${nextRemain}초`;
+
+                const nextTimer = setInterval(() => {
+                  nextRemain -= 1;
+
+                  if (nextRemain <= 0) {
+                    clearInterval(nextTimer);
+                    cd.textContent = "";
+                    nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
+                    document.getElementById("nextStage").addEventListener("click", () => {
+                      setHash("#/7");
+                    });
+                    return;
+                  }
+
+                  cd.textContent = `다음 단계 버튼 노출까지 ${nextRemain}초`;
+                }, 1000);
+              } else {
+                cd.textContent = "";
+                nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
+                document.getElementById("nextStage").addEventListener("click", () => {
+                  setHash("#/7");
+                });
+              }
+            } else {
+              cd.textContent = "메뉴가 활성화되었습니다.";
             }
+
             return;
           }
+
           cd.textContent = `활성화까지 ${remain}초`;
         }, 1000);
       } else {
@@ -1455,7 +1516,7 @@ buttons.forEach(btn => {
       const cfg = ARTICLE_LINK_MAP[`#/${routeKey}`];
       if (!cfg) return setHash("#/intro");
       const parts = routeKey.split("-");
-    const locked = parts[1] === "1";
+      const locked = parts[1] === "1";
       renderArticleButtonsPage({
         pageKey: routeKey,
         cfg,
@@ -2033,14 +2094,14 @@ buttons.forEach(btn => {
         dq5: state.page10Answers.dq5 || "",
         lsq1: state.page11Answers.lsq1 || "",
         lsq2: state.page11Answers.lsq2 || "",
-selectedNews: state.selectedNews ?? "",
-selectedNewsTitle: state.selectedNewsTitle || "",
-selectedNewsPage: state.selectedNewsPage || "",
-selectedNewsHistory: state.selectedNewsHistory.join(" > "),
-selectedNewsTitleHistory: state.selectedNewsTitleHistory.join(" | "),
-selectedNewsPageHistory: state.selectedNewsPageHistory.join(" > "),
-q2: "",
-q3: "",
+        selectedNews: state.selectedNews ?? "",
+        selectedNewsTitle: state.selectedNewsTitle || "",
+        selectedNewsPage: state.selectedNewsPage || "",
+        selectedNewsHistory: state.selectedNewsHistory.join(" > "),
+        selectedNewsTitleHistory: state.selectedNewsTitleHistory.join(" | "),
+        selectedNewsPageHistory: state.selectedNewsPageHistory.join(" > "),
+        q2: "",
+        q3: "",
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent
       };
