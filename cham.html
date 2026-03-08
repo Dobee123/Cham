@@ -439,78 +439,99 @@
   <script>
     const GS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzzDv9AJbOzFDKOhmYCu6hqTSzMRzTZMqxalFU2uG1kno-ITzVK02BU70hZSwTbeL1faA/exec";
 
-    /***********************
-     * 페이지별 이미지 URL
-     * 여기만 바꾸면 각 페이지 이미지 교체 가능
-     ***********************/
     const PAGE_IMAGES = {
-      "6-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "6-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "6-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "6-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "6-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-
-      "6-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "6-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "6-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "6-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "6-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-
-      "62-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "62-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "62-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "62-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "62-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-
-      "62-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "62-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "62-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "62-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "62-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-
-      "63-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "63-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "63-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "63-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "63-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-
-      "63-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "63-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "63-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "63-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "63-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-
-      "64-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "64-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "64-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "64-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "64-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-
-      "64-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "64-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "64-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "64-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "64-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-
-      "65-1":   "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "65-1-1": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "65-1-2": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "65-1-3": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-      "65-1-4": "https://i.postimg.cc/GmP5JPkD/a741cf88-98fe-44f0-be20-3332a571f273.jpg",
-
-      "65-2":   "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "65-2-1": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "65-2-2": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "65-2-3": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg",
-      "65-2-4": "https://i.postimg.cc/h4kn2r7Y/bd5d9d79-0a73-4acd-91a6-ac885ce3b680.jpg"
+      "6-1": "", "6-1-1": "", "6-1-2": "", "6-1-3": "", "6-1-4": "",
+      "6-2": "", "6-2-1": "", "6-2-2": "", "6-2-3": "", "6-2-4": "",
+      "62-1": "", "62-1-1": "", "62-1-2": "", "62-1-3": "", "62-1-4": "",
+      "62-2": "", "62-2-1": "", "62-2-2": "", "62-2-3": "", "62-2-4": "",
+      "63-1": "", "63-1-1": "", "63-1-2": "", "63-1-3": "", "63-1-4": "",
+      "63-2": "", "63-2-1": "", "63-2-2": "", "63-2-3": "", "63-2-4": "",
+      "64-1": "", "64-1-1": "", "64-1-2": "", "64-1-3": "", "64-1-4": "",
+      "64-2": "", "64-2-1": "", "64-2-2": "", "64-2-3": "", "64-2-4": "",
+      "65-1": "", "65-1-1": "", "65-1-2": "", "65-1-3": "", "65-1-4": "",
+      "65-2": "", "65-2-1": "", "65-2-2": "", "65-2-3": "", "65-2-4": ""
     };
 
-    const ARTICLE_TITLES = {
-      main: "한국형 3축 체계 대폭 강화…北 핵·미사일 위협 대응",
-      a1: "“북핵, 압도적 힘으로 막는다”…3축체계에 ‘돈줄’ 푼 정부",
-      a2: "KF-21 날고 정조대왕함 뜬다, 3축체계 고도화 9조 투입",
-      a3: "北 핵·미사일 대응 최우선 과제, 국방부 “어떤 상황서도 평화”",
-      a4: "전년비 21% 증액 8조 8337억…북핵 대응에 ‘올인’"
+    const ARTICLE_TITLE_SETS = {
+      "6-1": {
+        main: "한국형 3축 체계 대폭 강화…北 핵·미사일 위협 대응",
+        a1: "“북핵, 압도적 힘으로 막는다”…3축체계에 ‘돈줄’ 푼 정부",
+        a2: "KF-21 날고 정조대왕함 뜬다, 3축체계 고도화 9조 투입",
+        a3: "北 핵·미사일 대응 최우선 과제, 국방부 “어떤 상황서도 평화”",
+        a4: "전년비 21% 증액 8조 8337억…북핵 대응에 ‘올인’"
+      },
+
+      "6-2": {
+        main: "2026년 국방예산 ‘3축 체계’에 8.8조 투입, 북핵 억제력 완성",
+        a1: "“괴물 미사일” 현무-5 실전 배체… 평양 벙커 파괴할 응징의 칼",
+        a2: "한국형 사드’L-SAM’ 양산 착수… 미사일 잡는 ‘철벽 방패’ 뜬다",
+        a3: "한미 ‘핵협의그룹(NCG) 가동 본격화’, 미 핵우산 더 단단해졌다",
+        a4: "AI드론이 먼저 뜨고 로봇이 정찰…북핵 대응 ‘미래형 군대’로 진화"
+      },
+
+      "62-1": {
+        main: "군대서 배우는 '클로드·제미나이' … AI 인재 양성소로 변신한 병영",
+        a1: "부대 내 AI센터서 챗GPT·클로드 실습 삼매경.. 전역 후 취업에도 도움",
+        a2: "국방부 \"군 복무하며 디지털 인재로 도약\"… AI 실무 교육 확대",
+        a3: "\"챗GPT로 보고서 쓴다\"… 국방부, 전 장병 대상 AI 실습 교육 추진",
+        a4: "군대 갔더니 'AI 고수' 되어 나왔다?… 국방부, 실전형 AI 교육 제공"
+      },
+
+      "62-2": {
+        main: "\"코딩 배우러 군대 간다\"… 2026년 전군에 'AI 교육장' 완비",
+        a1: "지게차부터 정보처리까지… 군대서 '평생 먹거리' 자격증 딴다",
+        a2: " \"군대서 전공 수업 듣고 조기 졸업\"… 학점 인정 대학 180곳 돌파",
+        a3: "\"군 창업동아리서 CEO 꿈 키워요\"… 입상하면 상금, 창업 자금까지",
+        a4: "병영도서관이 '북카페'로 변신… 군대서 인문학 소양 쌓는다"
+      },
+
+      "63-1": {
+        main: "올해 장병 급식비 1만4000원… '뷔페식' 병영식당 전면 확대",
+        a1: "'짬밥'은 옛말, 이제는 'K-밀리터리 다이닝' 군 급식의 혁명",
+        a2: "\"오늘 점심은 뭐 먹지?\" 골라 먹는 재미 쏠쏠… 확 바뀐 병영 식탁",
+        a3: "국방부, 지역 식자재 공급 대폭 확대… '군 급식'이 지역경제 살린다",
+        a4: "군대 가면 '급식' 걱정 끝?…  '고퀄리티' 뷔페 매일 먹는다"
+      },
+
+      "63-2": {
+        main: "\"군대서 학점 따고 자격증 딴다\"… 전역하면 '스펙 부자'",
+        a1: "\"짬밥 말고 뷔페 먹는다\"… 13찬 골라 담는 'K-병영식당'",
+        a2: " 초급간부 숙소 '1인 1실' 시대… 이사비·당직비도 현실화",
+        a3: "\"라떼는 침상이었는데\"… 군 생활관, 화장실 딸린 2~4인실로 대변신",
+        a4: "\"전투복에 AI 기술 입힌다\"… 2026년형 '하이테크 피복' 전력화"
+      },
+
+      "64-1": {
+        main: "올해부터 '장기간부도약적금' 시행… 3년 뒤 2300만원 수령",
+        a1: "병사는 205만원, 간부는?… '장기간부도약적금'으로 역차별 해소",
+        a2: "\"3년 부으면 2300만원\"… 장기복무 간부 위한 '재테크' 길 열린다",
+        a3: "국방부 \"장기복무 간부에게 2300만원 목돈 지원\"… 처우 개선 박차",
+        a4: "직업군인 꿈꾸는 청년 주목!… '장기간부도약적금' 시행"
+      },
+
+      "64-2": {
+        main: "2026년 병장 월급 150만원 동결… \"적금 더하면 월 205만원 유지\"",
+        a1: "소위 월급 213만원… 2026년 초급간부 보수 최대 6.6% 인상",
+        a2: "\"군대가 최고의 재테크\"…  '혜택 끝판왕' 장병내일준비적금",
+        a3: "간부들도 목돈 만든다… 올해 '장기간부도약적금' 전격 출시",
+        a4: "휴일 당직비 10만원으로 '점프'… 예비군 훈련비도 올랐다"
+      },
+
+      "65-1": {
+        main: "국방부 \"2026년까지 간부 숙소 '1인 1실' 100% 확보한다\"",
+        a1: "국방부 2조원 들여 독신 숙소·관사 전면 뜯어고친다",
+        a2: "곰팡이 핀 관사는 옛말… \"이제 '국평' 아파트에 삽니다\"",
+        a3: "국방부,  연말까지 노후 관사 개선 및 국민평형 공급 확대 추진",
+        a4: "직업군인 숙소, 오피스텔 안 부럽다… '1인 1실' 전면화"
+      },
+
+      "65-2": {
+        main: " \"녹물 나오는 관사는 옛말\"… 군 가족 보금자리 '32평형'으로 확대",
+        a1: "군대에서 내 집 마련 꿈꾼다\"… 주택수당·전세지원 '쌍끌이'",
+        a2: "초급간부 숙소 '1인 1실' 시대 개막… 좁고 낡은 방은 안녕",
+        a3: "군인 다자녀 가족은 '집 걱정' 끝… 2자녀부터 혜택 쏟아진다",
+        a4: "군대 내무반 맞아?… 침대마다 콘센트, 방마다 화장실 '호텔급 변신'"
+      }
     };
 
     const TOPIC_ROUTE_MAP = {
@@ -521,7 +542,7 @@
       "5": { locked: "65-1", free: "65-2" }
     };
 
-    function buildArticleMap(prefix) {
+    function buildArticleMap(prefix, titles) {
       const root = `#/${prefix}`;
       const p1 = `#/${prefix}-1`;
       const p2 = `#/${prefix}-2`;
@@ -530,69 +551,69 @@
 
       return {
         [root]: {
-          title: ARTICLE_TITLES.main,
+          title: titles.main,
           selectedNews: 0,
           links: [
-            { text: ARTICLE_TITLES.a1, target: p1, code: 1 },
-            { text: ARTICLE_TITLES.a2, target: p2, code: 2 },
-            { text: ARTICLE_TITLES.a3, target: p3, code: 3 },
-            { text: ARTICLE_TITLES.a4, target: p4, code: 4 }
+            { text: titles.a1, target: p1, code: 1 },
+            { text: titles.a2, target: p2, code: 2 },
+            { text: titles.a3, target: p3, code: 3 },
+            { text: titles.a4, target: p4, code: 4 }
           ]
         },
         [p1]: {
-          title: ARTICLE_TITLES.a1,
+          title: titles.a1,
           selectedNews: 1,
           links: [
-            { text: ARTICLE_TITLES.a2, target: p2, code: 2 },
-            { text: ARTICLE_TITLES.a3, target: p3, code: 3 },
-            { text: ARTICLE_TITLES.a4, target: p4, code: 4 },
-            { text: ARTICLE_TITLES.main, target: root, code: 0 }
+            { text: titles.main, target: root, code: 0 },
+            { text: titles.a2, target: p2, code: 2 },
+            { text: titles.a3, target: p3, code: 3 },
+            { text: titles.a4, target: p4, code: 4 }
           ]
         },
         [p2]: {
-          title: ARTICLE_TITLES.a2,
+          title: titles.a2,
           selectedNews: 2,
           links: [
-            { text: ARTICLE_TITLES.a3, target: p3, code: 3 },
-            { text: ARTICLE_TITLES.a4, target: p4, code: 4 },
-            { text: ARTICLE_TITLES.main, target: root, code: 0 },
-            { text: ARTICLE_TITLES.a1, target: p1, code: 1 }
+            { text: titles.main, target: root, code: 0 },
+            { text: titles.a1, target: p1, code: 1 },
+            { text: titles.a3, target: p3, code: 3 },
+            { text: titles.a4, target: p4, code: 4 }
           ]
         },
         [p3]: {
-          title: ARTICLE_TITLES.a3,
+          title: titles.a3,
           selectedNews: 3,
           links: [
-            { text: ARTICLE_TITLES.a4, target: p4, code: 4 },
-            { text: ARTICLE_TITLES.main, target: root, code: 0 },
-            { text: ARTICLE_TITLES.a1, target: p1, code: 1 },
-            { text: ARTICLE_TITLES.a2, target: p2, code: 2 }
+            { text: titles.main, target: root, code: 0 },
+            { text: titles.a1, target: p1, code: 1 },
+            { text: titles.a2, target: p2, code: 2 },
+            { text: titles.a4, target: p4, code: 4 }
           ]
         },
         [p4]: {
-          title: ARTICLE_TITLES.a4,
+          title: titles.a4,
           selectedNews: 4,
           links: [
-            { text: ARTICLE_TITLES.main, target: root, code: 0 },
-            { text: ARTICLE_TITLES.a1, target: p1, code: 1 },
-            { text: ARTICLE_TITLES.a2, target: p2, code: 2 },
-            { text: ARTICLE_TITLES.a3, target: p3, code: 3 }
+            { text: titles.main, target: root, code: 0 },
+            { text: titles.a1, target: p1, code: 1 },
+            { text: titles.a2, target: p2, code: 2 },
+            { text: titles.a3, target: p3, code: 3 }
           ]
         }
       };
     }
 
     const ARTICLE_LINK_MAP = {
-      ...buildArticleMap("6-1"),
-      ...buildArticleMap("6-2"),
-      ...buildArticleMap("62-1"),
-      ...buildArticleMap("62-2"),
-      ...buildArticleMap("63-1"),
-      ...buildArticleMap("63-2"),
-      ...buildArticleMap("64-1"),
-      ...buildArticleMap("64-2"),
-      ...buildArticleMap("65-1"),
-      ...buildArticleMap("65-2")
+      ...buildArticleMap("6-1", ARTICLE_TITLE_SETS["6-1"]),
+      ...buildArticleMap("6-2", ARTICLE_TITLE_SETS["6-2"]),
+      ...buildArticleMap("62-1", ARTICLE_TITLE_SETS["62-1"]),
+      ...buildArticleMap("62-2", ARTICLE_TITLE_SETS["62-2"]),
+      ...buildArticleMap("63-1", ARTICLE_TITLE_SETS["63-1"]),
+      ...buildArticleMap("63-2", ARTICLE_TITLE_SETS["63-2"]),
+      ...buildArticleMap("64-1", ARTICLE_TITLE_SETS["64-1"]),
+      ...buildArticleMap("64-2", ARTICLE_TITLE_SETS["64-2"]),
+      ...buildArticleMap("65-1", ARTICLE_TITLE_SETS["65-1"]),
+      ...buildArticleMap("65-2", ARTICLE_TITLE_SETS["65-2"])
     };
 
     const TOPIC_QUESTIONS = {
@@ -665,12 +686,39 @@
         "5": [null, null, null, null, null]
       },
       algoAnswers: [null, null, null, null, null, null],
+      page7Answers: {
+        iup: Array(15).fill(null),
+        add1: null,
+        add2: null
+      },
+      page8Answers: {
+        tr: Array(7).fill(null)
+      },
+      page9Answers: {
+        use: Array(4).fill(null)
+      },
+      page10Answers: {
+        dq1: null,
+        dq2: null,
+        dq3: null,
+        dq4: null,
+        dq4Count: "",
+        dq5: null
+      },
+      page11Answers: {
+        lsq1: null,
+        lsq2: null
+      },
       selectedNews: null,
       selectedNewsTitle: null,
       selectedNewsPage: null,
       routeChoice: null,
       route: null,
       answers: { q2: null, q3: null },
+      isFinalSaved: false,
+      articleVisited: {},
+      lockedVisitCount: 0,
+      freeRouteStartedAt: null,
       adminRows: []
     };
 
@@ -945,6 +993,42 @@
             algoQ10: "",
             algoQ11: "",
             algoQ12: "",
+            iup1: "",
+            iup2: "",
+            iup3: "",
+            iup4: "",
+            iup5: "",
+            iup6: "",
+            iup7: "",
+            iup8: "",
+            iup9: "",
+            iup10: "",
+            iup11: "",
+            iup12: "",
+            iup13: "",
+            iup14: "",
+            iup15: "",
+            add1: "",
+            add2: "",
+            tr1: "",
+            tr2: "",
+            tr3: "",
+            tr4: "",
+            tr5: "",
+            tr6: "",
+            tr7: "",
+            use1: "",
+            use2: "",
+            use3: "",
+            use4: "",
+            dq1: "",
+            dq2: "",
+            dq3: "",
+            dq4: "",
+            dq4Count: "",
+            dq5: "",
+            lsq1: "",
+            lsq2: "",
             selectedNews: "",
             selectedNewsTitle: "",
             selectedNewsPage: "",
@@ -971,6 +1055,33 @@
         state.selectedNewsTitle = null;
         state.selectedNewsPage = null;
         state.answers = { q2: null, q3: null };
+        state.page7Answers = {
+          iup: Array(15).fill(null),
+          add1: null,
+          add2: null
+        };
+        state.page8Answers = {
+          tr: Array(7).fill(null)
+        };
+        state.page9Answers = {
+          use: Array(4).fill(null)
+        };
+        state.page10Answers = {
+          dq1: null,
+          dq2: null,
+          dq3: null,
+          dq4: null,
+          dq4Count: "",
+          dq5: null
+        };
+        state.page11Answers = {
+          lsq1: null,
+          lsq2: null
+        };
+        state.isFinalSaved = false;
+        state.articleVisited = {};
+        state.lockedVisitCount = 0;
+        state.freeRouteStartedAt = null;
         setHash("#/q1");
       });
     }
@@ -1155,50 +1266,34 @@
         state.routeChoice = null;
         state.route = null;
         state.answers = { q2: null, q3: null };
+        state.page7Answers = {
+          iup: Array(15).fill(null),
+          add1: null,
+          add2: null
+        };
+        state.page8Answers = {
+          tr: Array(7).fill(null)
+        };
+        state.page9Answers = {
+          use: Array(4).fill(null)
+        };
+        state.page10Answers = {
+          dq1: null,
+          dq2: null,
+          dq3: null,
+          dq4: null,
+          dq4Count: "",
+          dq5: null
+        };
+        state.page11Answers = {
+          lsq1: null,
+          lsq2: null
+        };
+        state.isFinalSaved = false;
+        state.articleVisited = {};
+        state.lockedVisitCount = 0;
+        state.freeRouteStartedAt = null;
         setHash("#/rand");
-      });
-    }
-
-    function radioQuestion({ title, qKey, nextHash }) {
-      const current = state.answers[qKey];
-
-      renderShell(`
-        <div>
-          <div class="tag">${getVariantTitle(state.routeChoice)}</div>
-          <h1 style="margin-top:10px;">${title}</h1>
-          <p>항목 5개 중 하나만 선택 가능합니다.</p>
-
-          <div class="question">잘하고 있습니까?</div>
-          <div class="options" role="radiogroup" aria-label="score">
-            ${[1, 2, 3, 4, 5].map(v => `
-              <label class="opt">
-                <input type="radio" name="${qKey}" value="${v}" ${String(current) === String(v) ? "checked" : ""}/>
-                <span>${v}점</span>
-              </label>
-            `).join("")}
-          </div>
-
-          <div class="row">
-            <button id="next" class="btn btn-primary" disabled>다음</button>
-          </div>
-        </div>
-      `);
-
-      const radios = [...document.querySelectorAll(`input[name="${qKey}"]`)];
-      const nextBtn = document.getElementById("next");
-
-      function sync() {
-        const picked = radios.find(r => r.checked)?.value ?? null;
-        state.answers[qKey] = picked ? Number(picked) : null;
-        nextBtn.disabled = !state.answers[qKey];
-      }
-
-      radios.forEach(r => r.addEventListener("change", sync));
-      sync();
-
-      nextBtn.addEventListener("click", () => {
-        if (!state.answers[qKey]) return;
-        setHash(nextHash);
       });
     }
 
@@ -1224,14 +1319,31 @@
     function renderArticleButtonsPage({ pageKey, cfg, locked }) {
       const imgUrl = PAGE_IMAGES[pageKey] || "";
 
+      state.articleVisited[pageKey] = true;
+
+      if (locked) {
+        state.lockedVisitCount += 1;
+      }
+
+      if (!locked && !state.freeRouteStartedAt) {
+        state.freeRouteStartedAt = Date.now();
+      }
+
+      const lockedEnoughVisited = state.lockedVisitCount >= 5;
+
+      let freeNextVisible = false;
+      if (!locked && state.freeRouteStartedAt) {
+        freeNextVisible = (Date.now() - state.freeRouteStartedAt) >= 10000;
+      }
+
       renderShell(`
         <div>
           <div class="tag">${getVariantTitle(state.routeChoice)}</div>
           <h1 style="margin-top:10px;">${cfg.title}</h1>
-          <p>${locked ? "페이지 접속 후 10초 뒤 버튼이 활성화됩니다." : "원하는 기사를 선택해 주세요."}</p>
+          <p>${locked ? "페이지 접속 후 10초 뒤 메뉴 버튼이 활성화됩니다." : "원하는 기사를 선택해 주세요."}</p>
 
           <div class="imgbox">
-            <img src="${imgUrl}" alt="기사 이미지" />
+            ${imgUrl ? `<img src="${imgUrl}" alt="기사 이미지" />` : `<div style="padding:60px 20px; text-align:center; color:#9ca3af;">이미지 영역</div>`}
           </div>
 
           <div class="news-title"><strong>함께 볼만한 뉴스</strong></div>
@@ -1250,13 +1362,17 @@
             `).join("")}
           </div>
 
-          ${cfg.selectedNews !== 0 ? `
-            <div class="row">
-              <button id="next" class="btn btn-primary" ${locked ? "disabled" : ""}>다음</button>
-            </div>
-          ` : ""}
+          <div class="row" id="nextWrap" style="justify-content:center;">
+            ${
+              locked && lockedEnoughVisited
+                ? `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`
+                : (!locked && freeNextVisible
+                    ? `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`
+                    : ``)
+            }
+          </div>
 
-          ${locked ? `<div class="small" id="countdown"></div>` : ""}
+          <div class="small" id="countdown"></div>
         </div>
       `);
 
@@ -1265,24 +1381,27 @@
       state.selectedNewsPage = pageKey;
 
       const buttons = [...document.querySelectorAll('[data-news-btn="1"]')];
-      const nextBtn = document.getElementById("next");
+      const cd = document.getElementById("countdown");
+      const nextStageBtn = document.getElementById("nextStage");
+      const nextWrap = document.getElementById("nextWrap");
 
-      function bindButtons() {
-        buttons.forEach(btn => {
-          btn.addEventListener("click", () => {
-            if (btn.classList.contains("disabled")) return;
-            state.selectedNews = Number(btn.dataset.code);
-            state.selectedNewsTitle = btn.dataset.title;
-            state.selectedNewsPage = btn.dataset.target.replace(/^#\//, "");
-            setHash(btn.dataset.target);
-          });
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (btn.classList.contains("disabled")) return;
+          state.selectedNews = Number(btn.dataset.code);
+          state.selectedNewsTitle = btn.dataset.title;
+          state.selectedNewsPage = btn.dataset.target.replace(/^#\//, "");
+          setHash(btn.dataset.target);
+        });
+      });
+
+      if (nextStageBtn) {
+        nextStageBtn.addEventListener("click", () => {
+          setHash("#/7");
         });
       }
 
-      bindButtons();
-
       if (locked) {
-        const cd = document.getElementById("countdown");
         let remain = 10;
         cd.textContent = `활성화까지 ${remain}초`;
 
@@ -1290,20 +1409,46 @@
           remain -= 1;
           if (remain <= 0) {
             clearInterval(timer);
-            cd.textContent = "버튼이 활성화되었습니다.";
+            cd.textContent = "메뉴가 활성화되었습니다.";
             buttons.forEach(btn => btn.classList.remove("disabled"));
-            if (nextBtn) nextBtn.disabled = false;
+
+            if (state.lockedVisitCount >= 5) {
+              nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
+              document.getElementById("nextStage").addEventListener("click", () => {
+                setHash("#/7");
+              });
+            }
             return;
           }
           cd.textContent = `활성화까지 ${remain}초`;
         }, 1000);
-      }
+      } else {
+        if (!freeNextVisible && state.freeRouteStartedAt) {
+          const remainMs = 10000 - (Date.now() - state.freeRouteStartedAt);
+          let remain = Math.max(0, Math.ceil(remainMs / 1000));
 
-      if (nextBtn) {
-        nextBtn.addEventListener("click", () => {
-          if (nextBtn.disabled) return;
-          setHash("#/q2");
-        });
+          if (remain > 0) {
+            cd.textContent = `다음 단계 버튼 노출까지 ${remain}초`;
+
+            const timer = setInterval(() => {
+              remain -= 1;
+              if (remain <= 0) {
+                clearInterval(timer);
+                cd.textContent = "";
+                nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
+                document.getElementById("nextStage").addEventListener("click", () => {
+                  setHash("#/7");
+                });
+                return;
+              }
+              cd.textContent = `다음 단계 버튼 노출까지 ${remain}초`;
+            }, 1000);
+          } else {
+            cd.textContent = "";
+          }
+        } else {
+          cd.textContent = "";
+        }
       }
     }
 
@@ -1318,111 +1463,618 @@
       });
     }
 
-    function pageQ2() {
-      if (!state.route) return setHash("#/intro");
-      radioQuestion({ title: "공통 질문 페이지", qKey: "q2", nextHash: "#/q3" });
-    }
-
-    function pageQ3() {
-      if (!state.route || !state.answers.q2) return setHash("#/intro");
-      const current = state.answers.q3;
+    function page7() {
+      const IUP_QUESTIONS = [
+        "IUP1. 현재의 기사들만으로 이 문제에 대해 충분히 이해했다고 느껴진다",
+        "IUP2. 제시된 정보의 양이 의사결정을 위해 충분하다고 생각한다",
+        "IUP3. 이 주제에 대해 더 많은 정보가 필요하다고 느껴진다.",
+        "IUP4. 기사에서 중요한 배경정보나 맥락설명이 빠져있다고 느껴진다.",
+        "IUP5. 문제의 원인이나 이유가 충분히 설명되지 않았다고 느껴진다.",
+        "IUP6. 정책이나 결정의 배경을 제대로 알기 위해 더 많은 정보가 필요하다.",
+        "IUP7. 더 다양한 관점이나 의견이 필요하다고 느껴진다.",
+        "IUP8. 여러 입장을 모두 이해하기 위해 추가 정보가 필요하다.",
+        "IUP9. 제시한 이슈에 대해 서로 다른 시각들이 제시되지 않았다고 느껴진다.",
+        "IUP10. 현재의 정보로는 이 문제에 대해 확실한 판단을 내릴 수 없다.",
+        "IUP11. 더 많은 정보가 없으면 정확한 결론을 내리기 어렵다고 느껴진다.",
+        "IUP12. 이 정도 정보로는 업무를 수행하기 어렵다고 느껴진다.",
+        "IUP13. 제시된 기사의 정보가 충분히 정확하고 신뢰할 만한지 의심스럽다.",
+        "IUP14. 이 정보의 참/거짓을 판단할 수 있는 근거자료가 필요하다.",
+        "IUP15. 제공된 정보가 편향되었을 가능성이 있다고 생각한다."
+      ];
 
       renderShell(`
         <div>
-          <div class="tag">${getVariantTitle(state.routeChoice)}</div>
-          <h1 style="margin-top:10px;">마지막 페이지</h1>
-          <p>항목 5개 중 하나만 선택 가능합니다. ‘전송하기’를 누르면 결과가 Google Sheets로 저장됩니다.</p>
+          <div class="sq-title-box">7페이지</div>
+          <p style="white-space: pre-line; line-height:1.7;">
+※ 다음은 귀하께서 평소 포탈이나 SNS를 통해 비슷한 뉴스를 접하는 경우와 관련한 경험을 묻고자 합니다. 귀하의 평소 생각을 답해주십시오
+          </p>
 
-          <div class="question">잘하고 있습니까?</div>
-          <div class="options" role="radiogroup" aria-label="score">
-            ${[1, 2, 3, 4, 5].map(v => `
-              <label class="opt">
-                <input type="radio" name="q3" value="${v}" ${String(current) === String(v) ? "checked" : ""}/>
-                <span>${v}점</span>
+          <div class="fact-table-wrap">
+            <table class="fact-table" style="min-width: 1400px;">
+              <thead>
+                <tr>
+                  <th>문항 내용</th>
+                  <th class="fact-col">전혀 그렇지 않다</th>
+                  <th class="fact-col">그렇지 않다</th>
+                  <th class="fact-col">약간 그렇지 않다</th>
+                  <th class="fact-col">그저 그렇다</th>
+                  <th class="fact-col">약간 그렇다</th>
+                  <th class="fact-col">그렇다</th>
+                  <th class="fact-col">매우 그렇다</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${IUP_QUESTIONS.map((q, idx) => `
+                  <tr>
+                    <td class="fact-text">${q}</td>
+                    ${[1,2,3,4,5,6,7].map(v => `
+                      <td>
+                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                          <input class="fact-radio" type="radio" name="iup_${idx}" value="${v}" ${String(state.page7Answers.iup[idx]) === String(v) ? "checked" : ""}>
+                          <span>${["①","②","③","④","⑤","⑥","⑦"][v-1]}</span>
+                        </label>
+                      </td>
+                    `).join("")}
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sq-block" style="margin-top:18px;">
+            <div class="sq-q">ADD1. 추가적인 정보를 탐색하기 위해 다른 매체에서 기사(정보)를 확인할 의향이 있으십니까?</div>
+            <div class="sq-inline">
+              <label class="sq-opt">
+                <input type="radio" name="add1" value="1" ${state.page7Answers.add1 === "1" ? "checked" : ""}>
+                <span>① 이용할 의향이 있다.</span>
               </label>
-            `).join("")}
+              <label class="sq-opt">
+                <input type="radio" name="add1" value="2" ${state.page7Answers.add1 === "2" ? "checked" : ""}>
+                <span>② 이용할 의향이 없다</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="sq-block" id="add2Wrap" style="margin-top:18px; ${state.page7Answers.add1 === "1" ? "" : "display:none;"}">
+            <div class="sq-q">ADD2. 추가적인 정보를 탐색하기 위해 다음 중 어느 매체를 선택하시겠습니까?</div>
+            <div class="sq-options">
+              <label class="sq-opt"><input type="radio" name="add2" value="1" ${state.page7Answers.add2 === "1" ? "checked" : ""}><span>① 국방일보</span></label>
+              <label class="sq-opt"><input type="radio" name="add2" value="2" ${state.page7Answers.add2 === "2" ? "checked" : ""}><span>② 전국 종합일간지</span></label>
+              <label class="sq-opt"><input type="radio" name="add2" value="3" ${state.page7Answers.add2 === "3" ? "checked" : ""}><span>③ 국방 전문 유튜브 채널</span></label>
+              <label class="sq-opt"><input type="radio" name="add2" value="4" ${state.page7Answers.add2 === "4" ? "checked" : ""}><span>④ 국방 전문 블로그</span></label>
+              <label class="sq-opt"><input type="radio" name="add2" value="5" ${state.page7Answers.add2 === "5" ? "checked" : ""}><span>⑤ 지상파 / 종합편성채널방송</span></label>
+            </div>
           </div>
 
           <div class="row">
-            <button id="send" class="btn btn-primary" disabled>전송하기</button>
+            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
           </div>
-          <div class="small" id="status"></div>
         </div>
       `);
 
-      const radios = [...document.querySelectorAll(`input[name="q3"]`)];
-      const sendBtn = document.getElementById("send");
-      const status = document.getElementById("status");
+      const nextBtn = document.getElementById("next");
+      const add2Wrap = document.getElementById("add2Wrap");
 
       function sync() {
-        const picked = radios.find(r => r.checked)?.value ?? null;
-        state.answers.q3 = picked ? Number(picked) : null;
-        sendBtn.disabled = !state.answers.q3;
+        for (let i = 0; i < 15; i++) {
+          const picked = document.querySelector(`input[name="iup_${i}"]:checked`);
+          state.page7Answers.iup[i] = picked ? picked.value : null;
+        }
+
+        const add1Picked = document.querySelector('input[name="add1"]:checked');
+        state.page7Answers.add1 = add1Picked ? add1Picked.value : null;
+
+        const add2Picked = document.querySelector('input[name="add2"]:checked');
+        state.page7Answers.add2 = add2Picked ? add2Picked.value : null;
+
+        if (state.page7Answers.add1 === "1") {
+          add2Wrap.style.display = "";
+        } else {
+          add2Wrap.style.display = "none";
+          state.page7Answers.add2 = null;
+          document.querySelectorAll('input[name="add2"]').forEach(el => {
+            el.checked = false;
+          });
+        }
+
+        const iupDone = state.page7Answers.iup.every(v => !!v);
+        const add1Done = !!state.page7Answers.add1;
+        const add2Done = state.page7Answers.add1 === "1" ? !!state.page7Answers.add2 : true;
+
+        nextBtn.disabled = !(iupDone && add1Done && add2Done);
       }
 
-      radios.forEach(r => r.addEventListener("change", sync));
+      for (let i = 0; i < 15; i++) {
+        document.querySelectorAll(`input[name="iup_${i}"]`).forEach(el => {
+          el.addEventListener("change", sync);
+        });
+      }
+
+      document.querySelectorAll('input[name="add1"]').forEach(el => {
+        el.addEventListener("change", sync);
+      });
+
+      document.querySelectorAll('input[name="add2"]').forEach(el => {
+        el.addEventListener("change", sync);
+      });
+
       sync();
 
-      sendBtn.addEventListener("click", async () => {
-        if (!state.answers.q3) return;
-
-        const facts = state.topicChoice ? state.topicFacts[state.topicChoice] : [null, null, null, null, null];
-
-        const payload = {
-          id: (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2)),
-          firstChoice: state.routeChoice,
-          topicChoice: state.topicChoice || "",
-          route: state.route,
-          screenout: "N",
-          screenoutReason: "",
-          sqGender: state.sq.gender,
-          sqBranch: state.sq.branch,
-          sqRank: state.sq.rank,
-          sqPortalNews: state.sq.portalNews,
-          sqMobilePhone: state.sq.mobilePhone,
-          sqInternetTime: state.sq.internetTime,
-          sqPolitical: state.sq.political,
-          sqDevice: state.sq.device,
-          fact1: facts[0] || "",
-          fact2: facts[1] || "",
-          fact3: facts[2] || "",
-          fact4: facts[3] || "",
-          fact5: facts[4] || "",
-          algoQ7: state.algoAnswers[0] || "",
-          algoQ8: state.algoAnswers[1] || "",
-          algoQ9: state.algoAnswers[2] || "",
-          algoQ10: state.algoAnswers[3] || "",
-          algoQ11: state.algoAnswers[4] || "",
-          algoQ12: state.algoAnswers[5] || "",
-          selectedNews: state.selectedNews ?? "",
-          selectedNewsTitle: state.selectedNewsTitle || "",
-          selectedNewsPage: state.selectedNewsPage || "",
-          q2: state.answers.q2,
-          q3: state.answers.q3,
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent
-        };
-
-        sendBtn.disabled = true;
-        status.textContent = "저장 중...";
-
-        try {
-          await saveToGoogleSheets(payload);
-          setHash("#/done");
-        } catch (e) {
-          console.error(e);
-          status.textContent = "저장 실패: Apps Script 배포/권한/URL 확인";
-          sendBtn.disabled = false;
+      nextBtn.addEventListener("click", () => {
+        if (state.page7Answers.add1 === "2") {
+          setHash("#/12");
+        } else {
+          setHash("#/8");
         }
       });
     }
 
-    function pageScreenout() {
-      renderShell(`<div class="done">설문이 종료되었습니다</div>`);
+    function page8() {
+      const TR_QUESTIONS = [
+        "TR1. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 믿을만하다.",
+        "TR2. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 공정하다.",
+        "TR3. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 설득력이 있다.",
+        "TR4. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 가치가 있다.",
+        "TR5. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 자세하고 깊이가 있다.",
+        "TR6. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 많은 정보를 제공한다.",
+        "TR7. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 공공과 독자의 이익을 잘 대변한다."
+      ];
+
+      renderShell(`
+        <div>
+          <div class="sq-title-box">8페이지</div>
+          <p style="white-space: pre-line; line-height:1.7;">
+※ 다음 질문은 귀하께서 추가 정보를 확인하려고 매체를 선택하신 이유에 대한 질문입니다. 귀하의 생각을 응답해주십시오.
+          </p>
+
+          <div class="fact-table-wrap">
+            <table class="fact-table" style="min-width: 1400px;">
+              <thead>
+                <tr>
+                  <th>문항 내용</th>
+                  <th class="fact-col">전혀 그렇지 않다</th>
+                  <th class="fact-col">그렇지 않다</th>
+                  <th class="fact-col">약간 그렇지 않다</th>
+                  <th class="fact-col">그저 그렇다</th>
+                  <th class="fact-col">약간 그렇다</th>
+                  <th class="fact-col">그렇다</th>
+                  <th class="fact-col">매우 그렇다</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${TR_QUESTIONS.map((q, idx) => `
+                  <tr>
+                    <td class="fact-text">${q}</td>
+                    ${[1,2,3,4,5,6,7].map(v => `
+                      <td>
+                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                          <input class="fact-radio" type="radio" name="tr_${idx}" value="${v}" ${String(state.page8Answers.tr[idx]) === String(v) ? "checked" : ""}>
+                          <span>${["①","②","③","④","⑤","⑥","⑦"][v-1]}</span>
+                        </label>
+                      </td>
+                    `).join("")}
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
+          </div>
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        for (let i = 0; i < 7; i++) {
+          const picked = document.querySelector(`input[name="tr_${i}"]:checked`);
+          state.page8Answers.tr[i] = picked ? picked.value : null;
+        }
+
+        nextBtn.disabled = state.page8Answers.tr.some(v => !v);
+      }
+
+      for (let i = 0; i < 7; i++) {
+        document.querySelectorAll(`input[name="tr_${i}"]`).forEach(el => {
+          el.addEventListener("change", sync);
+        });
+      }
+
+      sync();
+
+      document.getElementById("next").addEventListener("click", () => {
+        setHash("#/9");
+      });
     }
 
-    function pageDone() {
-      renderShell(`<div class="done">전송이 완료되었습니다</div>`);
+    function page9() {
+      const USE_QUESTIONS = [
+        "USE1. 내가 추가로 이용하려는 매체는 내가 원하는 정보를 얻을 수 있다.",
+        "USE2. 내가 추가로 이용하려는 매체는 나에게 유용한 정보를 제공한다.",
+        "USE3. 내가 추가로 이용하려는 매체는 원하는 정보를 쉽게 찾을 수 있다.",
+        "USE4. 내가 추가로 이용하려는 매체는 전반적으로 나에게 유용하다고 생각한다."
+      ];
+
+      renderShell(`
+        <div>
+          <div class="sq-title-box">9페이지</div>
+          <p style="white-space: pre-line; line-height:1.7;">
+※ 다음 질문은 귀하께서 추가 정보를 확인하려고 매체를 선택하신 이유에 대한 질문입니다. 귀하의 생각을 응답해주십시오.
+          </p>
+
+          <div class="fact-table-wrap">
+            <table class="fact-table" style="min-width: 1400px;">
+              <thead>
+                <tr>
+                  <th>문항 내용</th>
+                  <th class="fact-col">전혀 그렇지 않다</th>
+                  <th class="fact-col">그렇지 않다</th>
+                  <th class="fact-col">약간 그렇지 않다</th>
+                  <th class="fact-col">그저 그렇다</th>
+                  <th class="fact-col">약간 그렇다</th>
+                  <th class="fact-col">그렇다</th>
+                  <th class="fact-col">매우 그렇다</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${USE_QUESTIONS.map((q, idx) => `
+                  <tr>
+                    <td class="fact-text">${q}</td>
+                    ${[1,2,3,4,5,6,7].map(v => `
+                      <td>
+                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                          <input class="fact-radio" type="radio" name="use_${idx}" value="${v}" ${String(state.page9Answers.use[idx]) === String(v) ? "checked" : ""}>
+                          <span>${["①","②","③","④","⑤","⑥","⑦"][v-1]}</span>
+                        </label>
+                      </td>
+                    `).join("")}
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
+          </div>
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        for (let i = 0; i < 4; i++) {
+          const picked = document.querySelector(`input[name="use_${i}"]:checked`);
+          state.page9Answers.use[i] = picked ? picked.value : null;
+        }
+
+        nextBtn.disabled = state.page9Answers.use.some(v => !v);
+      }
+
+      for (let i = 0; i < 4; i++) {
+        document.querySelectorAll(`input[name="use_${i}"]`).forEach(el => {
+          el.addEventListener("change", sync);
+        });
+      }
+
+      sync();
+
+      document.getElementById("next").addEventListener("click", () => {
+        setHash("#/10");
+      });
+    }
+
+    function page10() {
+      renderShell(`
+        <div class="sq-page">
+          <div class="sq-title-box">10페이지</div>
+
+          <p style="white-space: pre-line; line-height:1.7;">
+※ 끝으로 귀하의 인적사항에 대한 질문입니다. 
+통계적인 목적 이외의 다른 용도로는 절대 사용되지 않으니, 안심하시고 답변해주시면 감사하겠습니다.
+          </p>
+
+          <div class="sq-block">
+            <div class="sq-q">DQ1. 귀하의 학력은 어떻게 되십니까?</div>
+            <div class="sq-options">
+              <label class="sq-opt"><input type="radio" name="dq1" value="1" ${state.page10Answers.dq1 === "1" ? "checked" : ""}><span>① 초등학교 졸업 이하</span></label>
+              <label class="sq-opt"><input type="radio" name="dq1" value="2" ${state.page10Answers.dq1 === "2" ? "checked" : ""}><span>② 중학교 졸업</span></label>
+              <label class="sq-opt"><input type="radio" name="dq1" value="3" ${state.page10Answers.dq1 === "3" ? "checked" : ""}><span>③ 고등학교 졸업</span></label>
+              <label class="sq-opt"><input type="radio" name="dq1" value="4" ${state.page10Answers.dq1 === "4" ? "checked" : ""}><span>④ 대학 재학/대학 졸업</span></label>
+              <label class="sq-opt"><input type="radio" name="dq1" value="5" ${state.page10Answers.dq1 === "5" ? "checked" : ""}><span>⑤ 대학원 재학 이상</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">DQ2. 귀하의 만 나이는 어떻게 되십니까? 2026년 3월 1일, 주민등록상 생년월일 기준으로 말씀해 주십시오.</div>
+            <div class="sq-options">
+              <label class="sq-opt"><input type="radio" name="dq2" value="1" ${state.page10Answers.dq2 === "1" ? "checked" : ""}><span>① 20~24</span></label>
+              <label class="sq-opt"><input type="radio" name="dq2" value="2" ${state.page10Answers.dq2 === "2" ? "checked" : ""}><span>② 25~29</span></label>
+              <label class="sq-opt"><input type="radio" name="dq2" value="3" ${state.page10Answers.dq2 === "3" ? "checked" : ""}><span>③ 30~34</span></label>
+              <label class="sq-opt"><input type="radio" name="dq2" value="4" ${state.page10Answers.dq2 === "4" ? "checked" : ""}><span>④ 35~39</span></label>
+              <label class="sq-opt"><input type="radio" name="dq2" value="5" ${state.page10Answers.dq2 === "5" ? "checked" : ""}><span>⑤ 40~49</span></label>
+              <label class="sq-opt"><input type="radio" name="dq2" value="6" ${state.page10Answers.dq2 === "6" ? "checked" : ""}><span>⑥ 50~54</span></label>
+              <label class="sq-opt"><input type="radio" name="dq2" value="7" ${state.page10Answers.dq2 === "7" ? "checked" : ""}><span>⑦ 55세 이상</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">DQ3. 귀하의 주민등록지상의 거주 지역은 어디입니까?</div>
+            <div class="sq-options">
+              <div class="sq-inline-3">
+                <label class="sq-opt"><input type="radio" name="dq3" value="1" ${state.page10Answers.dq3 === "1" ? "checked" : ""}><span>① 서울</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="2" ${state.page10Answers.dq3 === "2" ? "checked" : ""}><span>② 부산</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="3" ${state.page10Answers.dq3 === "3" ? "checked" : ""}><span>③ 대구</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="4" ${state.page10Answers.dq3 === "4" ? "checked" : ""}><span>④ 인천</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="5" ${state.page10Answers.dq3 === "5" ? "checked" : ""}><span>⑤ 광주</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="6" ${state.page10Answers.dq3 === "6" ? "checked" : ""}><span>⑥ 대전</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="7" ${state.page10Answers.dq3 === "7" ? "checked" : ""}><span>⑦ 울산</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="8" ${state.page10Answers.dq3 === "8" ? "checked" : ""}><span>⑧ 세종</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="9" ${state.page10Answers.dq3 === "9" ? "checked" : ""}><span>⑨ 경기</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="10" ${state.page10Answers.dq3 === "10" ? "checked" : ""}><span>⑩ 강원</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="11" ${state.page10Answers.dq3 === "11" ? "checked" : ""}><span>⑪ 충북</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="12" ${state.page10Answers.dq3 === "12" ? "checked" : ""}><span>⑫ 충남</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="13" ${state.page10Answers.dq3 === "13" ? "checked" : ""}><span>⑬ 전북</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="14" ${state.page10Answers.dq3 === "14" ? "checked" : ""}><span>⑭ 전남</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="15" ${state.page10Answers.dq3 === "15" ? "checked" : ""}><span>⑮ 경북</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="16" ${state.page10Answers.dq3 === "16" ? "checked" : ""}><span>⑯ 경남</span></label>
+                <label class="sq-opt"><input type="radio" name="dq3" value="17" ${state.page10Answers.dq3 === "17" ? "checked" : ""}><span>⑰ 제주</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">DQ4. 현재 귀하의 가구에 함께 거주하고 계신 가구원은 귀하 포함 총 몇 명입니까?<br><span class="small">(주민등록은 함께 되어 있지 않더라도 같이 살고 있으면 가구원에 포함)</span></div>
+            <div class="sq-options">
+              <div class="sq-inline">
+                <label class="sq-opt"><input type="radio" name="dq4" value="1" ${state.page10Answers.dq4 === "1" ? "checked" : ""}><span>① 1명(1인가구)</span></label>
+                <label class="sq-opt"><input type="radio" name="dq4" value="2" ${state.page10Answers.dq4 === "2" ? "checked" : ""}><span>② 2명</span></label>
+                <label class="sq-opt"><input type="radio" name="dq4" value="3" ${state.page10Answers.dq4 === "3" ? "checked" : ""}><span>③ 3명</span></label>
+                <label class="sq-opt"><input type="radio" name="dq4" value="4" ${state.page10Answers.dq4 === "4" ? "checked" : ""}><span>④ 4명</span></label>
+                <label class="sq-opt"><input type="radio" name="dq4" value="5" ${state.page10Answers.dq4 === "5" ? "checked" : ""}><span>⑤ 5명 이상</span></label>
+              </div>
+              <div id="dq4CountWrap" style="${state.page10Answers.dq4 === "5" ? "" : "display:none;"}; margin-top:10px;">
+                <input id="dq4Count" class="input" type="number" min="5" step="1" placeholder="상세 인원 수를 입력하세요" value="${escapeHtml(state.page10Answers.dq4Count || "")}" />
+              </div>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">DQ5. 귀 댁(가정)의 한 달 총수입(세전)은 얼마입니까? 보너스나 은행 이자 등을 모두 포함하여 선택해 주십시오.</div>
+            <div class="sq-options">
+              <label class="sq-opt"><input type="radio" name="dq5" value="1" ${state.page10Answers.dq5 === "1" ? "checked" : ""}><span>① 100만원 미만</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="2" ${state.page10Answers.dq5 === "2" ? "checked" : ""}><span>② 100만원~199만원</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="3" ${state.page10Answers.dq5 === "3" ? "checked" : ""}><span>③ 200만원~299만원</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="4" ${state.page10Answers.dq5 === "4" ? "checked" : ""}><span>④ 300만원~399만원</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="5" ${state.page10Answers.dq5 === "5" ? "checked" : ""}><span>⑤ 400만원~499만원</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="6" ${state.page10Answers.dq5 === "6" ? "checked" : ""}><span>⑥ 500만원~599만원</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="7" ${state.page10Answers.dq5 === "7" ? "checked" : ""}><span>⑦ 600만원~699만원</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="8" ${state.page10Answers.dq5 === "8" ? "checked" : ""}><span>⑧ 700만원~799만원</span></label>
+              <label class="sq-opt"><input type="radio" name="dq5" value="9" ${state.page10Answers.dq5 === "9" ? "checked" : ""}><span>⑨ 800만원 이상</span></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
+          </div>
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+      const dq4CountWrap = document.getElementById("dq4CountWrap");
+      const dq4CountInput = document.getElementById("dq4Count");
+
+      function sync() {
+        const dq1Picked = document.querySelector('input[name="dq1"]:checked');
+        const dq2Picked = document.querySelector('input[name="dq2"]:checked');
+        const dq3Picked = document.querySelector('input[name="dq3"]:checked');
+        const dq4Picked = document.querySelector('input[name="dq4"]:checked');
+        const dq5Picked = document.querySelector('input[name="dq5"]:checked');
+
+        state.page10Answers.dq1 = dq1Picked ? dq1Picked.value : null;
+        state.page10Answers.dq2 = dq2Picked ? dq2Picked.value : null;
+        state.page10Answers.dq3 = dq3Picked ? dq3Picked.value : null;
+        state.page10Answers.dq4 = dq4Picked ? dq4Picked.value : null;
+        state.page10Answers.dq5 = dq5Picked ? dq5Picked.value : null;
+        state.page10Answers.dq4Count = dq4CountInput ? dq4CountInput.value.trim() : "";
+
+        if (state.page10Answers.dq4 === "5") {
+          dq4CountWrap.style.display = "";
+        } else {
+          dq4CountWrap.style.display = "none";
+          state.page10Answers.dq4Count = "";
+          if (dq4CountInput) dq4CountInput.value = "";
+        }
+
+        const basicDone =
+          !!state.page10Answers.dq1 &&
+          !!state.page10Answers.dq2 &&
+          !!state.page10Answers.dq3 &&
+          !!state.page10Answers.dq4 &&
+          !!state.page10Answers.dq5;
+
+        const dq4ExtraDone =
+          state.page10Answers.dq4 === "5"
+            ? !!state.page10Answers.dq4Count
+            : true;
+
+        nextBtn.disabled = !(basicDone && dq4ExtraDone);
+      }
+
+      document.querySelectorAll('input[name="dq1"]').forEach(el => el.addEventListener("change", sync));
+      document.querySelectorAll('input[name="dq2"]').forEach(el => el.addEventListener("change", sync));
+      document.querySelectorAll('input[name="dq3"]').forEach(el => el.addEventListener("change", sync));
+      document.querySelectorAll('input[name="dq4"]').forEach(el => el.addEventListener("change", sync));
+      document.querySelectorAll('input[name="dq5"]').forEach(el => el.addEventListener("change", sync));
+
+      if (dq4CountInput) {
+        dq4CountInput.addEventListener("input", sync);
+      }
+
+      sync();
+
+      document.getElementById("next").addEventListener("click", () => {
+        setHash("#/11");
+      });
+    }
+
+    function page11() {
+      renderShell(`
+        <div class="sq-page">
+          <div class="sq-title-box">11페이지</div>
+
+          <div class="sq-block">
+            <div class="sq-note" style="margin:0; white-space:pre-line;">
+* 알려드립니다. 
+본 연구는 알고리즘 뉴스 반복 노출에 따라 수용자의 정보불충분성인식과 
+매체 선택에 차이가 있는지를 살펴보기 위한 것입니다. 
+본 연구에 활용된 기사는 이러한 연구 목적에 따라 연구자가 국방부 발표 내용과 관련 기사 내용들을 바탕으로 수정/편집한 것입니다. 
+따라서 본 연구에서 제공받으신 기사 내용은 실제와 다를 수 있습니다. 
+또한 기사에 언급된 언론사 기자의 이름, 이메일 주소 등의 정보 역시 오직 연구 목적을 위해 설정한 가상의 것으로 실제와 무관함을 알려드리오니, 이 점 오해 없기를 바랍니다.
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">LSQ1. 본 연구에서 제공된 기사가 연구 목적에 따라 수정/편집된 것임을 알게 되셨습니까?</div>
+            <div class="sq-inline">
+              <label class="sq-opt"><input type="radio" name="lsq1" value="1" ${state.page11Answers.lsq1 === "1" ? "checked" : ""}><span>① 네</span></label>
+              <label class="sq-opt"><input type="radio" name="lsq1" value="2" ${state.page11Answers.lsq1 === "2" ? "checked" : ""}><span>② 아니오</span></label>
+            </div>
+          </div>
+
+          <div class="sq-block">
+            <div class="sq-q">LSQ2. 본 연구에서 활용된 기사의 내용이 기관, 언론사 등과 무관함을 이해하셨습니까?</div>
+            <div class="sq-inline">
+              <label class="sq-opt"><input type="radio" name="lsq2" value="1" ${state.page11Answers.lsq2 === "1" ? "checked" : ""}><span>① 네</span></label>
+              <label class="sq-opt"><input type="radio" name="lsq2" value="2" ${state.page11Answers.lsq2 === "2" ? "checked" : ""}><span>② 아니오</span></label>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">설문 제출</button>
+          </div>
+        </div>
+      `);
+
+      const nextBtn = document.getElementById("next");
+
+      function sync() {
+        const lsq1Picked = document.querySelector('input[name="lsq1"]:checked');
+        const lsq2Picked = document.querySelector('input[name="lsq2"]:checked');
+
+        state.page11Answers.lsq1 = lsq1Picked ? lsq1Picked.value : null;
+        state.page11Answers.lsq2 = lsq2Picked ? lsq2Picked.value : null;
+
+        nextBtn.disabled = !(state.page11Answers.lsq1 && state.page11Answers.lsq2);
+      }
+
+      document.querySelectorAll('input[name="lsq1"]').forEach(el => el.addEventListener("change", sync));
+      document.querySelectorAll('input[name="lsq2"]').forEach(el => el.addEventListener("change", sync));
+
+      sync();
+
+      document.getElementById("next").addEventListener("click", () => {
+        setHash("#/12");
+      });
+    }
+
+    function buildFinalPayload() {
+      const facts = state.topicChoice ? state.topicFacts[state.topicChoice] : [null, null, null, null, null];
+
+      return {
+        id: (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2)),
+        firstChoice: state.routeChoice,
+        topicChoice: state.topicChoice || "",
+        route: state.route || "",
+        screenout: "N",
+        screenoutReason: "",
+        sqGender: state.sq.gender,
+        sqBranch: state.sq.branch,
+        sqRank: state.sq.rank,
+        sqPortalNews: state.sq.portalNews,
+        sqMobilePhone: state.sq.mobilePhone,
+        sqInternetTime: state.sq.internetTime,
+        sqPolitical: state.sq.political,
+        sqDevice: state.sq.device,
+        fact1: facts[0] || "",
+        fact2: facts[1] || "",
+        fact3: facts[2] || "",
+        fact4: facts[3] || "",
+        fact5: facts[4] || "",
+        algoQ7: state.algoAnswers[0] || "",
+        algoQ8: state.algoAnswers[1] || "",
+        algoQ9: state.algoAnswers[2] || "",
+        algoQ10: state.algoAnswers[3] || "",
+        algoQ11: state.algoAnswers[4] || "",
+        algoQ12: state.algoAnswers[5] || "",
+        iup1: state.page7Answers.iup[0] || "",
+        iup2: state.page7Answers.iup[1] || "",
+        iup3: state.page7Answers.iup[2] || "",
+        iup4: state.page7Answers.iup[3] || "",
+        iup5: state.page7Answers.iup[4] || "",
+        iup6: state.page7Answers.iup[5] || "",
+        iup7: state.page7Answers.iup[6] || "",
+        iup8: state.page7Answers.iup[7] || "",
+        iup9: state.page7Answers.iup[8] || "",
+        iup10: state.page7Answers.iup[9] || "",
+        iup11: state.page7Answers.iup[10] || "",
+        iup12: state.page7Answers.iup[11] || "",
+        iup13: state.page7Answers.iup[12] || "",
+        iup14: state.page7Answers.iup[13] || "",
+        iup15: state.page7Answers.iup[14] || "",
+        add1: state.page7Answers.add1 || "",
+        add2: state.page7Answers.add2 || "",
+        tr1: state.page8Answers.tr[0] || "",
+        tr2: state.page8Answers.tr[1] || "",
+        tr3: state.page8Answers.tr[2] || "",
+        tr4: state.page8Answers.tr[3] || "",
+        tr5: state.page8Answers.tr[4] || "",
+        tr6: state.page8Answers.tr[5] || "",
+        tr7: state.page8Answers.tr[6] || "",
+        use1: state.page9Answers.use[0] || "",
+        use2: state.page9Answers.use[1] || "",
+        use3: state.page9Answers.use[2] || "",
+        use4: state.page9Answers.use[3] || "",
+        dq1: state.page10Answers.dq1 || "",
+        dq2: state.page10Answers.dq2 || "",
+        dq3: state.page10Answers.dq3 || "",
+        dq4: state.page10Answers.dq4 || "",
+        dq4Count: state.page10Answers.dq4Count || "",
+        dq5: state.page10Answers.dq5 || "",
+        lsq1: state.page11Answers.lsq1 || "",
+        lsq2: state.page11Answers.lsq2 || "",
+        selectedNews: state.selectedNews ?? "",
+        selectedNewsTitle: state.selectedNewsTitle || "",
+        selectedNewsPage: state.selectedNewsPage || "",
+        q2: "",
+        q3: "",
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      };
+    }
+
+    function page12() {
+      renderShell(`
+        <div class="done" style="text-align:center; line-height:1.8; white-space:pre-line;">
+감사합니다. 설문이 모두 종료되었습니다. 
+
+본 연구와 관련한 문의사항이 있으시면 lims86@naver.com으로 연락주시기 바랍니다
+        </div>
+      `);
+
+      if (!state.isFinalSaved) {
+        state.isFinalSaved = true;
+        const payload = buildFinalPayload();
+        saveToGoogleSheets(payload).catch((e) => {
+          console.error("최종 저장 실패", e);
+        });
+      }
+    }
+
+    function pageScreenout() {
+      renderShell(`<div class="done">설문이 종료되었습니다</div>`);
     }
 
     function pageAdminLogin() {
@@ -1509,7 +2161,7 @@
           listEl.innerHTML = rows.map(r => `
             <div class="item" data-id="${escapeHtml(r.id)}">
               <div class="item-top">
-                <div><b>choice=${escapeHtml(r.firstChoice)}</b> · topic=${escapeHtml(r.topicChoice)} · route=${escapeHtml(r.route)} · news=${escapeHtml(r.selectedNews)} · page=${escapeHtml(r.selectedNewsPage)} · q2=${escapeHtml(r.q2)}, q3=${escapeHtml(r.q3)}</div>
+                <div><b>choice=${escapeHtml(r.firstChoice)}</b> · topic=${escapeHtml(r.topicChoice)} · route=${escapeHtml(r.route)} · news=${escapeHtml(r.selectedNews)} · page=${escapeHtml(r.selectedNewsPage)}</div>
                 <div class="mono">${escapeHtml(r.timestamp)}</div>
               </div>
               <div class="mono">id=${escapeHtml(r.id)}</div>
@@ -1570,10 +2222,14 @@
         return articlePage(routeKey);
       }
 
-      if (h === "#/q2") return pageQ2();
-      if (h === "#/q3") return pageQ3();
+      if (h === "#/7") return page7();
+      if (h === "#/8") return page8();
+      if (h === "#/9") return page9();
+      if (h === "#/10") return page10();
+      if (h === "#/11") return page11();
+      if (h === "#/12") return page12();
+
       if (h === "#/screenout") return pageScreenout();
-      if (h === "#/done") return pageDone();
 
       return setHash("#/intro");
     }
