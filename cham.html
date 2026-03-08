@@ -663,9 +663,12 @@ function getArticleImage(pageKey) {
         lsq1: null,
         lsq2: null
       },
-      selectedNews: null,
-      selectedNewsTitle: null,
-      selectedNewsPage: null,
+selectedNews: null,
+selectedNewsTitle: null,
+selectedNewsPage: null,
+selectedNewsHistory: [],
+selectedNewsTitleHistory: [],
+selectedNewsPageHistory: [],
       routeChoice: null,
       route: null,
       answers: { q2: null, q3: null },
@@ -935,11 +938,14 @@ function getArticleImage(pageKey) {
             dq5: "",
             lsq1: "",
             lsq2: "",
-            selectedNews: "",
-            selectedNewsTitle: "",
-            selectedNewsPage: "",
-            q2: "",
-            q3: "",
+selectedNews: "",
+selectedNewsTitle: "",
+selectedNewsPage: "",
+selectedNewsHistory: "",
+selectedNewsTitleHistory: "",
+selectedNewsPageHistory: "",
+q2: "",
+q3: "",
             timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent
           };
@@ -957,9 +963,12 @@ function getArticleImage(pageKey) {
         state.topicChoice = null;
         state.routeChoice = null;
         state.route = null;
-        state.selectedNews = null;
-        state.selectedNewsTitle = null;
-        state.selectedNewsPage = null;
+state.selectedNews = null;
+state.selectedNewsTitle = null;
+state.selectedNewsPage = null;
+state.selectedNewsHistory = [];
+state.selectedNewsTitleHistory = [];
+state.selectedNewsPageHistory = [];
         state.answers = { q2: null, q3: null };
         state.page7Answers = {
           iup: Array(15).fill(null),
@@ -1349,6 +1358,15 @@ function getArticleImage(pageKey) {
       `);
 
       state.selectedNews = cfg.selectedNews;
+      const currentPageAlreadyLogged =
+  state.selectedNewsPageHistory[state.selectedNewsPageHistory.length - 1] === pageKey;
+
+if (!currentPageAlreadyLogged) {
+  state.selectedNewsHistory.push(String(cfg.selectedNews));
+  state.selectedNewsTitleHistory.push(cfg.title);
+  state.selectedNewsPageHistory.push(pageKey);
+}
+      
       state.selectedNewsTitle = cfg.title;
       state.selectedNewsPage = pageKey;
 
@@ -1357,15 +1375,25 @@ function getArticleImage(pageKey) {
       const nextStageBtn = document.getElementById("nextStage");
       const nextWrap = document.getElementById("nextWrap");
 
-      buttons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          if (btn.classList.contains("disabled")) return;
-          state.selectedNews = Number(btn.dataset.code);
-          state.selectedNewsTitle = btn.dataset.title;
-          state.selectedNewsPage = btn.dataset.target.replace(/^#\//, "");
-          setHash(btn.dataset.target);
-        });
-      });
+buttons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.classList.contains("disabled")) return;
+
+    const clickedCode = String(btn.dataset.code);
+    const clickedTitle = btn.dataset.title;
+    const clickedPage = btn.dataset.target.replace(/^#\//, "");
+
+    state.selectedNews = Number(clickedCode);
+    state.selectedNewsTitle = clickedTitle;
+    state.selectedNewsPage = clickedPage;
+
+    state.selectedNewsHistory.push(clickedCode);
+    state.selectedNewsTitleHistory.push(clickedTitle);
+    state.selectedNewsPageHistory.push(clickedPage);
+
+    setHash(btn.dataset.target);
+  });
+});
 
       if (nextStageBtn) {
         nextStageBtn.addEventListener("click", () => {
@@ -2006,11 +2034,14 @@ function getArticleImage(pageKey) {
         dq5: state.page10Answers.dq5 || "",
         lsq1: state.page11Answers.lsq1 || "",
         lsq2: state.page11Answers.lsq2 || "",
-        selectedNews: state.selectedNews ?? "",
-        selectedNewsTitle: state.selectedNewsTitle || "",
-        selectedNewsPage: state.selectedNewsPage || "",
-        q2: "",
-        q3: "",
+selectedNews: state.selectedNews ?? "",
+selectedNewsTitle: state.selectedNewsTitle || "",
+selectedNewsPage: state.selectedNewsPage || "",
+selectedNewsHistory: state.selectedNewsHistory.join(" > "),
+selectedNewsTitleHistory: state.selectedNewsTitleHistory.join(" | "),
+selectedNewsPageHistory: state.selectedNewsPageHistory.join(" > "),
+q2: "",
+q3: "",
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent
       };
