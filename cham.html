@@ -747,7 +747,7 @@
     function pageIntro() {
       renderShell(`
         <div class="intro">
-        <div style="color:red; font-weight:bold;">test version 0320</div>
+
           <h1 class="intro-title" style="font-weight: normal; font-size: 1rem; line-height: 1.6;">안녕하십니까? <br><br>
 본 실험 연구는 ‘장병들의 뉴스 소비’에 대한 인식 조사입니다.<br><br>
 설문 사항에는 정답이 없습니다.<br><br>
@@ -851,19 +851,10 @@
             </div>
           </div>
 
-          <div class="sq-block">
-            <div class="sq-q">SQ7. 귀하께서 생각하시는 정치적 성향은 어디에 가장 가깝습니까?</div>
-            <div class="sq-inline-5">
-              <label class="sq-opt"><input type="radio" name="sq_political" value="1" ${state.sq.political === "1" ? "checked" : ""}><span>① 매우 진보</span></label>
-              <label class="sq-opt"><input type="radio" name="sq_political" value="2" ${state.sq.political === "2" ? "checked" : ""}><span>② 진보</span></label>
-              <label class="sq-opt"><input type="radio" name="sq_political" value="3" ${state.sq.political === "3" ? "checked" : ""}><span>③ 중도</span></label>
-              <label class="sq-opt"><input type="radio" name="sq_political" value="4" ${state.sq.political === "4" ? "checked" : ""}><span>④ 보수</span></label>
-              <label class="sq-opt"><input type="radio" name="sq_political" value="5" ${state.sq.political === "5" ? "checked" : ""}><span>⑤ 매우 보수</span></label>
-            </div>
-          </div>
+
 
           <div class="sq-block">
-            <div class="sq-q">SQ8. 귀하께서 현재 설문에 응하고 있는 접속 환경은 무엇입니까?</div>
+            <div class="sq-q">SQ7. 귀하께서 현재 설문에 응하고 있는 접속 환경은 무엇입니까?</div>
             <div class="sq-inline-3">
               <label class="sq-opt"><input type="radio" name="sq_device" value="1" ${state.sq.device === "1" ? "checked" : ""}><span>① PC</span></label>
               <label class="sq-opt"><input type="radio" name="sq_device" value="2" ${state.sq.device === "2" ? "checked" : ""}><span>② 태블릿</span></label>
@@ -872,7 +863,7 @@
           </div>
 
           <div class="sq-block">
-  <div class="sq-q">SQ9. 기프티콘을 받길 원하시면 전화번호를 입력해주세요(선택사항)</div>
+  <div class="sq-q">SQ8. 기프티콘을 받길 원하시면 전화번호를 입력해주세요(선택사항)</div>
   <input 
     type="text" 
     id="sq_phone" 
@@ -903,7 +894,6 @@ phoneInput.addEventListener("input", () => {
         ["sq_portalNews", "portalNews"],
         ["sq_mobilePhone", "mobilePhone"],
         ["sq_internetTime", "internetTime"],
-        ["sq_political", "political"],
         ["sq_device", "device"]
       ];
 
@@ -940,7 +930,6 @@ phoneInput.addEventListener("input", () => {
             sqPortalNews: state.sq.portalNews,
             sqMobilePhone: state.sq.mobilePhone,
             sqInternetTime: state.sq.internetTime,
-            sqPolitical: state.sq.political,
             sqDevice: state.sq.device,
             sqPhone: state.sq.phone,
             fact1: "",
@@ -1384,7 +1373,7 @@ phoneInput.addEventListener("input", () => {
 
       let freeNextVisible = false;
       if (!locked && state.freeRouteStartedAt) {
-        freeNextVisible = (Date.now() - state.freeRouteStartedAt) >= 10000;
+        freeNextVisible = (Date.now() - state.freeRouteStartedAt) >= 300000;
       }
 
       renderShell(`
@@ -1472,7 +1461,7 @@ phoneInput.addEventListener("input", () => {
       }
 
       if (locked) {
-        let remain = 10;
+        let remain = 300;
         cd.textContent = `활성화까지 ${remain}초`;
 
         const timer = setInterval(() => {
@@ -1522,7 +1511,7 @@ phoneInput.addEventListener("input", () => {
         }, 1000);
       } else {
         if (!freeNextVisible && state.freeRouteStartedAt) {
-          const remainMs = 10000 - (Date.now() - state.freeRouteStartedAt);
+          const remainMs = 300000 - (Date.now() - state.freeRouteStartedAt);
           let remain = Math.max(0, Math.ceil(remainMs / 1000));
 
           if (remain > 0) {
@@ -2151,7 +2140,6 @@ phoneInput.addEventListener("input", () => {
         sqPortalNews: state.sq.portalNews,
         sqMobilePhone: state.sq.mobilePhone,
         sqInternetTime: state.sq.internetTime,
-        sqPolitical: state.sq.political,
         sqDevice: state.sq.device,
         sqPhone: state.sq.phone || "",
         fact1: facts[0] || "",
