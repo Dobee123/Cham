@@ -1745,14 +1745,14 @@ phoneInput.addEventListener("input", () => {
 
   function sync() {
     for (let i = 0; i < 8; i++) {
-      const picked = document.querySelector(\`input[name="check_\${i}"]:checked\`);
+      const picked = document.querySelector(`input[name="check_${i}"]:checked`);
       state.checkAnswers[i] = picked ? Number(picked.value) : null;
     }
     nextBtn.disabled = state.checkAnswers.some(v => !v);
   }
 
   for (let i = 0; i < 8; i++) {
-    document.querySelectorAll(\`input[name="check_\${i}"]\`).forEach(el => {
+    document.querySelectorAll(`input[name="check_${i}"]`).forEach(el => {
       el.addEventListener("change", sync);
     });
   }
@@ -2153,6 +2153,7 @@ phoneInput.addEventListener("input", () => {
         sqInternetTime: state.sq.internetTime,
         sqPolitical: state.sq.political,
         sqDevice: state.sq.device,
+        sqPhone: state.sq.phone || "",
         fact1: facts[0] || "",
         fact2: facts[1] || "",
         fact3: facts[2] || "",
