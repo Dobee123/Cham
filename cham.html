@@ -631,6 +631,17 @@
       "Q6. 나는 알고리즘이 이용자에게 미칠 수 있는 영향력에 대해 잘 알고 있다."
     ];
 
+    const CHECK_QUESTIONS = [
+  "Check1. 방금 본 기사들은 내용이 반복적이었다.",
+  "Check2. 제시된 기사들이 서로 유사한 핵심 정보를 담고 있었다.",
+  "Check3. 이번 자극은 평소 알고리즘 뉴스 이용 시의 반복노출 경험을 잘 재현하였다.",
+  "Check4. 지금 본 기사들 중 반복되거나 겹치는 정보가 있었다.",
+  "Check5. 지금 본 기사들에서 새로운 정보를 발견하였다.",
+  "Check6. 각 기사가 다른 관점이나 새로운 정보를 제시하였다.",
+  "Check7. 기사들을 읽을 때 주의깊게 읽었다.",
+  "Check8. 실제 포털사이트에서 뉴스를 접했을 때와 유사한 환경이었다."
+];
+
     const state = {
       sq: {
         gender: null,
@@ -640,7 +651,8 @@
         mobilePhone: null,
         internetTime: null,
         political: null,
-        device: null
+        device: null,
+        phone: ""
       },
       topicChoice: null,
       topicFacts: {
@@ -656,6 +668,7 @@
         add1: null,
         add2: null
       },
+      checkAnswers: [null, null, null, null, null, null, null, null],
       page8Answers: {
         tr: Array(7).fill(null)
       },
@@ -744,6 +757,10 @@
 유사한 주제나 내용의 기사를 몇 차례로 제시되며, 제시된 기사를 읽고 나서의 생각을 설문 문항으로 묻습니다. <br><br>
 
 바쁘시더라도 잠시만 시간을 내어 설문에 성실히 응해주시면 감사하겠습니다. <br><br>
+
+성실히 설문에 참여해주신 분들께 소정의 감사 선물(기프티콘)을 드립니다. <br><br>
+
+
 </h1>
           <div class="row" style="justify-content:center; width:100%; margin-top:6px;">
             <button id="start" class="btn btn-primary" style="max-width:240px;">시작하기</button>
@@ -854,11 +871,30 @@
             </div>
           </div>
 
+          <div class="sq-block">
+  <div class="sq-q">SQ9. 기프티콘을 받길 원하시면 전화번호를 입력해주세요(선택사항)</div>
+  <input 
+    type="text" 
+    id="sq_phone" 
+    class="input" 
+    placeholder="숫자만 입력 (예: 01012345678)"
+    value="${state.sq.phone || ""}"
+  />
+</div>
+
           <div class="row">
             <button id="sqNext" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
           </div>
         </div>
       `);
+
+      const phoneInput = document.getElementById("sq_phone");
+
+phoneInput.addEventListener("input", () => {
+  // 숫자만 허용
+  phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
+  state.sq.phone = phoneInput.value;
+});
 
       const mappings = [
         ["sq_gender", "gender"],
@@ -906,6 +942,7 @@
             sqInternetTime: state.sq.internetTime,
             sqPolitical: state.sq.political,
             sqDevice: state.sq.device,
+            sqPhone: state.sq.phone,
             fact1: "",
             fact2: "",
             fact3: "",
@@ -1654,10 +1691,78 @@
         if (state.page7Answers.add1 === "2") {
           setHash("#/12");
         } else {
-          setHash("#/8");
+          setHash("#/7-1");
         }
       });
     }
+
+    function page71() {
+  renderShell(`
+    <div>
+      <div class="sq-title-box">7.1페이지</div>
+      <p style="white-space: pre-line; line-height:1.7;">
+다음은 앞서 보셨던 기사들에 대한 여러분의 생각을 묻는 항목입니다.
+각 문항에 대해 가장 적절한 응답을 선택해 주십시오.
+      </p>
+
+      <div class="fact-table-wrap">
+        <table class="fact-table" style="min-width: 1100px;">
+          <thead>
+            <tr>
+              <th>문항 내용</th>
+              <th class="fact-col">전혀 동의하지 않는다</th>
+              <th class="fact-col">동의하지 않는다</th>
+              <th class="fact-col">보통이다</th>
+              <th class="fact-col">동의한다</th>
+              <th class="fact-col">전적으로 동의한다</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${CHECK_QUESTIONS.map((q, idx) => `
+              <tr>
+                <td class="fact-text">${q}</td>
+                ${[1,2,3,4,5].map(v => `
+                  <td>
+                    <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
+                      <input class="fact-radio" type="radio" name="check_${idx}" value="${v}" ${String(state.checkAnswers[idx]) === String(v) ? "checked" : ""}>
+                      <span>${["①","②","③","④","⑤"][v-1]}</span>
+                    </label>
+                  </td>
+                `).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row">
+        <button id="next" class="btn btn-primary" disabled>다음</button>
+      </div>
+    </div>
+  `);
+
+  const nextBtn = document.getElementById("next");
+
+  function sync() {
+    for (let i = 0; i < 8; i++) {
+      const picked = document.querySelector(\`input[name="check_\${i}"]:checked\`);
+      state.checkAnswers[i] = picked ? Number(picked.value) : null;
+    }
+    nextBtn.disabled = state.checkAnswers.some(v => !v);
+  }
+
+  for (let i = 0; i < 8; i++) {
+    document.querySelectorAll(\`input[name="check_\${i}"]\`).forEach(el => {
+      el.addEventListener("change", sync);
+    });
+  }
+
+  sync();
+
+  nextBtn.addEventListener("click", () => {
+    setHash("#/8");
+  });
+}
 
     function page8() {
       const TR_QUESTIONS = [
@@ -2076,6 +2181,14 @@
         iup15: state.page7Answers.iup[14] || "",
         add1: state.page7Answers.add1 || "",
         add2: state.page7Answers.add2 || "",
+        check1: state.checkAnswers[0] || "",
+check2: state.checkAnswers[1] || "",
+check3: state.checkAnswers[2] || "",
+check4: state.checkAnswers[3] || "",
+check5: state.checkAnswers[4] || "",
+check6: state.checkAnswers[5] || "",
+check7: state.checkAnswers[6] || "",
+check8: state.checkAnswers[7] || "",
         tr1: state.page8Answers.tr[0] || "",
         tr2: state.page8Answers.tr[1] || "",
         tr3: state.page8Answers.tr[2] || "",
@@ -2152,6 +2265,7 @@
       }
 
       if (h === "#/7") return page7();
+      if (h === "#/7-1") return page71();
       if (h === "#/8") return page8();
       if (h === "#/9") return page9();
       if (h === "#/10") return page10();
