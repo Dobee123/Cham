@@ -1378,7 +1378,7 @@ phoneInput.addEventListener("input", () => {
         state.lockedVisitCount += 1;
 
         if (state.lockedVisitCount === 5 && !state.lockedNextEligibleAt) {
-          state.lockedNextEligibleAt = Date.now() + 10000;
+          state.lockedNextEligibleAt = Date.now() + 300000;
         }
       }
 
