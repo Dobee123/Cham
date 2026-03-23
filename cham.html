@@ -358,6 +358,20 @@
       transform: translateY(1px);
     }
 
+      .news-link.read-lock {
+    pointer-events: none;
+    color: #9ca3af;
+    background: #f3f4f6;
+    cursor: not-allowed;
+  }
+
+  .news-link.stage-lock {
+    pointer-events: none;
+    color: #9ca3af;
+    background: #f3f4f6;
+    cursor: not-allowed;
+  }
+
     @media (max-width: 1024px) {
       .fact-table-wrap {
         overflow-x: auto;
@@ -1396,7 +1410,7 @@ phoneInput.addEventListener("input", () => {
             ${cfg.links.map(item => `
               <button
                 type="button"
-                class="news-link ${locked ? "disabled" : ""}"
+                class="news-link ${locked ? "read-lock" : ""}"
                 data-news-btn="1"
                 data-target="${item.target}"
                 data-code="${item.code}"
@@ -1442,7 +1456,7 @@ phoneInput.addEventListener("input", () => {
 
       buttons.forEach(btn => {
         btn.addEventListener("click", () => {
-          if (btn.classList.contains("disabled")) return;
+          if (btn.classList.contains("read-lock") || btn.classList.contains("stage-lock")) return;
 
           const clickedCode = String(btn.dataset.code);
           const clickedTitle = btn.dataset.title;
@@ -1478,7 +1492,7 @@ if (nextStageBtn) {
 
           if (remain <= 0) {
             clearInterval(timer);
-            buttons.forEach(btn => btn.classList.remove("disabled"));
+            buttons.forEach(btn => btn.classList.remove("read-lock"));
 
             if (state.lockedNextEligibleAt) {
               const nextRemainMs = state.lockedNextEligibleAt - Date.now();
@@ -1494,7 +1508,7 @@ if (nextStageBtn) {
                     clearInterval(nextTimer);
                     cd.textContent = "";
                     nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-                    buttons.forEach(btn => btn.classList.add("disabled"));
+                    buttons.forEach(btn => btn.classList.add("stage-lock"));
                     document.getElementById("nextStage").addEventListener("click", () => {
                       setHash("#/7");
                     });
@@ -1506,7 +1520,7 @@ if (nextStageBtn) {
               } else {
                 cd.textContent = "";
                 nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-                buttons.forEach(btn => btn.classList.add("disabled"));
+                buttons.forEach(btn => btn.classList.add("stage-lock"));
                 document.getElementById("nextStage").addEventListener("click", () => {
                   setHash("#/7");
                 });
@@ -1534,7 +1548,7 @@ if (nextStageBtn) {
                 clearInterval(timer);
                 cd.textContent = "";
                 nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-                buttons.forEach(btn => btn.classList.add("disabled"));
+                buttons.forEach(btn => btn.classList.add("stage-lock"));
                 document.getElementById("nextStage").addEventListener("click", () => {
                   setHash("#/7");
                 });
