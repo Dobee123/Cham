@@ -1372,19 +1372,23 @@ phoneInput.addEventListener("input", () => {
     function renderArticleButtonsPage({ pageKey, cfg, locked }) {
       const imgUrl = getArticleImage(pageKey);
 
-      state.articleVisited[pageKey] = true;
 
-      if (locked) {
-        state.lockedVisitCount += 1;
+  const firstVisitToThisPage = !state.articleVisited[pageKey];
+  state.articleVisited[pageKey] = true;
 
-        if (state.lockedVisitCount === 5 && !state.lockedNextEligibleAt) {
-          state.lockedNextEligibleAt = Date.now() + 300000;
-        }
-      }
+  if (locked) {
+    if (firstVisitToThisPage) {
+      state.lockedVisitCount += 1;
+    }
 
-      if (!locked && !state.freeRouteStartedAt) {
-        state.freeRouteStartedAt = Date.now();
-      }
+    if (state.lockedVisitCount >= 5 && !state.lockedNextEligibleAt) {
+      state.lockedNextEligibleAt = Date.now() + 10000;
+    }
+  }
+
+  if (!locked && !state.freeRouteStartedAt) {
+    state.freeRouteStartedAt = Date.now();
+  }
 
       const lockedNextVisible =
         locked &&
@@ -1453,6 +1457,15 @@ phoneInput.addEventListener("input", () => {
       const cd = document.getElementById("countdown");
       const nextStageBtn = document.getElementById("nextStage");
       const nextWrap = document.getElementById("nextWrap");
+    function showNextStageButton() {
+  if (document.getElementById("nextStage")) return;
+
+  nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
+  buttons.forEach(btn => btn.classList.add("stage-lock"));
+  document.getElementById("nextStage").addEventListener("click", () => {
+    setHash("#/7");
+  });
+}
 
       buttons.forEach(btn => {
         btn.addEventListener("click", () => {
@@ -1475,8 +1488,7 @@ phoneInput.addEventListener("input", () => {
       });
 
 if (nextStageBtn) {
-
-  buttons.forEach(btn => btn.classList.add("disabled"));
+  buttons.forEach(btn => btn.classList.add("stage-lock"));
 
   nextStageBtn.addEventListener("click", () => {
     setHash("#/7");
@@ -1490,48 +1502,13 @@ if (nextStageBtn) {
         const timer = setInterval(() => {
           remain -= 1;
 
-          if (remain <= 0) {
-            clearInterval(timer);
-            buttons.forEach(btn => btn.classList.remove("read-lock"));
-
-            if (state.lockedNextEligibleAt) {
-              const nextRemainMs = state.lockedNextEligibleAt - Date.now();
-              let nextRemain = Math.max(0, Math.ceil(nextRemainMs / 1000));
-
-              if (nextRemain > 0) {
-                cd.textContent = `다음 단계 버튼 노출까지 ${nextRemain}초`;
-
-                const nextTimer = setInterval(() => {
-                  nextRemain -= 1;
-
-                  if (nextRemain <= 0) {
-                    clearInterval(nextTimer);
-                    cd.textContent = "";
-                    nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-                    buttons.forEach(btn => btn.classList.add("stage-lock"));
-                    document.getElementById("nextStage").addEventListener("click", () => {
-                      setHash("#/7");
-                    });
-                    return;
-                  }
-
-                  cd.textContent = `다음 단계 버튼 노출까지 ${nextRemain}초`;
-                }, 1000);
-              } else {
-                cd.textContent = "";
-                nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-                buttons.forEach(btn => btn.classList.add("stage-lock"));
-                document.getElementById("nextStage").addEventListener("click", () => {
-                  setHash("#/7");
-                });
-              }
-            } else {
-              cd.textContent = "메뉴가 활성화되었습니다.";
-            }
-
-            return;
-          }
-
+       if (remain <= 0) {
+  clearInterval(timer);
+  buttons.forEach(btn => btn.classList.remove("read-lock"));
+  cd.textContent = "메뉴가 활성화되었습니다.";
+  return;
+}
+  
           cd.textContent = `활성화까지 ${remain}초`;
         }, 1000);
       } else {
@@ -1563,6 +1540,25 @@ if (nextStageBtn) {
           cd.textContent = "";
         }
       }
+
+    if (locked && state.lockedNextEligibleAt && !lockedNextVisible) {
+  const nextRemainMs = state.lockedNextEligibleAt - Date.now();
+  let nextRemain = Math.max(0, Math.ceil(nextRemainMs / 1000));
+
+  if (nextRemain > 0) {
+    const nextTimer = setInterval(() => {
+      nextRemain -= 1;
+
+      if (nextRemain <= 0) {
+        clearInterval(nextTimer);
+        showNextStageButton();
+        return;
+      }
+    }, 1000);
+  } else {
+    showNextStageButton();
+  }
+}
     }
 
     function articlePage(routeKey) {
@@ -2093,7 +2089,7 @@ if (nextStageBtn) {
           <div class="sq-title-box">11페이지</div>
 
           <div class="sq-block">
-            <div class="sq-note" style="margin:0; white-space:pre-line;">
+            <div class="sq-note" style="margin:0; white-space:pre-line; font-size:16px">
 * 알려드립니다. 
 본 연구는 알고리즘 뉴스 반복 노출에 따라 수용자의 정보불충분성인식과 매체 선택에 차이가 있는지를 살펴보기 위한 것입니다. 
 본 연구에 활용된 기사는 이러한 연구 목적에 따라 연구자가 국방부 발표 내용과 관련 기사 내용들을 바탕으로 수정/편집한 것입니다. 
