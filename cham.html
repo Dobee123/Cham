@@ -721,7 +721,8 @@
       articleVisited: {},
       lockedVisitCount: 0,
       lockedNextEligibleAt: null,
-      freeRouteStartedAt: null
+      freeRouteStartedAt: null,
+      lockedClickCount: 0
     };
 
     const $app = () => document.getElementById("app");
@@ -1060,6 +1061,7 @@ phoneInput.addEventListener("input", () => {
         state.lockedVisitCount = 0;
         state.lockedNextEligibleAt = null;
         state.freeRouteStartedAt = null;
+        state.lockedClickCount = 0;
         setHash("#/q1");
       });
     }
@@ -1276,6 +1278,7 @@ phoneInput.addEventListener("input", () => {
         state.lockedVisitCount = 0;
         state.lockedNextEligibleAt = null;
         state.freeRouteStartedAt = null;
+        state.lockedClickCount = 0;
         setHash("#/rand");
       });
     }
@@ -1370,176 +1373,142 @@ phoneInput.addEventListener("input", () => {
     }
 
     function renderArticleButtonsPage({ pageKey, cfg, locked }) {
-      const imgUrl = getArticleImage(pageKey);
-
-
-  const firstVisitToThisPage = !state.articleVisited[pageKey];
+  const imgUrl = PAGE_IMAGES[pageKey] || "";
   state.articleVisited[pageKey] = true;
-
-  if (locked) {
-    if (firstVisitToThisPage) {
-      state.lockedVisitCount += 1;
-    }
-
-    if (state.lockedVisitCount >= 5 && !state.lockedNextEligibleAt) {
-      state.lockedNextEligibleAt = Date.now() + 10000;
-    }
-  }
 
   if (!locked && !state.freeRouteStartedAt) {
     state.freeRouteStartedAt = Date.now();
   }
 
-      const lockedNextVisible =
-        locked &&
-        state.lockedNextEligibleAt &&
-        Date.now() >= state.lockedNextEligibleAt;
+  const lockedNextVisible = locked && state.lockedClickCount >= 5;
 
-      let freeNextVisible = false;
-      if (!locked && state.freeRouteStartedAt) {
-        freeNextVisible = (Date.now() - state.freeRouteStartedAt) >= 300000;
-      }
+  let freeNextVisible = false;
+  if (!locked && state.freeRouteStartedAt) {
+    freeNextVisible = (Date.now() - state.freeRouteStartedAt) >= 10000;
+  }
 
-      renderShell(`
-        <div>
-          <h1 style="margin-top:10px;">${cfg.title}</h1>
-          ${locked ? "" : `<p>원하는 기사를 선택해 주세요.</p>`}
+  renderShell(`
+    <div>
+      <div class="tag">${getVariantTitle(state.routeChoice)}</div>
+      <h1 style="margin-top:10px;">${cfg.title}</h1>
+      <p>${locked ? "페이지 접속 후 10초 뒤 메뉴 버튼이 활성화됩니다." : "원하는 기사를 선택해 주세요."}</p>
 
-          <div class="imgbox">
-            ${imgUrl ? `<img src="${imgUrl}" alt="기사 이미지" />` : `<div style="padding:60px 20px; text-align:center; color:#9ca3af;">이미지 영역</div>`}
-          </div>
+      <div class="imgbox">
+        ${imgUrl ? `<img src="${imgUrl}" alt="기사 이미지" />` : `<div style="padding:60px 20px; text-align:center; color:#9ca3af;">이미지 영역</div>`}
+      </div>
 
-          <div class="news-title"><strong>함께 볼만한 뉴스</strong></div>
-          <div class="news-links">
-            ${cfg.links.map(item => `
-              <button
-                type="button"
-                class="news-link ${locked ? "read-lock" : ""}"
-                data-news-btn="1"
-                data-target="${item.target}"
-                data-code="${item.code}"
-                data-title="${escapeHtml(item.text)}"
-              >
-                ${item.text}
-              </button>
-            `).join("")}
-          </div>
+      <div class="news-title"><strong>함께 볼만한 뉴스</strong></div>
+      <div class="news-links">
+        ${cfg.links.map(item => {
+          const targetPageKey = item.target.replace(/^#\\//, "");
+          const isVisited = !!state.articleVisited[targetPageKey];
+          return `
+            <button
+              type="button"
+              class="news-link ${locked ? "disabled" : ""}"
+              data-news-btn="1"
+              data-target="${item.target}"
+              data-code="${item.code}"
+              data-title="${escapeHtml(item.text)}"
+            >
+              ${item.text}${isVisited ? ' <span style="font-weight:800;">[최근 읽은 기사]</span>' : ""}
+            </button>
+          `;
+        }).join("")}
+      </div>
 
-          <div class="row" id="nextWrap" style="justify-content:center;">
-            ${
-              locked && lockedNextVisible
+      <div class="row" id="nextWrap" style="justify-content:center;">
+        ${
+          locked
+            ? (lockedNextVisible
                 ? `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`
-                : (!locked && freeNextVisible
-                    ? `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`
-                    : ``)
-            }
-          </div>
+                : ``)
+            : (freeNextVisible
+                ? `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`
+                : ``)
+        }
+      </div>
 
-          <div class="small" id="countdown"></div>
-        </div>
-      `);
+      <div class="small" id="countdown"></div>
+      ${locked ? `<div class="small" id="lockedCount">기사 선택 횟수: ${state.lockedClickCount}/5</div>` : ``}
+    </div>
+  `);
 
-      state.selectedNews = cfg.selectedNews;
+  state.selectedNews = cfg.selectedNews;
+  state.selectedNewsTitle = cfg.title;
+  state.selectedNewsPage = pageKey;
 
-      const currentPageAlreadyLogged =
-        state.selectedNewsPageHistory[state.selectedNewsPageHistory.length - 1] === pageKey;
+  const buttons = [...document.querySelectorAll('[data-news-btn="1"]')];
+  const cd = document.getElementById("countdown");
+  const nextStageBtn = document.getElementById("nextStage");
+  const nextWrap = document.getElementById("nextWrap");
+  const lockedCountEl = document.getElementById("lockedCount");
 
-      if (!currentPageAlreadyLogged) {
-        state.selectedNewsHistory.push(String(cfg.selectedNews));
-        state.selectedNewsTitleHistory.push(cfg.title);
-        state.selectedNewsPageHistory.push(pageKey);
-      }
-
-      state.selectedNewsTitle = cfg.title;
-      state.selectedNewsPage = pageKey;
-
-      const buttons = [...document.querySelectorAll('[data-news-btn="1"]')];
-      const cd = document.getElementById("countdown");
-      const nextStageBtn = document.getElementById("nextStage");
-      const nextWrap = document.getElementById("nextWrap");
-    function showNextStageButton() {
-  if (document.getElementById("nextStage")) return;
-
-  nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-  buttons.forEach(btn => btn.classList.add("stage-lock"));
-  document.getElementById("nextStage").addEventListener("click", () => {
-    setHash("#/7");
-  });
-}
-
-      buttons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          if (btn.classList.contains("read-lock") || btn.classList.contains("stage-lock")) return;
-
-          const clickedCode = String(btn.dataset.code);
-          const clickedTitle = btn.dataset.title;
-          const clickedPage = btn.dataset.target.replace(/^#\//, "");
-
-          state.selectedNews = Number(clickedCode);
-          state.selectedNewsTitle = clickedTitle;
-          state.selectedNewsPage = clickedPage;
-
-          state.selectedNewsHistory.push(clickedCode);
-          state.selectedNewsTitleHistory.push(clickedTitle);
-          state.selectedNewsPageHistory.push(clickedPage);
-
-          setHash(btn.dataset.target);
-        });
-      });
-
-if (nextStageBtn) {
-  buttons.forEach(btn => btn.classList.add("stage-lock"));
-
-  nextStageBtn.addEventListener("click", () => {
-    setHash("#/7");
-  });
-}
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("disabled")) return;
 
       if (locked) {
-        let remain = 60;
-        cd.textContent = `활성화까지 ${remain}초`;
+        state.lockedClickCount += 1;
+      }
+
+      state.selectedNews = Number(btn.dataset.code);
+      state.selectedNewsTitle = btn.dataset.title;
+      state.selectedNewsPage = btn.dataset.target.replace(/^#\//, "");
+
+      setHash(btn.dataset.target);
+    });
+  });
+
+  if (nextStageBtn) {
+    nextStageBtn.addEventListener("click", () => {
+      setHash("#/7");
+    });
+  }
+
+  if (locked) {
+    let remain = 10;
+    cd.textContent = `활성화까지 ${remain}초`;
+
+    const timer = setInterval(() => {
+      remain -= 1;
+      if (remain <= 0) {
+        clearInterval(timer);
+        cd.textContent = "메뉴가 활성화되었습니다.";
+        buttons.forEach(btn => btn.classList.remove("disabled"));
+        return;
+      }
+      cd.textContent = `활성화까지 ${remain}초`;
+    }, 1000);
+  } else {
+    if (!freeNextVisible && state.freeRouteStartedAt) {
+      const remainMs = 10000 - (Date.now() - state.freeRouteStartedAt);
+      let remain = Math.max(0, Math.ceil(remainMs / 1000));
+
+      if (remain > 0) {
+        cd.textContent = `다음 단계 버튼 노출까지 ${remain}초`;
 
         const timer = setInterval(() => {
           remain -= 1;
-
-       if (remain <= 0) {
-  clearInterval(timer);
-  buttons.forEach(btn => btn.classList.remove("read-lock"));
-  cd.textContent = "메뉴가 활성화되었습니다.";
-  return;
-}
-  
-          cd.textContent = `활성화까지 ${remain}초`;
+          if (remain <= 0) {
+            clearInterval(timer);
+            cd.textContent = "";
+            nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
+            document.getElementById("nextStage").addEventListener("click", () => {
+              setHash("#/7");
+            });
+            return;
+          }
+          cd.textContent = `다음 단계 버튼 노출까지 ${remain}초`;
         }, 1000);
       } else {
-        if (!freeNextVisible && state.freeRouteStartedAt) {
-          const remainMs = 300000 - (Date.now() - state.freeRouteStartedAt);
-          let remain = Math.max(0, Math.ceil(remainMs / 1000));
-
-          if (remain > 0) {
-            cd.textContent = `다음 단계 버튼 노출까지 ${remain}초`;
-
-            const timer = setInterval(() => {
-              remain -= 1;
-              if (remain <= 0) {
-                clearInterval(timer);
-                cd.textContent = "";
-                nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-                buttons.forEach(btn => btn.classList.add("stage-lock"));
-                document.getElementById("nextStage").addEventListener("click", () => {
-                  setHash("#/7");
-                });
-                return;
-              }
-              cd.textContent = `다음 단계 버튼 노출까지 ${remain}초`;
-            }, 1000);
-          } else {
-            cd.textContent = "";
-          }
-        } else {
-          cd.textContent = "";
-        }
+        cd.textContent = "";
       }
+    } else {
+      cd.textContent = "";
+    }
+  }
+}
 
     if (locked && state.lockedNextEligibleAt && !lockedNextVisible) {
   const nextRemainMs = state.lockedNextEligibleAt - Date.now();
