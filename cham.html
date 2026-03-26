@@ -1329,8 +1329,8 @@ phoneInput.addEventListener("input", () => {
             <div class="sq-note" style="white-space: pre-line; color:#111827; font-size:16px;">
             
 이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다.
-1분 동안 읽을 시간이 주어지며, 1분이 지나면 추천 기사 목록이 활성화됩니다.
-목록 중 하나의 기사를 선택하시면 또다시 1분 동안 기사를 읽으실 수 있습니다.
+45초 동안 읽을 시간이 주어지며, 45초가 지나면 추천 기사 목록이 활성화됩니다.
+목록 중 하나의 기사를 선택하시면 또다시 45초 동안 기사를 읽으실 수 있습니다.
 총 5개의 기사를 모두 읽으시면 다음 단계로 넘어갑니다.
             </div>
 
@@ -1356,8 +1356,8 @@ phoneInput.addEventListener("input", () => {
             <div class="sq-note" style="white-space: pre-line; color:#111827; font-size:16px;">
 
 이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다. 
-기사 하단에는 연관 기사 목록이 제시되며, 5분 동안 현재의 기사와 연관 기사를 자유롭게 선택해 읽으시면 됩니다.
-5분이 지나면 다음 단계로 넘어갈 수 있는 버튼이 활성화됩니다. 버튼을 눌러 다음 설문에 응답해주십시오.
+기사 하단에는 연관 기사 목록이 제시되며, 3분 45초 동안 현재의 기사와 연관 기사를 자유롭게 선택해 읽으시면 됩니다.
+3분 45초가 지나면 다음 단계로 넘어갈 수 있는 버튼이 활성화됩니다. 버튼을 눌러 다음 설문에 응답해주십시오.
             </div>
 
             <div class="row">
@@ -1390,7 +1390,7 @@ phoneInput.addEventListener("input", () => {
     }
 
     if (state.lockedVisitCount >= 5 && !state.lockedNextEligibleAt) {
-      state.lockedNextEligibleAt = Date.now() + 10000;
+      state.lockedNextEligibleAt = Date.now() + 45000;
     }
   }
 
@@ -1405,7 +1405,7 @@ phoneInput.addEventListener("input", () => {
 
       let freeNextVisible = false;
       if (!locked && state.freeRouteStartedAt) {
-        freeNextVisible = (Date.now() - state.freeRouteStartedAt) >= 300000;
+        freeNextVisible = (Date.now() - state.freeRouteStartedAt) >= 225000;
       }
 
       renderShell(`
