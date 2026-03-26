@@ -1508,7 +1508,7 @@ if (nextStageBtn) {
 }
 
       if (locked) {
-        let remain = 60;
+        let remain = 45;
         cd.textContent = `활성화까지 ${remain}초`;
 
         const timer = setInterval(() => {
@@ -1525,7 +1525,7 @@ if (nextStageBtn) {
         }, 1000);
       } else {
         if (!freeNextVisible && state.freeRouteStartedAt) {
-          const remainMs = 300000 - (Date.now() - state.freeRouteStartedAt);
+          const remainMs = 225000 - (Date.now() - state.freeRouteStartedAt);
           let remain = Math.max(0, Math.ceil(remainMs / 1000));
 
           if (remain > 0) {
