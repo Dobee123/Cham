@@ -720,8 +720,10 @@
       isFinalSaved: false,
       articleVisited: {},
       lockedVisitCount: 0,
+      recentReadPages: [],
       lockedNextEligibleAt: null,
-      freeRouteStartedAt: null
+      freeRouteStartedAt: null,
+      state.recentReadPages = [];
     };
 
     const $app = () => document.getElementById("app");
@@ -1058,6 +1060,7 @@ phoneInput.addEventListener("input", () => {
         state.isFinalSaved = false;
         state.articleVisited = {};
         state.lockedVisitCount = 0;
+        state.recentReadPages = [];
         state.lockedNextEligibleAt = null;
         state.freeRouteStartedAt = null;
         setHash("#/q1");
@@ -1376,6 +1379,21 @@ phoneInput.addEventListener("input", () => {
   const firstVisitToThisPage = !state.articleVisited[pageKey];
   state.articleVisited[pageKey] = true;
 
+      state.recentReadPages = Array.isArray(state.recentReadPages) ? state.recentReadPages : [];
+if (!state.recentReadPages.includes(pageKey)) {
+  state.recentReadPages.push(pageKey);
+}
+
+if (locked) {
+  if (firstVisitToThisPage) {
+    state.lockedVisitCount += 1;
+  }
+
+  if (state.lockedVisitCount >= 5 && !state.lockedNextEligibleAt) {
+    state.lockedNextEligibleAt = Date.now() + 10000;
+  }
+}
+
   if (locked) {
     if (firstVisitToThisPage) {
       state.lockedVisitCount += 1;
@@ -1411,18 +1429,25 @@ phoneInput.addEventListener("input", () => {
 
           <div class="news-title"><strong>함께 볼만한 뉴스</strong></div>
           <div class="news-links">
-            ${cfg.links.map(item => `
-              <button
-                type="button"
-                class="news-link ${locked ? "read-lock" : ""}"
-                data-news-btn="1"
-                data-target="${item.target}"
-                data-code="${item.code}"
-                data-title="${escapeHtml(item.text)}"
-              >
-                ${item.text}
-              </button>
-            `).join("")}
+
+            ${cfg.links.map(item => {
+              const targetPageKey = item.target.replace(/^#\//, "");
+              const isRecent = state.recentReadPages.includes(targetPageKey);
+              return `
+                <button
+                  type="button"
+                  class="news-link ${locked ? "read-lock" : ""}"
+                  data-news-btn="1"
+                  data-target="${item.target}"
+                  data-code="${item.code}"
+                  data-title="${escapeHtml(item.text)}"
+                >
+                  ${item.text}${isRecent ? " [최근 읽은 기사]" : ""}
+                </button>
+              `;
+            }).join("")}
+
+            
           </div>
 
           <div class="row" id="nextWrap" style="justify-content:center;">
@@ -1631,22 +1656,42 @@ if (nextStageBtn) {
             </table>
           </div>
 
-          <div class="sq-block" style="margin-top:18px;">
-            <div class="sq-q">ADD1. 추가적인 정보를 탐색하기 위해 다른 매체에서 기사(정보)를 확인할 의향이 있으십니까?</div>
-            <div class="sq-inline">
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="1" ${state.page7Answers.add1 === "1" ? "checked" : ""}>
-                <span>① 이용할 의향이 있다.</span>
-              </label>
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="2" ${state.page7Answers.add1 === "2" ? "checked" : ""}>
-                <span>② 이용할 의향이 없다</span>
-              </label>
-            </div>
-          </div>
+<div class="sq-block" style="margin-top:18px;">
+  <div class="sq-q">ADD1. 나는 추가적인 정보를 탐색하기 위해 다른 매체를 이용할 의향이 있다.</div>
+  <div class="sq-options">
+    <label class="sq-opt">
+      <input type="radio" name="add1" value="1" ${state.page7Answers.add1 === "1" ? "checked" : ""}>
+      <span>① 1점: 전혀 그렇지 않다</span>
+    </label>
+    <label class="sq-opt">
+      <input type="radio" name="add1" value="2" ${state.page7Answers.add1 === "2" ? "checked" : ""}>
+      <span>② 2점</span>
+    </label>
+    <label class="sq-opt">
+      <input type="radio" name="add1" value="3" ${state.page7Answers.add1 === "3" ? "checked" : ""}>
+      <span>③ 3점</span>
+    </label>
+    <label class="sq-opt">
+      <input type="radio" name="add1" value="4" ${state.page7Answers.add1 === "4" ? "checked" : ""}>
+      <span>④ 4점</span>
+    </label>
+    <label class="sq-opt">
+      <input type="radio" name="add1" value="5" ${state.page7Answers.add1 === "5" ? "checked" : ""}>
+      <span>⑤ 5점</span>
+    </label>
+    <label class="sq-opt">
+      <input type="radio" name="add1" value="6" ${state.page7Answers.add1 === "6" ? "checked" : ""}>
+      <span>⑥ 6점</span>
+    </label>
+    <label class="sq-opt">
+      <input type="radio" name="add1" value="7" ${state.page7Answers.add1 === "7" ? "checked" : ""}>
+      <span>⑦ 7점: 매우 그렇다</span>
+    </label>
+  </div>
+</div>
 
           <div class="sq-block" id="add2Wrap" style="margin-top:18px;">
-            <div class="sq-q">ADD2. 추가적인 정보를 탐색하기 위해 다음 중 어느 매체를 선택하시겠습니까?</div>
+            <div class="sq-q">ADD2. ㅁㅏㄴ약 선택한 주제에 대한 추가 정보를 탐색한다면, 다음 중 어느 매체를 선택하시겠습니까?</div>
             <div class="sq-options">
               <label class="sq-opt"><input type="radio" name="add2" value="1" ${state.page7Answers.add2 === "1" ? "checked" : ""}><span>① 국방부 공식매체(국방일보 등)</span></label>
               <label class="sq-opt"><input type="radio" name="add2" value="2" ${state.page7Answers.add2 === "2" ? "checked" : ""}><span>② 전국 종합일간지</span></label>
@@ -1787,7 +1832,7 @@ if (nextStageBtn) {
         <div>
           <div class="sq-title-box">8페이지</div>
           <p class="desc" style="white-space: pre-line;">
-※ 다음 질문은 귀하께서 추가 정보를 확인하려고 매체를 선택하신 이유에 대한 질문입니다. 귀하의 생각을 응답해주십시오.
+※ 귀하께서 만약 추가 정보를 확인한다면 매체를 선택하게 될 이유를 묻는 문항입니다. 귀하의 생각을 응답해주십시오.
           </p>
 
           <div class="fact-table-wrap">
