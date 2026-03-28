@@ -531,65 +531,43 @@
     }
 
     function buildArticleMap(prefix, titles) {
-      const root = `#/${prefix}`;
-      const p1 = `#/${prefix}-1`;
-      const p2 = `#/${prefix}-2`;
-      const p3 = `#/${prefix}-3`;
-      const p4 = `#/${prefix}-4`;
+  const root = `#/${prefix}`;
+  const p1 = `#/${prefix}-1`;
+  const p2 = `#/${prefix}-2`;
+  const p3 = `#/${prefix}-3`;
+  const p4 = `#/${prefix}-4`;
 
-      return {
-        [root]: {
-          title: titles.main,
-          selectedNews: 0,
-          links: [
-            { text: titles.a1, target: p1, code: 1 },
-            { text: titles.a2, target: p2, code: 2 },
-            { text: titles.a3, target: p3, code: 3 },
-            { text: titles.a4, target: p4, code: 4 }
-          ]
-        },
-        [p1]: {
-          title: titles.a1,
-          selectedNews: 1,
-          links: [
-            { text: titles.main, target: root, code: 0 },
-            { text: titles.a2, target: p2, code: 2 },
-            { text: titles.a3, target: p3, code: 3 },
-            { text: titles.a4, target: p4, code: 4 }
-          ]
-        },
-        [p2]: {
-          title: titles.a2,
-          selectedNews: 2,
-          links: [
-            { text: titles.main, target: root, code: 0 },
-            { text: titles.a1, target: p1, code: 1 },
-            { text: titles.a3, target: p3, code: 3 },
-            { text: titles.a4, target: p4, code: 4 }
-          ]
-        },
-        [p3]: {
-          title: titles.a3,
-          selectedNews: 3,
-          links: [
-            { text: titles.main, target: root, code: 0 },
-            { text: titles.a1, target: p1, code: 1 },
-            { text: titles.a2, target: p2, code: 2 },
-            { text: titles.a4, target: p4, code: 4 }
-          ]
-        },
-        [p4]: {
-          title: titles.a4,
-          selectedNews: 4,
-          links: [
-            { text: titles.main, target: root, code: 0 },
-            { text: titles.a1, target: p1, code: 1 },
-            { text: titles.a2, target: p2, code: 2 },
-            { text: titles.a3, target: p3, code: 3 }
-          ]
-        }
-      };
-    }
+  const pages = [
+    { key: root, title: titles.main, code: 0 },
+    { key: p1, title: titles.a1, code: 1 },
+    { key: p2, title: titles.a2, code: 2 },
+    { key: p3, title: titles.a3, code: 3 },
+    { key: p4, title: titles.a4, code: 4 }
+  ];
+
+  function makeLinks(currentIndex) {
+    const after = pages.slice(currentIndex + 1);
+    const before = pages.slice(0, currentIndex);
+    const ordered = [...after, ...before]; // 현재 기사 제외 + 다음 기사부터 순환
+    return ordered.map(item => ({
+      text: item.title,
+      target: item.key,
+      code: item.code
+    }));
+  }
+
+  const map = {};
+
+  pages.forEach((page, index) => {
+    map[page.key] = {
+      title: page.title,
+      selectedNews: page.code,
+      links: makeLinks(index)
+    };
+  });
+
+  return map;
+}
 
     const ARTICLE_LINK_MAP = {
       ...buildArticleMap("6-1", ARTICLE_TITLE_SETS["6-1"]),
