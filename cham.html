@@ -770,16 +770,6 @@
       document.getElementById("start").addEventListener("click", () => setHash("#/"));
     }
 
-function pageBlocked() {
-  renderShell(`
-    <div class="intro">
-      <h1 class="intro-title" style="font-weight: 700; font-size: 1.4rem; line-height: 1.8;">
-        "본 조사는 13일부터 시작할 예정입니다. 자세한 내용은 부대 담당자에게 문의하세요." 
-      </h1>
-    </div>
-  `);
-}
-    
     function pageSQ() {
       renderShell(`
         <div class="sq-page">
@@ -2266,17 +2256,41 @@ check8: state.checkAnswers[7] || "",
       }
     }
 
-function router() {
-  const h = location.hash || "#/blocked";
+    function router() {
+      const h = location.hash || "#/intro";
 
-  if (h !== "#/blocked") {
-    return setHash("#/blocked");
-  }
+      if (h === "#/intro") return pageIntro();
 
-  return pageBlocked();
-}
+      if (h === "#/") return pageSQ();
+      if (h === "#/q1") return pageTopicChoice();
 
-    
+      if (h === "#/4-1") return page41();
+      if (h === "#/4-2") return page42();
+      if (h === "#/4-3") return page43();
+      if (h === "#/4-4") return page44();
+      if (h === "#/4-5") return page45();
+
+      if (h === "#/page5") return page5();
+      if (h === "#/rand") return pageRand();
+      if (h === "#/stimulus-intro-locked") return pageStimulusIntroLocked();
+      if (h === "#/stimulus-intro-free") return pageStimulusIntroFree();
+
+      const articleMatch = h.match(/^#\/(6-1|6-2|62-1|62-2|63-1|63-2|64-1|64-2|65-1|65-2)(?:-([1-4]))?$/);
+      if (articleMatch) {
+        const routeKey = articleMatch[2] ? `${articleMatch[1]}-${articleMatch[2]}` : articleMatch[1];
+        return articlePage(routeKey);
+      }
+
+      if (h === "#/7") return page7();
+      if (h === "#/7-1") return page71();
+      if (h === "#/8") return page8();
+      if (h === "#/9") return page9();
+      if (h === "#/10") return page10();
+      if (h === "#/11") return page11();
+      if (h === "#/12") return page12();
+
+      return setHash("#/intro");
+    }
 
     (function forceIntroOnFirstLoad() {
       const BOOT_KEY = "survey_boot_v1";
