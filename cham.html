@@ -804,25 +804,25 @@ ${desc}
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
 
-        radios.forEach(radio => {
-          radio.addEventListener("change", () => {
-            answers[currentIndex] = radio.value;
-            stateSetter([...answers]);
+radios.forEach(radio => {
+  radio.addEventListener("click", () => {
+    answers[currentIndex] = radio.value;
+    stateSetter([...answers]);
 
-            const done = answers.every(v => !!v);
+    const done = answers.every(v => !!v);
 
-            if (autoAdvance && currentIndex < questions.length - 1) {
-              currentIndex += 1;
-              draw();
-              return;
-            }
+    if (autoAdvance && currentIndex < questions.length - 1) {
+      currentIndex += 1;
+      draw();
+      return;
+    }
 
-            if (done) {
-              nextBtn.disabled = false;
-              nextBtn.textContent = "다음";
-            }
-          });
-        });
+    if (done) {
+      nextBtn.disabled = false;
+      nextBtn.textContent = "다음";
+    }
+  });
+});
 
         prevBtn.addEventListener("click", () => {
           if (currentIndex > 0) {
@@ -901,17 +901,17 @@ ${desc}
           const radios = document.querySelectorAll(`input[name="${answerNamePrefix}_${currentStep}"]`);
           const prevBtn = document.getElementById("prevBtn");
 
-          radios.forEach(radio => {
-            radio.addEventListener("change", () => {
-              answers[currentStep] = radio.value;
-              stateSetter([...answers]);
+       radios.forEach(radio => {
+  radio.addEventListener("click", () => {
+    answers[currentStep] = radio.value;
+    stateSetter([...answers]);
 
-              if (autoAdvance) {
-                currentStep += 1;
-                draw();
-              }
-            });
-          });
+    if (autoAdvance) {
+      currentStep += 1;
+      draw();
+    }
+  });
+});
 
           prevBtn.addEventListener("click", () => {
             if (currentStep > 0) {
@@ -966,22 +966,22 @@ ${desc}
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
 
-        radios.forEach(radio => {
-          radio.addEventListener("change", () => {
-            step.valueSetter(radio.value);
+radios.forEach(radio => {
+  radio.addEventListener("click", () => {
+    step.valueSetter(radio.value);
 
-            if (autoAdvance && extraIndex < extraSteps.length - 1) {
-              currentStep += 1;
-              draw();
-              return;
-            }
+    if (autoAdvance && extraIndex < extraSteps.length - 1) {
+      currentStep += 1;
+      draw();
+      return;
+    }
 
-            if (extraSteps.every(s => !!s.valueGetter())) {
-              nextBtn.disabled = false;
-              nextBtn.textContent = "다음";
-            }
-          });
-        });
+    if (extraSteps.every(s => !!s.valueGetter())) {
+      nextBtn.disabled = false;
+      nextBtn.textContent = "다음";
+    }
+  });
+});
 
         prevBtn.addEventListener("click", () => {
           currentStep -= 1;
