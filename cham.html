@@ -7,10 +7,11 @@
   <style>
 
     .desc {
-  font-size: 18px;  
-  line-height: 1.8;
-  color: #111827;
-}
+      font-size: 18px;
+      line-height: 1.8;
+      color: #111827;
+    }
+
     :root {
       --max: 1280px;
       --gap: 12px;
@@ -358,19 +359,19 @@
       transform: translateY(1px);
     }
 
-      .news-link.read-lock {
-    pointer-events: none;
-    color: #9ca3af;
-    background: #f3f4f6;
-    cursor: not-allowed;
-  }
+    .news-link.read-lock {
+      pointer-events: none;
+      color: #9ca3af;
+      background: #f3f4f6;
+      cursor: not-allowed;
+    }
 
-  .news-link.stage-lock {
-    pointer-events: none;
-    color: #9ca3af;
-    background: #f3f4f6;
-    cursor: not-allowed;
-  }
+    .news-link.stage-lock {
+      pointer-events: none;
+      color: #9ca3af;
+      background: #f3f4f6;
+      cursor: not-allowed;
+    }
 
     @media (max-width: 1024px) {
       .fact-table-wrap {
@@ -457,7 +458,7 @@
       "62-2": {
         main: "\"코딩 배우러 군대 간다\"… 2026년 전군에 'AI 교육장' 완비",
         a1: "지게차부터 정보처리까지… 군대서 '평생 먹거리' 자격증 딴다",
-        a2: " \"군대서 전공 수업 듣고 조기 졸업\"… 학점 인정 대학 180곳 돌파",
+        a2: "\"군대서 전공 수업 듣고 조기 졸업\"… 학점 인정 대학 180곳 돌파",
         a3: "\"군 창업동아리서 CEO 꿈 키워요\"… 입상하면 상금, 창업 자금까지",
         a4: "병영도서관이 '북카페'로 변신… 군대서 인문학 소양 쌓는다"
       },
@@ -531,43 +532,43 @@
     }
 
     function buildArticleMap(prefix, titles) {
-  const root = `#/${prefix}`;
-  const p1 = `#/${prefix}-1`;
-  const p2 = `#/${prefix}-2`;
-  const p3 = `#/${prefix}-3`;
-  const p4 = `#/${prefix}-4`;
+      const root = `#/${prefix}`;
+      const p1 = `#/${prefix}-1`;
+      const p2 = `#/${prefix}-2`;
+      const p3 = `#/${prefix}-3`;
+      const p4 = `#/${prefix}-4`;
 
-  const pages = [
-    { key: root, title: titles.main, code: 0 },
-    { key: p1, title: titles.a1, code: 1 },
-    { key: p2, title: titles.a2, code: 2 },
-    { key: p3, title: titles.a3, code: 3 },
-    { key: p4, title: titles.a4, code: 4 }
-  ];
+      const pages = [
+        { key: root, title: titles.main, code: 0 },
+        { key: p1, title: titles.a1, code: 1 },
+        { key: p2, title: titles.a2, code: 2 },
+        { key: p3, title: titles.a3, code: 3 },
+        { key: p4, title: titles.a4, code: 4 }
+      ];
 
-  function makeLinks(currentIndex) {
-    const after = pages.slice(currentIndex + 1);
-    const before = pages.slice(0, currentIndex);
-    const ordered = [...after, ...before]; // 현재 기사 제외 + 다음 기사부터 순환
-    return ordered.map(item => ({
-      text: item.title,
-      target: item.key,
-      code: item.code
-    }));
-  }
+      function makeLinks(currentIndex) {
+        const after = pages.slice(currentIndex + 1);
+        const before = pages.slice(0, currentIndex);
+        const ordered = [...after, ...before];
+        return ordered.map(item => ({
+          text: item.title,
+          target: item.key,
+          code: item.code
+        }));
+      }
 
-  const map = {};
+      const map = {};
 
-  pages.forEach((page, index) => {
-    map[page.key] = {
-      title: page.title,
-      selectedNews: page.code,
-      links: makeLinks(index)
-    };
-  });
+      pages.forEach((page, index) => {
+        map[page.key] = {
+          title: page.title,
+          selectedNews: page.code,
+          links: makeLinks(index)
+        };
+      });
 
-  return map;
-}
+      return map;
+    }
 
     const ARTICLE_LINK_MAP = {
       ...buildArticleMap("6-1", ARTICLE_TITLE_SETS["6-1"]),
@@ -630,15 +631,15 @@
     ];
 
     const CHECK_QUESTIONS = [
-  "Check1. 방금 본 기사들은 내용이 반복적이었다.",
-  "Check2. 제시된 기사들이 서로 유사한 핵심 정보를 담고 있었다.",
-  "Check3. 이번 자극은 평소 알고리즘 뉴스 이용 시의 반복노출 경험을 잘 재현하였다.",
-  "Check4. 지금 본 기사들 중 반복되거나 겹치는 정보가 있었다.",
-  "Check5. 방금 본 각각의 기사에서 서로 다른 정보를 찾을 수 있었다",
-  "Check6. 방금 본 각각의 기사들은 서로 다른 관점이나 정보를 제시하였다 ",
-  "Check7. 기사들을 읽을 때 주의깊게 읽었다.",
-  "Check8. 실제 포털사이트에서 뉴스를 접했을 때와 유사한 환경이었다."
-];
+      "Check1. 방금 본 기사들은 내용이 반복적이었다.",
+      "Check2. 제시된 기사들이 서로 유사한 핵심 정보를 담고 있었다.",
+      "Check3. 이번 자극은 평소 알고리즘 뉴스 이용 시의 반복노출 경험을 잘 재현하였다.",
+      "Check4. 지금 본 기사들 중 반복되거나 겹치는 정보가 있었다.",
+      "Check5. 방금 본 각각의 기사에서 서로 다른 정보를 찾을 수 있었다",
+      "Check6. 방금 본 각각의 기사들은 서로 다른 관점이나 정보를 제시하였다 ",
+      "Check7. 기사들을 읽을 때 주의깊게 읽었다.",
+      "Check8. 실제 포털사이트에서 뉴스를 접했을 때와 유사한 환경이었다."
+    ];
 
     const state = {
       sq: {
@@ -743,10 +744,240 @@
       return true;
     }
 
+    function renderSingleQuestionLikertPage({
+      titleBox = "",
+      desc = "",
+      questions = [],
+      answers = [],
+      scaleLabels = [],
+      answerNamePrefix = "q",
+      nextHash = "#/intro",
+      stateSetter,
+      autoAdvance = true
+    }) {
+      let currentIndex = answers.findIndex(v => !v);
+      if (currentIndex === -1) currentIndex = questions.length - 1;
+
+      function draw() {
+        const currentAnswer = answers[currentIndex];
+
+        renderShell(`
+          <div class="sq-page">
+            <div class="sq-title-box">${titleBox}</div>
+
+            <p class="desc" style="white-space: pre-line;">
+${desc}
+            </p>
+
+            <div class="sq-block">
+              <div class="small" style="margin-bottom:10px;">
+                ${currentIndex + 1} / ${questions.length}
+              </div>
+
+              <div class="sq-q" style="font-size:20px; line-height:1.7;">
+                ${questions[currentIndex]}
+              </div>
+
+              <div class="sq-options" style="margin-top:18px;">
+                ${scaleLabels.map((label, idx) => {
+                  const value = String(idx + 1);
+                  return `
+                    <label class="sq-opt">
+                      <input type="radio" name="${answerNamePrefix}_${currentIndex}" value="${value}" ${String(currentAnswer) === value ? "checked" : ""}>
+                      <span>${label}</span>
+                    </label>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+
+          <div class="row" style="justify-content:center;">
+  <button id="nextBtn" class="btn btn-primary" style="max-width:200px;" ${answers.every(v => !!v) ? "" : "disabled"}>
+    ${answers.every(v => !!v) ? "다음" : "응답 완료 후 활성화"}
+  </button>
+</div>
+          </div>
+        `);
+
+        const radios = document.querySelectorAll(`input[name="${answerNamePrefix}_${currentIndex}"]`);
+        const nextBtn = document.getElementById("nextBtn");
+
+        radios.forEach(radio => {
+          radio.addEventListener("change", () => {
+            answers[currentIndex] = radio.value;
+            stateSetter([...answers]);
+
+            const done = answers.every(v => !!v);
+
+            if (autoAdvance && currentIndex < questions.length - 1) {
+              currentIndex += 1;
+              draw();
+              return;
+            }
+
+            if (done) {
+              nextBtn.disabled = false;
+              nextBtn.textContent = "다음";
+            }
+          });
+        });
+
+
+
+        nextBtn.addEventListener("click", () => {
+          if (!answers.every(v => !!v)) return;
+          setHash(nextHash);
+        });
+      }
+
+      draw();
+    }
+
+    function renderSingleQuestionLikertPageWithExtras({
+      titleBox = "",
+      desc = "",
+      questions = [],
+      answers = [],
+      scaleLabels = [],
+      answerNamePrefix = "q",
+      nextHash = "#/intro",
+      stateSetter,
+      autoAdvance = true,
+      extraSteps = []
+    }) {
+      let firstUnansweredMain = answers.findIndex(v => !v);
+      let currentStep = firstUnansweredMain === -1 ? questions.length : firstUnansweredMain;
+
+      function draw() {
+        const isMainStep = currentStep < questions.length;
+
+        if (isMainStep) {
+          const currentAnswer = answers[currentStep];
+
+          renderShell(`
+            <div class="sq-page">
+              <div class="sq-title-box">${titleBox}</div>
+
+              <p class="desc" style="white-space: pre-line;">
+${desc}
+              </p>
+
+              <div class="sq-block">
+                <div class="small" style="margin-bottom:10px;">
+                  ${currentStep + 1} / ${questions.length + extraSteps.length}
+                </div>
+
+                <div class="sq-q" style="font-size:20px; line-height:1.7;">
+                  ${questions[currentStep]}
+                </div>
+
+                <div class="sq-options" style="margin-top:18px;">
+                  ${scaleLabels.map((label, idx) => {
+                    const value = String(idx + 1);
+                    return `
+                      <label class="sq-opt">
+                        <input type="radio" name="${answerNamePrefix}_${currentStep}" value="${value}" ${String(currentAnswer) === value ? "checked" : ""}>
+                        <span>${label}</span>
+                      </label>
+                    `;
+                  }).join("")}
+                </div>
+              </div>
+<div class="row" style="justify-content:center;">
+  <button id="nextBtn" class="btn btn-primary" style="max-width:200px;" disabled>응답 완료 후 활성화</button>
+</div>
+            </div>
+          `);
+
+          const radios = document.querySelectorAll(`input[name="${answerNamePrefix}_${currentStep}"]`);
+
+          radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+              answers[currentStep] = radio.value;
+              stateSetter([...answers]);
+
+              if (autoAdvance) {
+                currentStep += 1;
+                draw();
+              }
+            });
+          });
+
+
+
+          return;
+        }
+
+        const extraIndex = currentStep - questions.length;
+        const step = extraSteps[extraIndex];
+
+        renderShell(`
+          <div class="sq-page">
+            <div class="sq-title-box">${titleBox}</div>
+
+            <p class="desc" style="white-space: pre-line;">
+${desc}
+            </p>
+
+            <div class="sq-block">
+              <div class="small" style="margin-bottom:10px;">
+                ${currentStep + 1} / ${questions.length + extraSteps.length}
+              </div>
+
+              <div class="sq-q" style="font-size:20px; line-height:1.7;">
+                ${step.question}
+              </div>
+
+              <div class="sq-options" style="margin-top:18px;">
+                ${step.options.map(opt => `
+                  <label class="sq-opt">
+                    <input type="radio" name="${step.name}" value="${opt.value}" ${String(step.valueGetter()) === String(opt.value) ? "checked" : ""}>
+                    <span>${opt.label}</span>
+                  </label>
+                `).join("")}
+              </div>
+            </div>
+<div class="row" style="justify-content:center;">
+  <button id="nextBtn" class="btn btn-primary" style="max-width:200px;" ${extraSteps.every(s => !!s.valueGetter()) ? "" : "disabled"}>
+    ${extraSteps.every(s => !!s.valueGetter()) ? "다음" : "응답 완료 후 활성화"}
+  </button>
+</div>
+          </div>
+        `);
+
+        const radios = document.querySelectorAll(`input[name="${step.name}"]`);
+        const nextBtn = document.getElementById("nextBtn");
+
+        radios.forEach(radio => {
+          radio.addEventListener("change", () => {
+            step.valueSetter(radio.value);
+
+            if (autoAdvance && extraIndex < extraSteps.length - 1) {
+              currentStep += 1;
+              draw();
+              return;
+            }
+
+            if (extraSteps.every(s => !!s.valueGetter())) {
+              nextBtn.disabled = false;
+              nextBtn.textContent = "다음";
+            }
+          });
+        });
+
+
+        nextBtn.addEventListener("click", () => {
+          if (!extraSteps.every(s => !!s.valueGetter())) return;
+          setHash(nextHash);
+        });
+      }
+
+      draw();
+    }
+
     function pageIntro() {
       renderShell(`
         <div class="intro">
-
           <h1 class="intro-title" style="font-weight: normal; font-size: 1rem; line-height: 1.6;">안녕하십니까? <br><br>
 본 실험 연구는 ‘장병들의 뉴스 소비’에 대한 인식 조사입니다.<br><br>
 설문 사항에는 정답이 없습니다.<br><br>
@@ -758,8 +989,6 @@
 바쁘시더라도 잠시만 시간을 내어 설문에 성실히 응해주시면 감사하겠습니다. <br><br>
 
 성실히 설문에 참여해주신 분들께 소정의 감사 선물(기프티콘)을 드립니다. <br><br>
-
-
 </h1>
           <div class="row" style="justify-content:center; width:100%; margin-top:6px;">
             <button id="start" class="btn btn-primary" style="max-width:240px;">시작하기</button>
@@ -850,8 +1079,6 @@
             </div>
           </div>
 
-
-
           <div class="sq-block">
             <div class="sq-q">SQ7. 귀하께서 현재 설문에 응하고 있는 접속 환경은 무엇입니까?</div>
             <div class="sq-inline-3">
@@ -862,15 +1089,15 @@
           </div>
 
           <div class="sq-block">
-  <div class="sq-q">SQ8. 기프티콘을 받길 원하시면 전화번호를 입력해주세요(선택사항)</div>
-  <input 
-    type="text" 
-    id="sq_phone" 
-    class="input" 
-    placeholder="숫자만 입력 (예: 01012345678)"
-    value="${state.sq.phone || ""}"
-  />
-</div>
+            <div class="sq-q">SQ8. 기프티콘을 받길 원하시면 전화번호를 입력해주세요(선택사항)</div>
+            <input
+              type="text"
+              id="sq_phone"
+              class="input"
+              placeholder="숫자만 입력 (예: 01012345678)"
+              value="${state.sq.phone || ""}"
+            />
+          </div>
 
           <div class="row">
             <button id="sqNext" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
@@ -880,11 +1107,10 @@
 
       const phoneInput = document.getElementById("sq_phone");
 
-phoneInput.addEventListener("input", () => {
-  // 숫자만 허용
-  phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
-  state.sq.phone = phoneInput.value;
-});
+      phoneInput.addEventListener("input", () => {
+        phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
+        state.sq.phone = phoneInput.value;
+      });
 
       const mappings = [
         ["sq_gender", "gender"],
@@ -959,6 +1185,14 @@ phoneInput.addEventListener("input", () => {
             iup15: "",
             add1: "",
             add2: "",
+            check1: "",
+            check2: "",
+            check3: "",
+            check4: "",
+            check5: "",
+            check6: "",
+            check7: "",
+            check8: "",
             tr1: "",
             tr2: "",
             tr3: "",
@@ -1016,6 +1250,7 @@ phoneInput.addEventListener("input", () => {
           add1: null,
           add2: null
         };
+        state.checkAnswers = [null, null, null, null, null, null, null, null];
         state.page8Answers = {
           tr: Array(7).fill(null)
         };
@@ -1156,108 +1391,24 @@ phoneInput.addEventListener("input", () => {
     function page45() { if (!state.topicChoice) return setHash("#/intro"); topicFactPage("5"); }
 
     function page5() {
-      renderShell(`
-        <div>
-          <div class="sq-title-box">5페이지</div>
-          <p class="desc" style="white-space: pre-line;">
-※ 알고리즘이란 포털, SNS, 유튜브 등에서 사용자의 이용 패턴을 바탕으로 뉴스나 콘텐츠를 추천하는 시스템입니다. 포털, SNS, 유튜브에서 방금 읽었던 기사나 영상과 유사한 내용이 자동으로 노출되는 형태가 대표적인 예입니다. 다음 질문은 알고리즘에 대한 평소 생각을 묻는 내용입니다. 귀하의 평소 생각을 답해주십시오.
-          </p>
-
-          <div class="fact-table-wrap">
-            <table class="fact-table">
-              <thead>
-                <tr>
-                  <th>문항 내용</th>
-                  <th class="fact-col">전혀 동의하지 않는다</th>
-                  <th class="fact-col">동의하지 않는다</th>
-                  <th class="fact-col">보통이다</th>
-                  <th class="fact-col">동의한다</th>
-                  <th class="fact-col">전적으로 동의한다</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${ALGO_QUESTIONS.map((q, idx) => `
-                  <tr>
-                    <td class="fact-text">${q}</td>
-                    ${[1,2,3,4,5].map(v => `
-                      <td>
-                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
-                          <input class="fact-radio" type="radio" name="algo_${idx}" value="${v}" ${String(state.algoAnswers[idx]) === String(v) ? "checked" : ""}>
-                          <span>${["①","②","③","④","⑤"][v-1]}</span>
-                        </label>
-                      </td>
-                    `).join("")}
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="row">
-            <button id="next" class="btn btn-primary" disabled>다음</button>
-          </div>
-        </div>
-      `);
-
-      const nextBtn = document.getElementById("next");
-
-      function sync() {
-        for (let i = 0; i < 6; i++) {
-          const picked = document.querySelector(`input[name="algo_${i}"]:checked`);
-          state.algoAnswers[i] = picked ? Number(picked.value) : null;
-        }
-        nextBtn.disabled = state.algoAnswers.some(v => !v);
-      }
-
-      for (let i = 0; i < 6; i++) {
-        document.querySelectorAll(`input[name="algo_${i}"]`).forEach(el => {
-          el.addEventListener("change", sync);
-        });
-      }
-
-      sync();
-
-      nextBtn.addEventListener("click", () => {
-        state.selectedNews = null;
-        state.selectedNewsTitle = null;
-        state.selectedNewsPage = null;
-        state.selectedNewsHistory = [];
-        state.selectedNewsTitleHistory = [];
-        state.selectedNewsPageHistory = [];
-        state.routeChoice = null;
-        state.route = null;
-        state.initialArticleRoute = null;
-        state.answers = { q2: null, q3: null };
-        state.page7Answers = {
-          iup: Array(15).fill(null),
-          add1: null,
-          add2: null
-        };
-        state.page8Answers = {
-          tr: Array(7).fill(null)
-        };
-        state.page9Answers = {
-          use: Array(4).fill(null)
-        };
-        state.page10Answers = {
-          dq1: null,
-          dq2: null,
-          dq3: null,
-          dq4: null,
-          dq4Count: "",
-          dq5: null
-        };
-        state.page11Answers = {
-          lsq1: null,
-          lsq2: null
-        };
-        state.isFinalSaved = false;
-        state.articleVisited = {};
-        state.lockedVisitCount = 0;
-        state.recentReadPages = [];
-        state.lockedNextEligibleAt = null;
-        state.freeRouteStartedAt = null;
-        setHash("#/rand");
+      renderSingleQuestionLikertPage({
+        titleBox: "5페이지",
+        desc: `※ 알고리즘이란 포털, SNS, 유튜브 등에서 사용자의 이용 패턴을 바탕으로 뉴스나 콘텐츠를 추천하는 시스템입니다. 포털, SNS, 유튜브에서 방금 읽었던 기사나 영상과 유사한 내용이 자동으로 노출되는 형태가 대표적인 예입니다. 다음 질문은 알고리즘에 대한 평소 생각을 묻는 내용입니다. 귀하의 평소 생각을 답해주십시오.`,
+        questions: ALGO_QUESTIONS,
+        answers: state.algoAnswers.map(v => v ? String(v) : null),
+        scaleLabels: [
+          "① 전혀 동의하지 않는다",
+          "② 동의하지 않는다",
+          "③ 보통이다",
+          "④ 동의한다",
+          "⑤ 전적으로 동의한다"
+        ],
+        answerNamePrefix: "algo",
+        stateSetter: (newAnswers) => {
+          state.algoAnswers = newAnswers.map(v => v ? Number(v) : null);
+        },
+        nextHash: "#/rand",
+        autoAdvance: true
       });
     }
 
@@ -1305,7 +1456,7 @@ phoneInput.addEventListener("input", () => {
           <div class="sq-block">
             <div class="sq-q">D. 자극물 안내문 및 제시</div>
             <div class="sq-note" style="white-space: pre-line; color:#111827; font-size:16px;">
-            
+
 이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다.
 48초 동안 읽을 시간이 주어지며, 48초가 지나면 추천 기사 목록이 활성화됩니다.
 목록 중 하나의 기사를 선택하시면 또다시 48초 동안 기사를 읽으실 수 있습니다.
@@ -1333,7 +1484,7 @@ phoneInput.addEventListener("input", () => {
             <div class="sq-q">D. 자극물 안내문 및 제시</div>
             <div class="sq-note" style="white-space: pre-line; color:#111827; font-size:16px;">
 
-이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다. 
+이제부터 귀하께서 평소 업무 등에 필요하다고 생각하거나 관심 있다고 선택한 주제에 관련된 기사가 나옵니다.
 기사 하단에는 연관 기사 목록이 제시되며, 4분 동안 현재의 기사와 연관 기사를 자유롭게 선택해 읽으시면 됩니다.
 4분이 지나면 다음 단계로 넘어갈 수 있는 버튼이 활성화됩니다. 버튼을 눌러 다음 설문에 응답해주십시오.
             </div>
@@ -1353,28 +1504,27 @@ phoneInput.addEventListener("input", () => {
     function renderArticleButtonsPage({ pageKey, cfg, locked }) {
       const imgUrl = getArticleImage(pageKey);
 
+      const firstVisitToThisPage = !state.articleVisited[pageKey];
+      state.articleVisited[pageKey] = true;
 
-  const firstVisitToThisPage = !state.articleVisited[pageKey];
-  state.articleVisited[pageKey] = true;
+      state.recentReadPages = Array.isArray(state.recentReadPages) ? state.recentReadPages : [];
+      if (!state.recentReadPages.includes(pageKey)) {
+        state.recentReadPages.push(pageKey);
+      }
 
-  state.recentReadPages = Array.isArray(state.recentReadPages) ? state.recentReadPages : [];
-  if (!state.recentReadPages.includes(pageKey)) {
-    state.recentReadPages.push(pageKey);
-  }
+      if (locked) {
+        if (firstVisitToThisPage) {
+          state.lockedVisitCount += 1;
+        }
 
-  if (locked) {
-    if (firstVisitToThisPage) {
-      state.lockedVisitCount += 1;
-    }
+        if (state.lockedVisitCount >= 5 && !state.lockedNextEligibleAt) {
+          state.lockedNextEligibleAt = Date.now() + 48000;
+        }
+      }
 
-    if (state.lockedVisitCount >= 5 && !state.lockedNextEligibleAt) {
-      state.lockedNextEligibleAt = Date.now() + 48000;
-    }
-  }
-
-  if (!locked && !state.freeRouteStartedAt) {
-    state.freeRouteStartedAt = Date.now();
-  }
+      if (!locked && !state.freeRouteStartedAt) {
+        state.freeRouteStartedAt = Date.now();
+      }
 
       const lockedNextVisible =
         locked &&
@@ -1447,15 +1597,16 @@ phoneInput.addEventListener("input", () => {
       const cd = document.getElementById("countdown");
       const nextStageBtn = document.getElementById("nextStage");
       const nextWrap = document.getElementById("nextWrap");
-    function showNextStageButton() {
-  if (document.getElementById("nextStage")) return;
 
-  nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
-  buttons.forEach(btn => btn.classList.add("stage-lock"));
-  document.getElementById("nextStage").addEventListener("click", () => {
-    setHash("#/7");
-  });
-}
+      function showNextStageButton() {
+        if (document.getElementById("nextStage")) return;
+
+        nextWrap.innerHTML = `<button id="nextStage" class="btn btn-primary" style="max-width:220px;">다음 단계</button>`;
+        buttons.forEach(btn => btn.classList.add("stage-lock"));
+        document.getElementById("nextStage").addEventListener("click", () => {
+          setHash("#/7");
+        });
+      }
 
       buttons.forEach(btn => {
         btn.addEventListener("click", () => {
@@ -1477,13 +1628,13 @@ phoneInput.addEventListener("input", () => {
         });
       });
 
-if (nextStageBtn) {
-  buttons.forEach(btn => btn.classList.add("stage-lock"));
+      if (nextStageBtn) {
+        buttons.forEach(btn => btn.classList.add("stage-lock"));
 
-  nextStageBtn.addEventListener("click", () => {
-    setHash("#/7");
-  });
-}
+        nextStageBtn.addEventListener("click", () => {
+          setHash("#/7");
+        });
+      }
 
       if (locked) {
         let remain = 48;
@@ -1492,13 +1643,13 @@ if (nextStageBtn) {
         const timer = setInterval(() => {
           remain -= 1;
 
-       if (remain <= 0) {
-  clearInterval(timer);
-  buttons.forEach(btn => btn.classList.remove("read-lock"));
-  cd.textContent = "메뉴가 활성화되었습니다.";
-  return;
-}
-  
+          if (remain <= 0) {
+            clearInterval(timer);
+            buttons.forEach(btn => btn.classList.remove("read-lock"));
+            cd.textContent = "메뉴가 활성화되었습니다.";
+            return;
+          }
+
           cd.textContent = `활성화까지 ${remain}초`;
         }, 1000);
       } else {
@@ -1531,24 +1682,24 @@ if (nextStageBtn) {
         }
       }
 
-    if (locked && state.lockedNextEligibleAt && !lockedNextVisible) {
-  const nextRemainMs = state.lockedNextEligibleAt - Date.now();
-  let nextRemain = Math.max(0, Math.ceil(nextRemainMs / 1000));
+      if (locked && state.lockedNextEligibleAt && !lockedNextVisible) {
+        const nextRemainMs = state.lockedNextEligibleAt - Date.now();
+        let nextRemain = Math.max(0, Math.ceil(nextRemainMs / 1000));
 
-  if (nextRemain > 0) {
-    const nextTimer = setInterval(() => {
-      nextRemain -= 1;
+        if (nextRemain > 0) {
+          const nextTimer = setInterval(() => {
+            nextRemain -= 1;
 
-      if (nextRemain <= 0) {
-        clearInterval(nextTimer);
-        showNextStageButton();
-        return;
+            if (nextRemain <= 0) {
+              clearInterval(nextTimer);
+              showNextStageButton();
+              return;
+            }
+          }, 1000);
+        } else {
+          showNextStageButton();
+        }
       }
-    }, 1000);
-  } else {
-    showNextStageButton();
-  }
-}
     }
 
     function articlePage(routeKey) {
@@ -1582,205 +1733,80 @@ if (nextStageBtn) {
         "IUP15. 제공된 정보가 편향되었을 가능성이 있다고 생각한다."
       ];
 
-      renderShell(`
-        <div>
-          <div class="sq-title-box">7페이지</div>
-          <p class="desc" style="white-space: pre-line;">
-※ 다음은 귀하께서 선택한 국방 주제에 대한 뉴스 기사를 반복적으로 또는 자유롭게 읽고 난 뒤 느낀 점을 묻는 문항들입니다. '① 전혀 그렇지 않다 ~ ⑦ 매우 그렇다' 중 가장 가깝게 생각하시는 항목을 선택해주시면 됩니다.
-          </p>
-
-          <div class="fact-table-wrap">
-            <table class="fact-table">
-              <thead>
-                <tr>
-                  <th>문항 내용</th>
-                  <th class="fact-col">전혀 그렇지 않다</th>
-                  <th class="fact-col">그렇지 않다</th>
-                  <th class="fact-col">약간 그렇지 않다</th>
-                  <th class="fact-col">그저 그렇다</th>
-                  <th class="fact-col">약간 그렇다</th>
-                  <th class="fact-col">그렇다</th>
-                  <th class="fact-col">매우 그렇다</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${IUP_QUESTIONS.map((q, idx) => `
-                  <tr>
-                    <td class="fact-text">${q}</td>
-                    ${[1,2,3,4,5,6,7].map(v => `
-                      <td>
-                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
-                          <input class="fact-radio" type="radio" name="iup_${idx}" value="${v}" ${String(state.page7Answers.iup[idx]) === String(v) ? "checked" : ""}>
-                          <span>${["①","②","③","④","⑤","⑥","⑦"][v-1]}</span>
-                        </label>
-                      </td>
-                    `).join("")}
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-
-         <div class="sq-block" style="margin-top:18px;">
-            <div class="sq-q">ADD1. 나는 추가적인 정보를 탐색하기 위해 다른 매체를 이용할 의향이 있다.</div>
-            <div class="sq-options">
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="1" ${state.page7Answers.add1 === "1" ? "checked" : ""}>
-                <span>① 전혀 그렇지 않다</span>
-              </label>
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="2" ${state.page7Answers.add1 === "2" ? "checked" : ""}>
-                <span>② 그렇지 않다</span>
-              </label>
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="3" ${state.page7Answers.add1 === "3" ? "checked" : ""}>
-                <span>③ 약간 그렇지 않다</span>
-              </label>
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="4" ${state.page7Answers.add1 === "4" ? "checked" : ""}>
-                <span>④ 그저 그렇다</span>
-              </label>
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="5" ${state.page7Answers.add1 === "5" ? "checked" : ""}>
-                <span>⑤ 약간 그렇다</span>
-              </label>
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="6" ${state.page7Answers.add1 === "6" ? "checked" : ""}>
-                <span>⑥ 그렇다</span>
-              </label>
-              <label class="sq-opt">
-                <input type="radio" name="add1" value="7" ${state.page7Answers.add1 === "7" ? "checked" : ""}>
-                <span>⑦ 매우 그렇다</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="sq-block" id="add2Wrap" style="margin-top:18px;">
-            <div class="sq-q">ADD2. 만약 선택한 주제에 대한 추가 정보를 탐색한다면, 다음 중 어느 매체를 선택하시겠습니까?</div>
-            <div class="sq-options">
-              <label class="sq-opt"><input type="radio" name="add2" value="1" ${state.page7Answers.add2 === "1" ? "checked" : ""}><span>① 국방부 공식매체(국방일보 등)</span></label>
-              <label class="sq-opt"><input type="radio" name="add2" value="2" ${state.page7Answers.add2 === "2" ? "checked" : ""}><span>② 전국 종합일간지</span></label>
-              <label class="sq-opt"><input type="radio" name="add2" value="3" ${state.page7Answers.add2 === "3" ? "checked" : ""}><span>③ 국방 전문 유튜브 채널</span></label>
-              <label class="sq-opt"><input type="radio" name="add2" value="4" ${state.page7Answers.add2 === "4" ? "checked" : ""}><span>④ 국방 전문 블로그</span></label>
-              <label class="sq-opt"><input type="radio" name="add2" value="5" ${state.page7Answers.add2 === "5" ? "checked" : ""}><span>⑤ 지상파 / 종합편성채널방송</span></label>
-            </div>
-          </div>
-
-          <div class="row">
-            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
-          </div>
-        </div>
-      `);
-
-      const nextBtn = document.getElementById("next");
-      function sync() {
-        for (let i = 0; i < 15; i++) {
-          const picked = document.querySelector(`input[name="iup_${i}"]:checked`);
-          state.page7Answers.iup[i] = picked ? picked.value : null;
-        }
-
-        const add1Picked = document.querySelector('input[name="add1"]:checked');
-        state.page7Answers.add1 = add1Picked ? add1Picked.value : null;
-
-        const add2Picked = document.querySelector('input[name="add2"]:checked');
-        state.page7Answers.add2 = add2Picked ? add2Picked.value : null;
-
-        const iupDone = state.page7Answers.iup.every(v => !!v);
-        const add1Done = !!state.page7Answers.add1;
-        const add2Done = !!state.page7Answers.add2;
-        
-        nextBtn.disabled = !(iupDone && add1Done && add2Done);
-      }
-
-      for (let i = 0; i < 15; i++) {
-        document.querySelectorAll(`input[name="iup_${i}"]`).forEach(el => {
-          el.addEventListener("change", sync);
-        });
-      }
-
-      document.querySelectorAll('input[name="add1"]').forEach(el => {
-        el.addEventListener("change", sync);
-      });
-
-      document.querySelectorAll('input[name="add2"]').forEach(el => {
-        el.addEventListener("change", sync);
-      });
-
-      sync();
-
-      nextBtn.addEventListener("click", () => {
-
-          setHash("#/7-1");
-
+      renderSingleQuestionLikertPageWithExtras({
+        titleBox: "7페이지",
+        desc: `※ 다음은 귀하께서 선택한 국방 주제에 대한 뉴스 기사를 반복적으로 또는 자유롭게 읽고 난 뒤 느낀 점을 묻는 문항들입니다. '① 전혀 그렇지 않다 ~ ⑦ 매우 그렇다' 중 가장 가깝게 생각하시는 항목을 선택해주시면 됩니다.`,
+        questions: IUP_QUESTIONS,
+        answers: state.page7Answers.iup,
+        scaleLabels: [
+          "① 전혀 그렇지 않다",
+          "② 그렇지 않다",
+          "③ 약간 그렇지 않다",
+          "④ 그저 그렇다",
+          "⑤ 약간 그렇다",
+          "⑥ 그렇다",
+          "⑦ 매우 그렇다"
+        ],
+        answerNamePrefix: "iup",
+        stateSetter: (newAnswers) => {
+          state.page7Answers.iup = newAnswers;
+        },
+        nextHash: "#/7-1",
+        autoAdvance: true,
+        extraSteps: [
+          {
+            name: "add1",
+            question: "ADD1. 나는 추가적인 정보를 탐색하기 위해 다른 매체를 이용할 의향이 있다.",
+            valueGetter: () => state.page7Answers.add1,
+            valueSetter: (val) => { state.page7Answers.add1 = val; },
+            options: [
+              { value: "1", label: "① 전혀 그렇지 않다" },
+              { value: "2", label: "② 그렇지 않다" },
+              { value: "3", label: "③ 약간 그렇지 않다" },
+              { value: "4", label: "④ 그저 그렇다" },
+              { value: "5", label: "⑤ 약간 그렇다" },
+              { value: "6", label: "⑥ 그렇다" },
+              { value: "7", label: "⑦ 매우 그렇다" }
+            ]
+          },
+          {
+            name: "add2",
+            question: "ADD2. 만약 선택한 주제에 대한 추가 정보를 탐색한다면, 다음 중 어느 매체를 선택하시겠습니까?",
+            valueGetter: () => state.page7Answers.add2,
+            valueSetter: (val) => { state.page7Answers.add2 = val; },
+            options: [
+              { value: "1", label: "① 국방부 공식매체(국방일보 등)" },
+              { value: "2", label: "② 전국 종합일간지" },
+              { value: "3", label: "③ 국방 전문 유튜브 채널" },
+              { value: "4", label: "④ 국방 전문 블로그" },
+              { value: "5", label: "⑤ 지상파 / 종합편성채널방송" }
+            ]
+          }
+        ]
       });
     }
 
     function page71() {
-  renderShell(`
-    <div>
-      <div class="sq-title-box">7.1페이지</div>
-     <p class="desc" style="white-space: pre-line;">
-※ 앞서 제시된 뉴스 기사에 대한 귀하의 생각을 묻는 질문입니다. 다음 기사를 잘 읽고 질문에 답해주십시오.
-      </p>
-
-      <div class="fact-table-wrap">
-        <table class="fact-table" style="min-width: 1100px;">
-          <thead>
-            <tr>
-              <th>문항 내용</th>
-              <th class="fact-col">전혀 동의하지 않는다</th>
-              <th class="fact-col">동의하지 않는다</th>
-              <th class="fact-col">보통이다</th>
-              <th class="fact-col">동의한다</th>
-              <th class="fact-col">전적으로 동의한다</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${CHECK_QUESTIONS.map((q, idx) => `
-              <tr>
-                <td class="fact-text">${q}</td>
-                ${[1,2,3,4,5].map(v => `
-                  <td>
-                    <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
-                      <input class="fact-radio" type="radio" name="check_${idx}" value="${v}" ${String(state.checkAnswers[idx]) === String(v) ? "checked" : ""}>
-                      <span>${["①","②","③","④","⑤"][v-1]}</span>
-                    </label>
-                  </td>
-                `).join("")}
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </div>
-
-      <div class="row">
-        <button id="next" class="btn btn-primary" disabled>다음</button>
-      </div>
-    </div>
-  `);
-
-  const nextBtn = document.getElementById("next");
-
-  function sync() {
-    for (let i = 0; i < 8; i++) {
-      const picked = document.querySelector(`input[name="check_${i}"]:checked`);
-      state.checkAnswers[i] = picked ? Number(picked.value) : null;
+      renderSingleQuestionLikertPage({
+        titleBox: "7.1페이지",
+        desc: `※ 앞서 제시된 뉴스 기사에 대한 귀하의 생각을 묻는 질문입니다. 다음 기사를 잘 읽고 질문에 답해주십시오.`,
+        questions: CHECK_QUESTIONS,
+        answers: state.checkAnswers.map(v => v ? String(v) : null),
+        scaleLabels: [
+          "① 전혀 동의하지 않는다",
+          "② 동의하지 않는다",
+          "③ 보통이다",
+          "④ 동의한다",
+          "⑤ 전적으로 동의한다"
+        ],
+        answerNamePrefix: "check",
+        stateSetter: (newAnswers) => {
+          state.checkAnswers = newAnswers.map(v => v ? Number(v) : null);
+        },
+        nextHash: "#/8",
+        autoAdvance: true
+      });
     }
-    nextBtn.disabled = state.checkAnswers.some(v => !v);
-  }
-
-  for (let i = 0; i < 8; i++) {
-    document.querySelectorAll(`input[name="check_${i}"]`).forEach(el => {
-      el.addEventListener("change", sync);
-    });
-  }
-
-  sync();
-
-  nextBtn.addEventListener("click", () => {
-    setHash("#/11");
-  });
-}
 
     function page8() {
       const TR_QUESTIONS = [
@@ -1793,72 +1819,26 @@ if (nextStageBtn) {
         "TR7. 내가 추가로 이용하려는 매체에서 내게 제공하는 뉴스는 대체로 공공과 독자의 이익을 잘 대변한다."
       ];
 
-      renderShell(`
-        <div>
-          <div class="sq-title-box">8페이지</div>
-          <p class="desc" style="white-space: pre-line;">
-※ 다음 질문은 귀하께서 추가 정보를 확인하려고 매체를 선택하신 이유에 대한 질문입니다. 귀하의 생각을 응답해주십시오.
-          </p>
-
-          <div class="fact-table-wrap">
-            <table class="fact-table">
-              <thead>
-                <tr>
-                  <th>문항 내용</th>
-                  <th class="fact-col">전혀 그렇지 않다</th>
-                  <th class="fact-col">그렇지 않다</th>
-                  <th class="fact-col">약간 그렇지 않다</th>
-                  <th class="fact-col">그저 그렇다</th>
-                  <th class="fact-col">약간 그렇다</th>
-                  <th class="fact-col">그렇다</th>
-                  <th class="fact-col">매우 그렇다</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${TR_QUESTIONS.map((q, idx) => `
-                  <tr>
-                    <td class="fact-text">${q}</td>
-                    ${[1,2,3,4,5,6,7].map(v => `
-                      <td>
-                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
-                          <input class="fact-radio" type="radio" name="tr_${idx}" value="${v}" ${String(state.page8Answers.tr[idx]) === String(v) ? "checked" : ""}>
-                          <span>${["①","②","③","④","⑤","⑥","⑦"][v-1]}</span>
-                        </label>
-                      </td>
-                    `).join("")}
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="row">
-            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
-          </div>
-        </div>
-      `);
-
-      const nextBtn = document.getElementById("next");
-
-      function sync() {
-        for (let i = 0; i < 7; i++) {
-          const picked = document.querySelector(`input[name="tr_${i}"]:checked`);
-          state.page8Answers.tr[i] = picked ? picked.value : null;
-        }
-
-        nextBtn.disabled = state.page8Answers.tr.some(v => !v);
-      }
-
-      for (let i = 0; i < 7; i++) {
-        document.querySelectorAll(`input[name="tr_${i}"]`).forEach(el => {
-          el.addEventListener("change", sync);
-        });
-      }
-
-      sync();
-
-      document.getElementById("next").addEventListener("click", () => {
-        setHash("#/9");
+      renderSingleQuestionLikertPage({
+        titleBox: "8페이지",
+        desc: `※ 다음 질문은 귀하께서 추가 정보를 확인하려고 매체를 선택하신 이유에 대한 질문입니다. 귀하의 생각을 응답해주십시오.`,
+        questions: TR_QUESTIONS,
+        answers: state.page8Answers.tr,
+        scaleLabels: [
+          "① 전혀 그렇지 않다",
+          "② 그렇지 않다",
+          "③ 약간 그렇지 않다",
+          "④ 그저 그렇다",
+          "⑤ 약간 그렇다",
+          "⑥ 그렇다",
+          "⑦ 매우 그렇다"
+        ],
+        answerNamePrefix: "tr",
+        stateSetter: (newAnswers) => {
+          state.page8Answers.tr = newAnswers;
+        },
+        nextHash: "#/9",
+        autoAdvance: true
       });
     }
 
@@ -1870,72 +1850,26 @@ if (nextStageBtn) {
         "USE4. 내가 추가로 이용하려는 매체는 전반적으로 나에게 유용하다고 생각한다."
       ];
 
-      renderShell(`
-        <div>
-          <div class="sq-title-box">9페이지</div>
-        <p class="desc" style="white-space: pre-line;">
-※ 다음 질문은 귀하께서 추가 정보를 확인하려고 매체를 선택하신 이유에 대한 질문입니다. 귀하의 생각을 응답해주십시오.
-          </p>
-
-          <div class="fact-table-wrap">
-            <table class="fact-table">
-              <thead>
-                <tr>
-                  <th>문항 내용</th>
-                  <th class="fact-col">전혀 그렇지 않다</th>
-                  <th class="fact-col">그렇지 않다</th>
-                  <th class="fact-col">약간 그렇지 않다</th>
-                  <th class="fact-col">그저 그렇다</th>
-                  <th class="fact-col">약간 그렇다</th>
-                  <th class="fact-col">그렇다</th>
-                  <th class="fact-col">매우 그렇다</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${USE_QUESTIONS.map((q, idx) => `
-                  <tr>
-                    <td class="fact-text">${q}</td>
-                    ${[1,2,3,4,5,6,7].map(v => `
-                      <td>
-                        <label style="display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;">
-                          <input class="fact-radio" type="radio" name="use_${idx}" value="${v}" ${String(state.page9Answers.use[idx]) === String(v) ? "checked" : ""}>
-                          <span>${["①","②","③","④","⑤","⑥","⑦"][v-1]}</span>
-                        </label>
-                      </td>
-                    `).join("")}
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="row">
-            <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
-          </div>
-        </div>
-      `);
-
-      const nextBtn = document.getElementById("next");
-
-      function sync() {
-        for (let i = 0; i < 4; i++) {
-          const picked = document.querySelector(`input[name="use_${i}"]:checked`);
-          state.page9Answers.use[i] = picked ? picked.value : null;
-        }
-
-        nextBtn.disabled = state.page9Answers.use.some(v => !v);
-      }
-
-      for (let i = 0; i < 4; i++) {
-        document.querySelectorAll(`input[name="use_${i}"]`).forEach(el => {
-          el.addEventListener("change", sync);
-        });
-      }
-
-      sync();
-
-      document.getElementById("next").addEventListener("click", () => {
-        setHash("#/10");
+      renderSingleQuestionLikertPage({
+        titleBox: "9페이지",
+        desc: `※ 다음 질문은 귀하께서 추가 정보를 확인하려고 매체를 선택하신 이유에 대한 질문입니다. 귀하의 생각을 응답해주십시오.`,
+        questions: USE_QUESTIONS,
+        answers: state.page9Answers.use,
+        scaleLabels: [
+          "① 전혀 그렇지 않다",
+          "② 그렇지 않다",
+          "③ 약간 그렇지 않다",
+          "④ 그저 그렇다",
+          "⑤ 약간 그렇다",
+          "⑥ 그렇다",
+          "⑦ 매우 그렇다"
+        ],
+        answerNamePrefix: "use",
+        stateSetter: (newAnswers) => {
+          state.page9Answers.use = newAnswers;
+        },
+        nextHash: "#/10",
+        autoAdvance: true
       });
     }
 
@@ -1944,8 +1878,8 @@ if (nextStageBtn) {
         <div class="sq-page">
           <div class="sq-title-box">10페이지</div>
 
-         <p class="desc" style="white-space: pre-line;">
-※ 끝으로 귀하의 인적사항에 대한 질문입니다. 
+          <p class="desc" style="white-space: pre-line;">
+※ 끝으로 귀하의 인적사항에 대한 질문입니다.
 통계적인 목적 이외의 다른 용도로는 절대 사용되지 않으니, 안심하시고 답변해주시면 감사하겠습니다.
           </p>
 
@@ -2100,10 +2034,10 @@ if (nextStageBtn) {
 
           <div class="sq-block">
             <div class="sq-note" style="margin:0; white-space:pre-line; font-size:16px">
-<strong>* 알려드립니다. 
-본 연구는 알고리즘 뉴스 반복 노출에 따라 수용자의 정보불충분성인식과 매체 선택에 차이가 있는지를 살펴보기 위한 것입니다. 
-본 연구에 활용된 기사는 이러한 연구 목적에 따라 연구자가 국방부 발표 내용과 관련 기사 내용들을 바탕으로 수정/편집한 것입니다. 
-따라서 본 연구에서 제공받으신 기사 내용은 실제와 다를 수 있습니다. 
+<strong>* 알려드립니다.
+본 연구는 알고리즘 뉴스 반복 노출에 따라 수용자의 정보불충분성인식과 매체 선택에 차이가 있는지를 살펴보기 위한 것입니다.
+본 연구에 활용된 기사는 이러한 연구 목적에 따라 연구자가 국방부 발표 내용과 관련 기사 내용들을 바탕으로 수정/편집한 것입니다.
+따라서 본 연구에서 제공받으신 기사 내용은 실제와 다를 수 있습니다.
 또한 기사에 언급된 언론사 기자의 이름, 이메일 주소 등의 정보 역시 오직 연구 목적을 위해 설정한 가상의 것으로 실제와 무관함을 알려드리오니, 이 점 오해 없기를 바랍니다. </strong>
             </div>
           </div>
@@ -2199,13 +2133,13 @@ if (nextStageBtn) {
         add1: state.page7Answers.add1 || "",
         add2: state.page7Answers.add2 || "",
         check1: state.checkAnswers[0] || "",
-check2: state.checkAnswers[1] || "",
-check3: state.checkAnswers[2] || "",
-check4: state.checkAnswers[3] || "",
-check5: state.checkAnswers[4] || "",
-check6: state.checkAnswers[5] || "",
-check7: state.checkAnswers[6] || "",
-check8: state.checkAnswers[7] || "",
+        check2: state.checkAnswers[1] || "",
+        check3: state.checkAnswers[2] || "",
+        check4: state.checkAnswers[3] || "",
+        check5: state.checkAnswers[4] || "",
+        check6: state.checkAnswers[5] || "",
+        check7: state.checkAnswers[6] || "",
+        check8: state.checkAnswers[7] || "",
         tr1: state.page8Answers.tr[0] || "",
         tr2: state.page8Answers.tr[1] || "",
         tr3: state.page8Answers.tr[2] || "",
@@ -2241,7 +2175,7 @@ check8: state.checkAnswers[7] || "",
     function page12() {
       renderShell(`
         <div class="done" style="text-align:center; line-height:1.8; white-space:pre-line;">
-감사합니다. 설문이 모두 종료되었습니다. 
+감사합니다. 설문이 모두 종료되었습니다.
 
 본 연구와 관련한 문의사항이 있으시면 lims86@naver.com으로 연락주시기 바랍니다
         </div>
