@@ -743,10 +743,18 @@
       return choice || "설문";
     }
 
-function renderShell(innerHtml) {
+function renderShell(innerHtml, scrollMode = "keep") {
   const el = $app();
   if (!el) return;
   el.innerHTML = `<div class="wrap"><div class="card">${innerHtml}</div></div>`;
+
+  requestAnimationFrame(() => {
+    if (scrollMode === "top") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    } else if (scrollMode === "bottom") {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "auto" });
+    }
+  });
 }
 
     function escapeHtml(str) {
@@ -831,7 +839,7 @@ ${desc}
           </button>
         </div>
       </div>
-    `);
+    `, "top");
 
     const radios = document.querySelectorAll(`input[name="${answerNamePrefix}_${currentIndex}"]`);
     const prevBtn = document.getElementById("prevBtn");
@@ -941,7 +949,7 @@ ${desc}
             <button id="nextBtn" class="btn btn-primary" style="max-width:200px;" disabled>응답 완료 후 활성화</button>
           </div>
         </div>
-      `);
+      `, "top");
 
       const radios = document.querySelectorAll(`input[name="${answerNamePrefix}_${currentStep}"]`);
       const prevBtn = document.getElementById("prevBtn");
@@ -1007,7 +1015,7 @@ ${desc}
           </button>
         </div>
       </div>
-    `);
+    `, "top");
 
     const radios = document.querySelectorAll(`input[name="${step.name}"]`);
     const prevBtn = document.getElementById("prevBtn");
@@ -1066,7 +1074,7 @@ ${desc}
             <button id="start" class="btn btn-primary" style="max-width:240px;">시작하기</button>
           </div>
         </div>
-      `);
+      `, "top");
 
       document.getElementById("start").addEventListener("click", () => setHash("#/"));
     }
@@ -1175,7 +1183,7 @@ ${desc}
             <button id="sqNext" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
           </div>
         </div>
-      `);
+      `, "top");
 
       const phoneInput = document.getElementById("sq_phone");
 
@@ -1376,7 +1384,7 @@ ${desc}
             </div>
           </div>
         </div>
-      `);
+      `, "top");
 
       const radios = [...document.querySelectorAll('input[name="topic_q1"]')];
       const nextBtn = document.getElementById("next");
@@ -1437,7 +1445,7 @@ ${desc}
             <button id="next" class="btn btn-primary" disabled>다음</button>
           </div>
         </div>
-      `);
+      `, "top");
 
       const nextBtn = document.getElementById("next");
 
@@ -1544,7 +1552,7 @@ ${desc}
             </div>
           </div>
         </div>
-      `);
+      `, "top");
 
       document.getElementById("nextLockedIntro").addEventListener("click", () => {
         setHash(`#/${state.initialArticleRoute || state.route}`);
@@ -1570,7 +1578,7 @@ ${desc}
             </div>
           </div>
         </div>
-      `);
+      `, "top");
 
       document.getElementById("nextFreeIntro").addEventListener("click", () => {
         setHash(`#/${state.initialArticleRoute || state.route}`);
@@ -1653,7 +1661,7 @@ ${desc}
 
           <div class="small" id="countdown"></div>
         </div>
-      `);
+      `, "top");
 
       state.selectedNews = cfg.selectedNews;
 
@@ -2043,7 +2051,7 @@ ${desc}
             <button id="next" class="btn btn-primary" disabled style="max-width:200px;">다음</button>
           </div>
         </div>
-      `);
+      `, "top");
 
       const nextBtn = document.getElementById("next");
       const dq4CountWrap = document.getElementById("dq4CountWrap");
@@ -2138,7 +2146,7 @@ ${desc}
             <button id="next" class="btn btn-primary" disabled style="max-width:200px;">설문 제출</button>
           </div>
         </div>
-      `);
+      `, "top");
 
       const nextBtn = document.getElementById("next");
 
@@ -2255,7 +2263,7 @@ ${desc}
 
 본 연구와 관련한 문의사항이 있으시면 lims86@naver.com으로 연락주시기 바랍니다
         </div>
-      `);
+      `, "top");
 
       if (!state.isFinalSaved) {
         state.isFinalSaved = true;
