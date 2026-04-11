@@ -1349,6 +1349,10 @@ ${desc}
         state.freeRouteStartedAt = null;
         setHash("#/q1");
       });
+
+      requestAnimationFrame(() => {
+  window.scrollTo({ top: 0, behavior: "auto" });
+});
     }
 
     function pageTopicChoice() {
@@ -1710,7 +1714,7 @@ ${desc}
 
       if (locked) {
         let remain = 48;
-        cd.textContent = `활성화까지 ${remain}초`;
+        cd.textContent = `${remain}초 뒤 다음 기사를 선택할 수 있습니다.`;
 
         const timer = setInterval(() => {
           remain -= 1;
