@@ -1722,7 +1722,7 @@ ${desc}
 
       if (locked) {
         let remain = 48;
-        cd.textContent = `${remain}초 뒤 다음 기사를 선택할 수 있습니다.`;
+        cd.textContent = `활성화까지 ${remain}초`;
 
         const timer = setInterval(() => {
           remain -= 1;
@@ -1734,7 +1734,7 @@ ${desc}
             return;
           }
 
-          cd.textContent = `활성화까지 ${remain}초`;
+          cd.textContent = `${remain}초 뒤 다음 기사를 선택할 수 있습니다.`;
         }, 1000);
       } else {
         if (!freeNextVisible && state.freeRouteStartedAt) {
