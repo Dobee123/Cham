@@ -1058,25 +1058,12 @@ ${desc}
     function pageIntro() {
       renderShell(`
         <div class="intro">
-          <h1 class="intro-title" style="font-weight: normal; font-size: 1rem; line-height: 1.6;">안녕하십니까? <br><br>
-본 실험 연구는 ‘장병들의 뉴스 소비’에 대한 인식 조사입니다.<br><br>
-설문 사항에는 정답이 없습니다.<br><br>
-조사와 관련한 귀하의 모든 답변은 통계법 제33조(비밀의 보호) 및 제34조(통계 조사자 등의 의무)에 의거하여 <strong>익명</strong>으로 처리되며, 수집된 정보는 학문적 연구에만 활용합니다.<br><br>
+          <h1 class="intro-title" style="font-weight: normal; font-size: 4rem; line-height: 1.6;"><strong>설문이 종료되었습니다.</strong><br><br>
 
-이번 연구에서는 한 가지 이슈를 다양한 기사로 접하는 포털 뉴스 이용 상황을 재현하고 있습니다. <br>
-유사한 주제나 내용의 기사를 몇 차례 제시하며, 제시된 기사를 읽고 나서의 생각을 설문 문항으로 묻습니다. <br><br>
-
-바쁘시더라도 잠시만 시간을 내어 설문에 성실히 응해주시면 감사하겠습니다. <br><br>
-
-성실히 설문에 참여해주신 분들께 소정의 감사 선물(기프티콘)을 드립니다. <br><br>
 </h1>
-          <div class="row" style="justify-content:center; width:100%; margin-top:6px;">
-            <button id="start" class="btn btn-primary" style="max-width:240px;">시작하기</button>
-          </div>
         </div>
       `, "top");
 
-      document.getElementById("start").addEventListener("click", () => setHash("#/"));
     }
 
     function pageSQ() {
